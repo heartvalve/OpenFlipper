@@ -330,13 +330,10 @@ void MeshCompiler::WeldList::add(const int _face, const int _corner)
   bool matched = false;
 
   // search for same vertex that is referenced already
-//   for ( std::list< WeldListEntry >::iterator it = list.begin();
-//     it != list.end() && !matched; ++it )
   for (size_t i = 0; i < list.size() && !matched; ++i)
   {
     WeldListEntry* it = &list[i];
     // query referenced vertex data
-//    meshComp->getInputFaceVertexData(it->refFaceId, it->refCornerId, vtx1);
 
     // compare vertices
     if (cmpFunc->equalVertex(vtx0, vtx1, meshComp->getVertexDeclaration()))
@@ -410,7 +407,6 @@ void MeshCompiler::weldVertices()
       int adjCornerId = -1;
       for (int m = 0; m < getFaceSize(adjFace); ++m)
       {
-//        int adjVertex = faceInput_->getSingleFaceAttr(adjFace, m, inputIDPos_);
         const int adjVertex = getInputIndex(adjFace, m, inputIDPos_);
         
         if (adjVertex == i)
@@ -435,8 +431,6 @@ void MeshCompiler::weldVertices()
 
     // apply local WeldList of a vertex to global weld map
 
-//     for (std::list< WeldListEntry >::iterator it = weldList.list.begin();
-//       it != weldList.list.end();  ++ it)
     for (size_t e = 0; e < weldList.list.size(); ++e)
     {
       const WeldListEntry* it = &weldList.list[e];
@@ -719,11 +713,6 @@ void MeshCompiler::splitVertices()
       }
     }
   }
-
-
-//  assert(numDrawVerts_ == splitter_->numVerts);
-
-// std::cout << "VertexSplitter: num splits: " << (splitter_->numVerts - input_[inputIDPos_].count) <<" num resizes " << splitter_->dbg_numResizes << std::endl;
 }
 
 
@@ -759,84 +748,6 @@ void MeshCompiler::forceUnsharedFaceVertex()
     // reset shared list
     memset(&sharedVertices[0], 0, sizeof(int) * maxFaceSize_);
     int numShared = 0;
-
-//     const int numAdj = getAdjFaceFaceCount(faceID);
-//     for (int k = 0; k < numAdj; ++k)
-//     {
-//       const int adjFaceID = getAdjFaceFace(faceID, k);
-//       const int adjFaceSize = getFaceSize(adjFaceID);
-// 
-//       assert(adjFaceID >= 0);
-//       assert(adjFaceID < numFaces_);
-// 
-//       for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
-//       {
-//         if (sharedVertices[v0])
-//           continue;
-// 
-//         const int vertexID0 = getInputIndexSplit(faceID, v0);
-// 
-//         for (int v1 = 0; v1 < adjFaceSize; ++v1)
-//         {
-//           const int vertexID1 = getInputIndexSplit(adjFaceID, v1);
-// 
-//           if (vertexID0 == vertexID1)
-//           {
-//             if (!sharedVertices[v0])
-//             {
-//               sharedVertices[v0] = true;
-//               ++numShared;
-//               break;
-//             }
-//           }
-//         }
-//       }
-//     }
-
-//     for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
-//     {
-//       if (sharedVertices[v0])
-//         continue;
-// 
-//       const int pos0 = getInputIndex(faceID, v0, inputIDPos_);
-//       const int vertexID0 = getInputIndexSplit(faceID, v0);
-// 
-//       if (VertexUsed[vertexID0])
-//       {
-//         sharedVertices[v0] = true;
-//         ++numsh
-//       }
-// 
-//       // walk adjacency list of each vertex to find neighboring faces
-//       const int adjCount = getAdjVertexFaceCount(pos0);
-//       for (int q = 0; q < adjCount && !sharedVertices[v0]; ++q)
-//       {
-//         const int adjFaceID = getAdjVertexFace(pos0, q);
-// 
-//         if (adjFaceID != faceID)
-//         {
-//           const int adjFaceSize = getFaceSize(adjFaceID);
-// 
-//           for (int v1 = 0; v1 < adjFaceSize; ++v1)
-//           {
-//             const int vertexID1 = getInputIndexSplit(adjFaceID, v1);
-// 
-//             int pos1 = getInputIndex(adjFaceID, v1, inputIDPos_);
-// 
-//             if (vertexID0 == vertexID1)
-//             {
-//               if (!sharedVertices[v0])
-//               {
-//                 sharedVertices[v0] = true;
-//                 ++numShared;
-//                 break;
-//               }
-//             }
-//           }
-// 
-//         }
-//       }
-//     }
 
     for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
     {
@@ -944,7 +855,6 @@ void MeshCompiler::getInputFaceVertexData( const int _faceId, const int _corner,
   {
     const VertexElement* el = decl_.getElement(i);
 
-//    int idx = faceInput_->getSingleFaceAttr(_faceId, _corner, i);
     const int idx = getInputIndex(_faceId, _corner, i);
 
     input_[i].getElementData(idx, (char*)_out + (size_t)el->pointer_, el);
@@ -1020,7 +930,6 @@ int MeshCompiler::getInputIndexOffset( const int _face, const int _corner, const
   assert(_face < numFaces_);
 
   const int baseIdx = int(faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face]);
-//  int fsize = faceCorners_.empty() ? maxFaceCorners_ : faceCorners_[_face];
   const int fsize = getFaceSize(_face);
 
   const int rotCount = faceRotCount_.empty() && _rotation ? 0 : faceRotCount_[_face];
@@ -1114,13 +1023,8 @@ MeshCompiler::VertexSplitter::VertexSplitter(int _numAttribs,
   const int maxCount = (_numAttribs + 1) * (_numWorstCase + 1);
 
   // alloc split list and invalidate
-//   splits = new int[maxCount];
-//   memset(splits, -1, maxCount * sizeof(int) );
-//  splits.resize(_numWorstCase, -1);
   splits.resize(maxCount, -1);
 
-//    numVerts = 0;
-  
   dbg_numResizes = 0;
   dbg_numSplits = 0;
 }
@@ -1129,7 +1033,6 @@ MeshCompiler::VertexSplitter::VertexSplitter(int _numAttribs,
 
 MeshCompiler::VertexSplitter::~VertexSplitter()
 {
-//  delete [] splits;
 }
 
 
@@ -1147,8 +1050,6 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
 
     // mark as referenced (next = this)
     setNext(pos, pos);
-//         setNext(pos, numVerts);
-//         pos = numVerts++;
   }
   else
   {
@@ -1163,7 +1064,6 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
       if (!memcmp(vertex, getAttribs(pos), numAttribs * sizeof(int)))
       {
         // found! reuse index
-//        return next < pos ? next : pos;
         return pos;
       }
       else
@@ -1171,7 +1071,6 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
         next = getNext(pos);
         
         if (next < 0) break;    // end of list
-//        if (next <= pos) break; // avoid loop
         if (next == pos) break; // avoid loop
 
         pos = next;             // go to next entry
@@ -2774,7 +2673,6 @@ void MeshCompiler::createVertexMap(bool _keepIsolatedVerts)
     for (int k = 0; k < getFaceSize(i); ++k)
     {
       int vertexID = getInputIndexSplit(i, k);
-//      vertexMap_[vertexID] = std::pair<int, unsigned char>(i, (unsigned char)k);
       vertexMapFace_[vertexID] = i;
       vertexMapCorner_[vertexID] = (unsigned char)k;
     }
@@ -3672,22 +3570,6 @@ void MeshCompiler::prepareData()
   if (!provokingVertexSetByUser_)
     provokingVertex_ = -1;
 
-
-//   faceData_.resize(numIndices_ * numAttributes_);
-// 
-//   for (int i = 0; i < numFaces_; ++i)
-//   {
-//     int offs = getInputFaceOffset(i);
-//     int fsize = getFaceSize(i);
-//     
-//     for (int k = 0; k < fsize; ++k)
-//     {
-//       for (int m = 0; m < numAttributes_; ++m)
-//       {
-//         faceData_[(offs + k) * numAttributes_ + m] = faceInput_->getSingleFaceAttr(i, k, m);
-//       }
-//     }
-//   }
 
 #ifdef _DEBUG
   for (int i = 0; i < numFaces_; ++i)
