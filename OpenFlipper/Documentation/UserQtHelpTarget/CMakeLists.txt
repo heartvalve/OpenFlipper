@@ -21,6 +21,7 @@ IF (DOXYGEN_FOUND)
   
   # Remove temporary html files after buily
   add_custom_command(TARGET doc-UserQtHelp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove_directory ${user_html_doc_dir})
+  message("Post build : remove ${user_html_doc_dir}")
 
     # On apple we take the whole directory, so we don't need this extra install command
   if ( NOT APPLE ) 
