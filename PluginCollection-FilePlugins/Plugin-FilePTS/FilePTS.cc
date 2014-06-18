@@ -112,11 +112,11 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   _splatCloud.clear();
 
   // set default options
-  bool loadNormals    = true;
-  bool loadPointsizes = false;
-  bool loadColors     = false;
+  bool loadNormals    = OpenFlipperSettings().value( "FilePTS/Load/Normals", true ).toBool();
+  bool loadPointsizes = OpenFlipperSettings().value( "FilePTS/Load/Pointsizes", false ).toBool();
+  bool loadColors     = OpenFlipperSettings().value( "FilePTS/Load/Colors", false ).toBool();
 //int  loadColorRange = 0;
-  bool loadIndices    = false;
+  bool loadIndices    = OpenFlipperSettings().value( "FilePTS/Load/Indices", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && loadOptions_ )
@@ -286,11 +286,11 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   _splatCloud.clear();
 
   // set default options
-  bool loadNormals    = true;
-  bool loadPointsizes = false;
-  bool loadColors     = false;
-  int  loadColorRange = 0;
-  bool loadIndices    = false;
+  bool loadNormals    = OpenFlipperSettings().value( "FilePTS/Load/Normals", true ).toBool();
+  bool loadPointsizes = OpenFlipperSettings().value( "FilePTS/Load/Pointsizes", false ).toBool();
+  bool loadColors     = OpenFlipperSettings().value( "FilePTS/Load/Colors", false ).toBool();
+  int  loadColorRange = OpenFlipperSettings().value( "FilePTS/Load/ColorRange",0 ).toInt();
+  bool loadIndices    = OpenFlipperSettings().value( "FilePTS/Load/Indices", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && loadOptions_ )
@@ -444,11 +444,11 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
 bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/
 {
   // set default options
-  bool saveNormals    = true;
-  bool savePointsizes = false;
-  bool saveColors     = false;
+  bool saveNormals    = OpenFlipperSettings().value( "FilePTS/Save/Normals", true ).toBool();
+  bool savePointsizes = OpenFlipperSettings().value( "FilePTS/Save/Pointsizes", false ).toBool();
+  bool saveColors     = OpenFlipperSettings().value( "FilePTS/Save/Colors", false ).toBool();
 //int  saveColorRange = 0;
-  bool saveIndices    = false;
+  bool saveIndices    = OpenFlipperSettings().value( "FilePTS/Save/Indices", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && saveOptions_ )
@@ -589,11 +589,11 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
 bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/
 {
   // set default options
-  bool saveNormals    = true;
-  bool savePointsizes = false;
-  bool saveColors     = false;
-  int  saveColorRange = 0;
-  bool saveIndices    = false;
+  bool saveNormals    = OpenFlipperSettings().value( "FilePTS/Save/Normals", true ).toBool();
+  bool savePointsizes = OpenFlipperSettings().value( "FilePTS/Save/Pointsizes", false ).toBool();
+  bool saveColors     = OpenFlipperSettings().value( "FilePTS/Save/Colors", false ).toBool();
+  int  saveColorRange = OpenFlipperSettings().value( "FilePTS/Save/ColorRange",0 ).toInt();
+  bool saveIndices    = OpenFlipperSettings().value( "FilePTS/Save/Indices", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && saveOptions_ )
@@ -729,7 +729,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
 int FilePTSPlugin::loadObject( QString _filename )
 {
   // set default options
-  bool loadBinaryFile = false;
+  bool loadBinaryFile = OpenFlipperSettings().value( "FilePTS/Load/BinaryFile", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && loadOptions_ )
@@ -821,7 +821,7 @@ int FilePTSPlugin::loadObject( QString _filename )
 bool FilePTSPlugin::saveObject( int _objectId, QString _filename )
 {
   // set default options
-  bool saveBinaryFile = false;
+  bool saveBinaryFile = OpenFlipperSettings().value( "FilePTS/Save/BinaryFile", false ).toBool();
 
   // get options
   if( OpenFlipper::Options::gui() && saveOptions_ )
