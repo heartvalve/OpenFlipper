@@ -99,6 +99,16 @@ QString PropertyVisualizer::toStr(OpenMesh::Vec3d v)
     return QObject::tr("( %1, %2, %3 )").arg(v[0]).arg(v[1]).arg(v[2]);
 }
 
+QString PropertyVisualizer::toStr(OpenMesh::Vec2d v)
+{
+    return QObject::tr("( %1, %2 )").arg(v[0]).arg(v[1]);
+}
+
+QString PropertyVisualizer::toStr(OpenMesh::Vec2f v)
+{
+    return QObject::tr("( %1, %2 )").arg(v[0]).arg(v[1]);
+}
+
 #ifdef ENABLE_SKELETON_SUPPORT
 QString PropertyVisualizer::toStr(BaseSkin::SkinWeights sw)
 {
@@ -122,4 +132,22 @@ OpenMesh::Vec3d PropertyVisualizer::strToVec3d (QString str)
     s.chop(2);
     QStringList strList = s.split(QObject::tr(", "));
     return OpenMesh::Vec3d(strList[0].toDouble(),strList[1].toDouble(),strList[2].toDouble());
+}
+
+OpenMesh::Vec2d PropertyVisualizer::strToVec2d (QString str)
+{
+    QString s = str;
+    s.remove(0,2);
+    s.chop(2);
+    QStringList strList = s.split(QObject::tr(", "));
+    return OpenMesh::Vec2d(strList[0].toDouble(),strList[1].toDouble());
+}
+
+OpenMesh::Vec2f PropertyVisualizer::strToVec2f (QString str)
+{
+    QString s = str;
+    s.remove(0,2);
+    s.chop(2);
+    QStringList strList = s.split(QObject::tr(", "));
+    return OpenMesh::Vec2f(strList[0].toFloat(),strList[1].toFloat());
 }

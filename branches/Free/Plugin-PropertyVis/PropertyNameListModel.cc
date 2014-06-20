@@ -60,6 +60,10 @@ const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec
         PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3d>), "Vec3d");
 const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec3f =
         PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f");
+const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec2d =
+        PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec2d>), "Vec2d");
+const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec2f =
+        PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec2f>), "Vec2f");
 
 #ifdef ENABLE_SKELETON_SUPPORT
   #include <ObjectTypes/Skeleton/BaseSkin.hh>
@@ -78,15 +82,17 @@ const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::prop_types[]
                                                               proptype_double,
                                                               proptype_Vec3d,
                                                               proptype_Vec3f,
+                                                              proptype_Vec2d,
+                                                              proptype_Vec2f,
 #ifdef ENABLE_SKELETON_SUPPORT
                                                               proptype_SkinWeights,
 #endif
 };
 
 #ifdef ENABLE_SKELETON_SUPPORT
-const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 7);
+const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 9);
 #else
-const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 6);
+const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 8);
 #endif
 
 const char *PropertyNameListModel::entity2str(ENTITY_FILTER entity) {
