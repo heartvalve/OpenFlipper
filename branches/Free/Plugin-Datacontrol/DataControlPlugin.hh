@@ -372,6 +372,17 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Hides all objects
         void hideAll();
 
+		/** Create and add an empty group.
+		 *
+		 * @param _groupName Name of the new group. If it is an empty string,
+		 *        a default name based on group id will be generated.
+		 * @param _parentGroupId Parent object under which the new group is
+		 *        created. If _parentGroupId is zero, the corresponding object
+		 *        does not exist or it is not a group, the new group is created
+		 *        as toplevel.
+		 */
+		int addEmptyGroup(QString _groupName = "", int _parentGroupId = 0);
+
         /** Group objects together
         *
         * @return object id of new group or -1 if failed

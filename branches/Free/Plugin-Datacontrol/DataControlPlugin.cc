@@ -610,9 +610,8 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
     // group does not exist
     if ( !group ) {
 
-      group = dynamic_cast< BaseObject* >( new GroupObject( current, dynamic_cast< GroupObject* >(parentItem ) ) );
-
-      emit emptyObjectAdded( group->id() );
+      int groupId = addEmptyGroup(current, parentItem->id());
+      PluginFunctions::getObject(groupId, group);
 
       // in the groups vector we only need the lowest groups
       // because they are used recursively
