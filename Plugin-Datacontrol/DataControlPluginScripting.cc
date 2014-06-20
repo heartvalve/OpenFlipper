@@ -53,10 +53,10 @@
 void DataControlPlugin::setDescriptions(){
 
   emit setSlotDescription("getSourceObjects(DataType)",tr("Returns the IdList of all source objects with given DataType."),
-                            QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
+                          QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
 
   emit setSlotDescription("getTargetObjects(DataType)",tr("Returns the IdList of all target objects with given DataType."),
-                              QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
+                          QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
 
   emit setSlotDescription("getObject(QString)",tr("Returns the id of an object with given name."),
                           QStringList(tr("Name")), QStringList(tr("Name of an object")));
@@ -65,7 +65,7 @@ void DataControlPlugin::setDescriptions(){
                           QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
   emit setSlotDescription("dataType(int)",tr("Returns the DataType of the object with the given id."),
-                            QStringList(tr("objectId")), QStringList(tr("ID of an object")));
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
   emit setSlotDescription("hideObject(int)",tr("Hide object with the given id."),
                           QStringList(tr("objectId")), QStringList(tr("ID of an object")));
@@ -85,6 +85,14 @@ void DataControlPlugin::setDescriptions(){
                           QString(tr("ObjectId,name")).split(","),
                           QString(tr("id of the object, the new name")).split(","));
 
+  emit setSlotDescription("addEmptyGroup(QString)", tr("Create new empty group."),
+                          QStringList(tr("GroupName")),
+                          QStringList(tr("Name of the new group.")));
+
+  emit setSlotDescription("addEmptyGroup(QString,int)", tr("Create new empty group."),
+                          QString(tr("GroupName,Parent")).split(","),
+                          QString(tr("Name of the new group., Parent of the new group, or -1, if there is no parent.")).split(","));
+
   emit setSlotDescription("groupObjects(IdList,QString)",tr("Group given Objects together."),
                           QString(tr("objectIds,groupName")).split(","),
                           QString(tr("List of objects that should be grouped., Name of the group.")).split(","));
@@ -102,7 +110,7 @@ void DataControlPlugin::setDescriptions(){
                           QStringList(tr("objectId")), QStringList(tr("Delete the given object.")));
 
   emit setSlotDescription("getGroupElements(int)",tr("Get elements of a group"),
-                           QStringList(tr("groupId")), QStringList(tr("Id of the group.")));
+                          QStringList(tr("groupId")), QStringList(tr("Id of the group.")));
 
   emit setSlotDescription("copyObject(int)",tr("Create a copy of an object"),
                           QStringList(tr("objectId")), QStringList(tr("Object to copy.")));
@@ -126,14 +134,14 @@ void DataControlPlugin::setDescriptions(){
                           QStringList(), QStringList());
 
   emit setSlotDescription("availableDataTypeNames()",tr("Returns a QStringList of all available DataType names."),
-                              QStringList(tr("")), QStringList(tr("")));
+                          QStringList(tr("")), QStringList(tr("")));
 
   emit setSlotDescription("printObjectInfoToLog()",tr("Print info about all objects to log"),
-                            QStringList(), QStringList());
+                          QStringList(), QStringList());
 
   emit setSlotDescription("addObjectToGroup(int,int)",tr("Add an Object to an existing group"),
-                            QStringList(tr("objectId,groupId").split(",")),
-                            QStringList(tr("ID of an object.,ID of an group where the object has to be added.").split(",")));
+                          QStringList(tr("objectId,groupId").split(",")),
+                          QStringList(tr("ID of an object.,ID of an group where the object has to be added.").split(",")));
 
 }
 
@@ -313,6 +321,40 @@ void DataControlPlugin::showObject( int objectId ) {
 
 //******************************************************************************
 
+/** \brief Create new empty group
+*
+* @param _groupName name of the new group
+* @param _parentGroupId id of the parent. -1, if the new group will have no parent
+*/
+int DataControlPlugin::addEmptyGroup(QString _groupName, int _parentGroupId) {
+	GroupObject* parentGroupObject = dynamic_cast<GroupObject*>(PluginFunctions::objectRoot());
+	BaseObject* parentObject = 0;
+	if (PluginFunctions::getObject(_parentGroupId, parentObject)) {
+		GroupObject* parent = dynamic_cast<GroupObject*>(parentObject);
+		if (parent) {
+			parentGroupObject = parent;
+		} else {
+			emit log(LOGWARN, tr("Parent object %1 is not a group, creating a new toplevel group").arg(_parentGroupId));
+		}
+	} else if (_parentGroupId != 0 ) {
+		emit log(LOGWARN, tr("Cannot get parent object %1, creating a new toplevel group").arg(_parentGroupId));
+	}
+
+	GroupObject* groupObject = new GroupObject("newGroup", parentGroupObject);
+
+	if (_groupName == "") {
+		groupObject->setName(tr("New group ") + QString::number(groupObject->id()));
+	} else {
+		groupObject->setName(_groupName);
+	}
+
+	emit emptyObjectAdded(groupObject->id());
+
+	return groupObject->id();
+}
+
+//******************************************************************************
+
 /** \brief Group given Objects together
  *
  * @param _objectIDs list of object ids
@@ -346,27 +388,23 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
   }
 
   //create new group
-  if (parent == 0)
-    parent = PluginFunctions::objectRoot();
+  int groupId = addEmptyGroup(_groupName);
+  BaseObject *groupItem = 0;
+  PluginFunctions::getObject(groupId, groupItem);
 
-  GroupObject* groupItem = new GroupObject( "newGroup", dynamic_cast< GroupObject* >(parent));
-
-  //set groupName
-  if (_groupName == "")
-    groupItem->setName(tr("newGroup ") + QString::number(groupItem->id()));
-  else
-    groupItem->setName( _groupName );
-
-  // Tell core that a new group has been added
-  emit emptyObjectAdded( groupItem->id() );
+  if (parent) {
+    groupItem->setParent(parent);
+  }
 
   //append new children to group
   for ( int i = 0 ; i < objs.size() ; ++i) {
-    (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
+    (objs[i])->setParent(groupItem);
   }
   
-  return groupItem->id();
+  return groupId;
 }
+
+//******************************************************************************
 
 bool DataControlPlugin::unGroupObject(int _id) {
   BaseObject* group = 0;
