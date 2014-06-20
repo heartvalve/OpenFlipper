@@ -88,6 +88,7 @@ void PropertyModel::removeProperty(QModelIndexList selectedIndices)
         QWidget* w = propertyVisualizers[it->row()]->getWidget();
         widgets->layout()->removeWidget(w);
         delete propertyVisualizers[it->row()];
+        propertyVisualizers[it->row()] = 0;
         deleteIndices.push_back(it->row());
     }
 
