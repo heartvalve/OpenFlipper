@@ -171,6 +171,7 @@ void DataControlPlugin::pluginsInitialized() {
   connect(tool_->lightSources, SIGNAL(stateChanged(int)), this, SLOT(slotShowLightSources(int)));
   //update light visibility, if layout was changed
   connect(model_, SIGNAL(layoutChanged ()), this, SLOT(slotShowLightSources()) );
+  connect(model_, SIGNAL(rowsRemoved(const QModelIndex& , int , int )), this, SLOT(slotShowLightSources()));
 }
 
 
