@@ -213,6 +213,8 @@ class PropertyNameListModel: public QAbstractListModel {
         static const TypeInfoWrapper proptype_double;
         static const TypeInfoWrapper proptype_Vec3d;
         static const TypeInfoWrapper proptype_Vec3f;
+        static const TypeInfoWrapper proptype_Vec2d;
+        static const TypeInfoWrapper proptype_Vec2f;
         static const TypeInfoWrapper proptype_SkinWeights;
 
     private:

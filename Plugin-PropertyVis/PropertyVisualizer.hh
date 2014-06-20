@@ -155,6 +155,8 @@ public:
     static inline QString toStr(int i)                { return QObject::tr("%1").arg(i); }
     static inline QString toStr(unsigned int i)       { return QObject::tr("%1").arg(i); }
     static        QString toStr(OpenMesh::Vec3d v);
+    static        QString toStr(OpenMesh::Vec2d v);
+    static        QString toStr(OpenMesh::Vec2f v);
 #ifdef ENABLE_SKELETON_SUPPORT
     static        QString toStr(BaseSkin::SkinWeights sw);
 #endif
@@ -164,7 +166,8 @@ public:
     static inline int             strToInt   (QString str) { return str.toInt();        }
     static inline unsigned int    strToUInt  (QString str) { return str.toUInt();       }
     static        OpenMesh::Vec3d strToVec3d (QString str);
-
+    static        OpenMesh::Vec2d strToVec2d (QString str);
+    static        OpenMesh::Vec2f strToVec2f (QString str);
 
 
 protected:

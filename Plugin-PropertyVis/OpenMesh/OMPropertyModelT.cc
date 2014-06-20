@@ -48,6 +48,7 @@
 #include "OMPropertyVisualizerDouble.hh"
 #include "OMPropertyVisualizerInteger.hh"
 #include "OMPropertyVisualizerVector.hh"
+#include "OMPropertyVisualizerVector2.hh"
 #include "OMPropertyVisualizerVectorFieldDifference.hh"
 
 #ifdef ENABLE_SKELETON_SUPPORT
@@ -73,7 +74,9 @@ OMPropertyModel<MeshT>::OMPropertyModel(MeshT* mesh, int objectID, QObject *pare
       proptype_uint(TypeInfoWrapper(typeid(OpenMesh::PropertyT<unsigned int>), "unsigned int")),
       proptype_double(TypeInfoWrapper(typeid(OpenMesh::PropertyT<double>), "double")),
       proptype_Vec3d(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3d>), "Vec3d")),
-      proptype_Vec3f(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f"))
+      proptype_Vec3f(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f")),
+      proptype_Vec2d(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec2d>), "Vec2d")),
+      proptype_Vec2f(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec2f>), "Vec2f"))
 #ifdef ENABLE_SKELETON_SUPPORT
       ,proptype_SkinWeights(TypeInfoWrapper(typeid(OpenMesh::PropertyT<BaseSkin::SkinWeights>), "SkinWeights"))
 #endif
@@ -540,6 +543,7 @@ template<typename MeshT>
 void OMPropertyModel<MeshT>::addPropertyVisualizer(OpenMesh::BaseProperty* const baseProp, MeshT* mesh, PropertyInfo::ENTITY_FILTER filter)
 {
     PropertyInfo propInfo = PropertyInfo(baseProp->name(), getSupportedTypeInfoWrapper(baseProp) , filter);
+    bool vec3 = (propInfo.typeinfo() == proptype_Vec3d) || (propInfo.typeinfo() == proptype_Vec3f);
     if (propInfo.typeinfo() == proptype_bool)
         propertyVisualizers.push_back(new OMPropertyVisualizerBoolean<MeshT>(mesh, propInfo));
     else if (propInfo.typeinfo() == proptype_int)
@@ -550,6 +554,10 @@ void OMPropertyModel<MeshT>::addPropertyVisualizer(OpenMesh::BaseProperty* const
         propertyVisualizers.push_back(new OMPropertyVisualizerDouble<MeshT>(mesh, propInfo));
     else if ((propInfo.typeinfo() == proptype_Vec3d) || (propInfo.typeinfo() == proptype_Vec3f))
         propertyVisualizers.push_back(new OMPropertyVisualizerVector<MeshT>(mesh, propInfo));
+    else if ((propInfo.typeinfo() == proptype_Vec2d))
+        propertyVisualizers.push_back(new OMPropertyVisualizerVector2<MeshT, ACG::Vec2d>(mesh, propInfo));
+    else if ((propInfo.typeinfo() == proptype_Vec2f))
+        propertyVisualizers.push_back(new OMPropertyVisualizerVector2<MeshT, ACG::Vec2f>(mesh, propInfo));
 #ifdef ENABLE_SKELETON_SUPPORT
     else if (propInfo.typeinfo() == proptype_SkinWeights)
         propertyVisualizers.push_back(new OMPropertyVisualizerSkinWeights<MeshT>(mesh, propInfo));
@@ -581,6 +589,16 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::VPropHandleT< TriMesh::Point > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
+        else if (dtype == tr("Vec2d"))
+        {
+            OpenMesh::VPropHandleT< ACG::Vec2d > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
+        else if (dtype == tr("Vec2f"))
+        {
+            OpenMesh::VPropHandleT< ACG::Vec2f > prop;
             mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
@@ -620,6 +638,16 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
             OpenMesh::EPropHandleT< TriMesh::Point > prop;
             mesh->add_property(prop, pname.toStdString());
         }
+        else if ( dtype == tr("Vec2d") )
+        {
+            OpenMesh::EPropHandleT< ACG::Vec2d > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
+        else if ( dtype == tr("Vec2f") )
+        {
+            OpenMesh::EPropHandleT< ACG::Vec2f > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
         else if ( dtype == tr("double") )
         {
             OpenMesh::EPropHandleT< double > prop;
@@ -646,6 +674,16 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::FPropHandleT< TriMesh::Point > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
+        else if ( dtype == tr("Vec2d") )
+        {
+            OpenMesh::FPropHandleT< ACG::Vec2d > prop;
+            mesh->add_property(prop, pname.toStdString());
+        }
+        else if ( dtype == tr("Vec2f") )
+        {
+            OpenMesh::FPropHandleT< ACG::Vec2f > prop;
             mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
@@ -712,6 +750,8 @@ void OMPropertyModel<MeshT>::initializeSupportedPropertyTypes()
     supportedPropertyTypes.insert(proptype_double);
     supportedPropertyTypes.insert(proptype_Vec3d);
     supportedPropertyTypes.insert(proptype_Vec3f);
+    supportedPropertyTypes.insert(proptype_Vec2d);
+    supportedPropertyTypes.insert(proptype_Vec2f);
     
 #ifdef ENABLE_SKELETON_SUPPORT
     supportedPropertyTypes.insert(proptype_SkinWeights);

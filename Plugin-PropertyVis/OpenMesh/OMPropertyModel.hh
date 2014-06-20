@@ -180,6 +180,8 @@ private:
     TypeInfoWrapper proptype_double;
     TypeInfoWrapper proptype_Vec3d;
     TypeInfoWrapper proptype_Vec3f;
+    TypeInfoWrapper proptype_Vec2d;
+    TypeInfoWrapper proptype_Vec2f;
 #ifdef ENABLE_SKELETON_SUPPORT
     TypeInfoWrapper proptype_SkinWeights;
 #endif
