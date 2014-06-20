@@ -323,30 +323,48 @@ TextureNode::set_texture(const QImage& _image)
 {
   checkEmpty();
 
-  int w=_image.width(), h=_image.height();
-
   // adjust texture size: 2^k * 2^l
-  GLint tex_w, tex_h;
-  for ( tex_w=1; tex_w <= w; tex_w <<= 1 ){};
-  for ( tex_h=1; tex_h <= h; tex_h <<= 1 ){};
-  tex_w >>= 1;
-  tex_h >>= 1;
+  int tex_w, w( _image.width()  );
+  int tex_h, h( _image.height() );
+
+  for (tex_w=1; tex_w < w; tex_w <<= 1) {};
+  for (tex_h=1; tex_h < h; tex_h <<= 1) {};
+  if (5 * tex_w > 7 *w)   // tex_w longer than sqrt(2)*w means too much waste of storage space (7/5 = sqrt(2)-1%)
+    tex_w >>= 1;
+  if (5 * tex_h > 7 *h)   // tex_h longer than sqrt(2)*h means too much waste of storage space (7/5 = sqrt(2)-1%)
+    tex_h >>= 1;
+
+  // is size of input image a power of 2?
+  bool isNPOT = ( tex_w != w ) || ( tex_h != h );
+
+  // image has to be converted to GL_RGBA8 to avoid crash
+  QImage textureGL;
+
+  // eventually scale to pot image if no hw support  / core in GL 2.0
+  if (!openGLVersion(2,0) && isNPOT)
+  {
+    // because texture will only be accessed proportionally by texture coordinates, aspect ratio is of no concern
+    textureGL = QGLWidget::convertToGLFormat ( _image.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
+  }
+  else
+  {
+    // use npot texture
+    tex_w = w;
+    tex_h = h;
+    textureGL = QGLWidget::convertToGLFormat ( _image );
+  }
 
   // enough texture mem?
   glTexImage2D( GL_PROXY_TEXTURE_2D, 0, GL_RGBA, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
-  GLint width;
-  glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width );
-  if ( width == 0 ) {
+  GLint testWidth;
+  glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &testWidth );
+  if ( testWidth == 0 ) {
     std::cerr << "Can't load texture TextureNode::set_texture" << std::endl;
     return;
   }
 
-  // Convert Image
-  QImage texture( QGLWidget::convertToGLFormat ( _image.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) ) );
-
   // Set the image
-  setTextureDataGL(activeTexture_,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,texture.bits());
-
+  setTextureDataGL(activeTexture_ ,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,textureGL.bits());
 }
 
 //----------------------------------------------------------------------------
@@ -470,46 +488,6 @@ TextureNode::add_texture(const QImage& _image)
 {
   checkEmpty();
 
-  // adjust texture size: 2^k * 2^l
-  int tex_w, w( _image.width()  );
-  int tex_h, h( _image.height() );
-
-  for (tex_w=1; tex_w < w; tex_w <<= 1) {};
-  for (tex_h=1; tex_h < h; tex_h <<= 1) {};
-  if (5 * tex_w > 7 *w)   // tex_w longer than sqrt(2)*w means too much waste of storage space (7/5 = sqrt(2)-1%)
-    tex_w >>= 1;
-  if (5 * tex_h > 7 *h)   // tex_h longer than sqrt(2)*h means too much waste of storage space (7/5 = sqrt(2)-1%)
-    tex_h >>= 1;
-
-  // is size of input image a power of 2?
-  bool isNPOT = ( tex_w != _image.width() ) || ( tex_h != _image.height() );
-
-  // image has to be converted to gl format to avoid crash
-  QImage textureGL;
-
-  // eventually scale to pot image if no hw support  / core in GL 2.0
-  if (!openGLVersion(2,0) && isNPOT)
-  {
-    // because texture will only be accessed proportionally by texture coordinates, aspect ratio is of no concern
-    textureGL = QGLWidget::convertToGLFormat ( _image.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
-  }
-  else
-  {
-    // use npot texture
-    tex_w = _image.width();
-    tex_h = _image.height();
-    textureGL = QGLWidget::convertToGLFormat ( _image );
-  }
-
-  // enough texture mem?
-  glTexImage2D( GL_PROXY_TEXTURE_2D, 0, GL_RGBA, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
-  GLint testWidth;
-  glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &testWidth );
-  if ( testWidth == 0 ) {
-    std::cerr << "Can't load texture TextureNode::add_texture" << std::endl;
-    return 0;  // does not really help
-  }
-
   textures_.resize(textures_.size()+1);  // can't push_back, because glGenTextures needs a pointer
 
   // Generate new texture
@@ -518,7 +496,7 @@ TextureNode::add_texture(const QImage& _image)
   activeTexture_ = int(textures_.size() - 1);
 
   // Set the image
-  setTextureDataGL(activeTexture_ ,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,textureGL.bits());
+  set_texture(_image);
 
   // return the id of the new texture
   return textures_.back().id;
