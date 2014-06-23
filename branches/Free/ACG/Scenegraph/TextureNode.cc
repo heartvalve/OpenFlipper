@@ -259,38 +259,37 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
 /** \brief Generate mipmaps for each texture that does not have one yet
 */
 void TextureNode::updateMipmaps(bool _mipmap) {
-    
-    // Make sure we have at least on element in the textures list
-    checkEmpty();
 
-    for(unsigned int i = 1; i < textures_.size(); ++i) {
-        
-        // Bind texture
-        ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[i].id );
-        
-        // Get pixel data out of texture memory
-        GLubyte* buffer = (GLubyte *)malloc(textures_[i].width*textures_[i].height*4);
-        glGetTexImage(textures_[i].target, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            
-        if(_mipmap) {
-            
-            // Build mipmap
-            gluBuild2DMipmaps(textures_[i].target, GL_RGBA, textures_[i].width, textures_[i].height,
-                              GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            
-            // Set mipmap available flag
-            textures_[i].mipmapAvailable = true;
-        } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures_[i].width, textures_[i].height,
-                         0, GL_RGBA, GL_UNSIGNED_BYTE, buffer );
-            
-            // Set mipmap available flag
-            textures_[i].mipmapAvailable = false;
-        }
-        
-        // Update parameters such that changes apply during runtime
-        applyTextureParameters(i);
+  // Make sure we have at least on element in the textures list
+  checkEmpty();
+
+  for(unsigned int i = 1; i < textures_.size(); ++i) {
+
+    // Bind texture
+    ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[i].id );
+
+    // size in bytes of level 0 texture
+    size_t bufferSize = textures_[i].width*textures_[i].height*4;
+
+    if(_mipmap && bufferSize) {
+
+      // Get pixel data out of texture memory
+      GLubyte* buffer = new GLubyte[bufferSize];
+      glGetTexImage(textures_[i].target, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+      // Build mipmap
+      gluBuild2DMipmaps(textures_[i].target, GL_RGBA, textures_[i].width, textures_[i].height,
+        GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+      delete [] buffer;
     }
+
+    // Set mipmap available flag
+    textures_[i].mipmapAvailable = _mipmap;
+
+    // Update parameters such that changes apply during runtime
+    applyTextureParameters(i);
+  }
 }
 
 //----------------------------------------------------------------------------
