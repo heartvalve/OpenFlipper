@@ -68,24 +68,6 @@
 namespace ACG
 {
 
-// template <class Mesh>
-// DrawMeshT<Mesh>::Vertex::Vertex()
-// {
-//   for (int i = 0; i < 3; ++i)
-//   {
-//     pos[i] = 0.0f;
-//     n[i] = 0.0f;
-// //    tan[i] = 0.0f;
-// 
-//     if (i < 2)
-//       tex[i] = 0.0f;
-//   }
-// 
-// //  tan[3] = 0.0f;
-// 
-//   col = 0xFFFFFFFF; // white
-// }
-
 template <class Mesh>
 DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
 :  mesh_(_mesh),
@@ -149,7 +131,6 @@ const void* DrawMeshT<Mesh>::testMeshPropertyTypeT( const OpenMesh::BaseProperty
   {
     if (_outSize)
       *_outSize = 1;
-//    dataPtr = p1 ? p1->data() : pv1->data();
     if (p1)
       dataPtr = p1->data();
     else
@@ -1373,9 +1354,6 @@ void DrawMeshT<Mesh>::bindBuffers()
   ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
 //  ACG::GLState::normalPointerEXT(3, GL_FLOAT, sizeof(Vertex), (char*)(20));  // ACG::GLState::normalPointerEXT crashes sth. in OpenGL
-//  glTangentPointerEXT(4, GL_FLOAT, sizeof(Vertex), (void*)(32));
-
-  //  ACG::GLState::enableClientState(GL_TANGENT_ARRAY_EXT);
 
   ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
 }
@@ -1400,7 +1378,6 @@ void DrawMeshT<Mesh>::unbindBuffers()
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
   ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
-  //  ACG::GLState::disableClientState(GL_TANGENT_ARRAY_EXT);
 
   if (colorMode_)
     ACG::GLState::disableClientState(GL_COLOR_ARRAY);
