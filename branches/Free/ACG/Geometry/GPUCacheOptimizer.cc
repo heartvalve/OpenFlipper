@@ -187,7 +187,7 @@ void GPUCacheOptimizer::OptimizeVertices(unsigned int NumTris, unsigned int NumV
 	// simply iterate over indices and increment vertex location if unvisited vertex found
 	unsigned int uCounter = 0; // vertex counter
 
-	memset(pVertMap, 0xFFFFFFFF, NumVerts * sizeof(unsigned int));
+	memset(pVertMap, 0xFF, NumVerts * sizeof(unsigned int));
 
 	for (unsigned int i = 0; i < NumTris * 3; ++i)
 	{
