@@ -1015,7 +1015,10 @@ private:
   inline
   typename Mesh::Normal computedTriMeshNormal(typename Mesh::FaceHandle fh) {
       typename Mesh::FVIter fv_iter = mesh_.fv_begin(fh);
-      return (mesh_.point(*fv_iter) + mesh_.point(*(++fv_iter)) + mesh_.point(*(++fv_iter))) / 3.0;
+      const typename Mesh::Point p1 = mesh_.point(*fv_iter);
+      const typename Mesh::Point p2 = mesh_.point(*(++fv_iter));
+      const typename Mesh::Point p3 = mesh_.point(*(++fv_iter));
+      return ( p1 + p2 + p3 ) / 3.0;
   }
 
   inline
