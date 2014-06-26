@@ -40,6 +40,7 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <GL/glew.h>
 #include "QtWidgetNode.hh"
 #include <ACG/GL/gl.hh>
 #include <iostream>
@@ -51,9 +52,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 
-#undef QT_NO_OPENGL
 #include <QGLWidget>
-#define QT_NO_OPENGL
 
 
 //== NAMESPACES ===============================================================
@@ -118,7 +117,7 @@ QtWidgetNode::QtWidgetNode(QWidget* _widget, BaseNode *_parent, std::string _nam
 QtWidgetNode::~QtWidgetNode()
 {
   if ( vbo_)
-    glDeleteBuffers(1,&vbo_);
+    GLState::deleteBuffers(1,&vbo_);
 
   if (texID_)
     glDeleteTextures(1,&texID_);

@@ -1835,7 +1835,7 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
     {
 
         if (mBuffer == 0)
-            glGenBuffers(1, &mBuffer);
+            ACG::GLState::genBuffers(1, &mBuffer);
 
         calculateVertexDeclaration();
 
@@ -1850,9 +1850,10 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
             unsigned int bufferSize = mVertexSize * numOfVertices;
 
             ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, mBuffer);
-            glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
+            ACG::GLState::bufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
 
-            unsigned char* buffer = (unsigned char *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+            unsigned char* buffer = (unsigned char *) ACG::GLState::mapBuffer(
+                    GL_ARRAY_BUFFER, GL_READ_WRITE);
 
             if (buffer)
             {
@@ -1867,7 +1868,7 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
                     buildTexCoordBuffer(buffer);
 
 
-                glUnmapBuffer(GL_ARRAY_BUFFER);
+                ACG::GLState::unmapBuffer(GL_ARRAY_BUFFER);
 
                 ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -1908,7 +1909,7 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, 
     if ((mBuffer == 0) || optionsChanged() || mInvalidated)
     {
         if (mBuffer == 0)
-            glGenBuffers(1, &mBuffer);
+            ACG::GLState::genBuffers(1, &mBuffer);
 
         calculateVertexDeclaration();
 
@@ -1923,9 +1924,9 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, 
             unsigned int bufferSize = mVertexSize * numOfVertices;
 
             ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, mBuffer);
-            glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
+            ACG::GLState::bufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
 
-            unsigned char* buffer = (unsigned char *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+            unsigned char* buffer = (unsigned char *) ACG::GLState::mapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
 
             if (buffer)
             {
@@ -1935,7 +1936,7 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, 
                 if (colorsNeedRebuild())
                     buildPickColorBuffer(_state, _offset, buffer);
 
-                glUnmapBuffer(GL_ARRAY_BUFFER);
+                ACG::GLState::unmapBuffer(GL_ARRAY_BUFFER);
 
                 ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -2025,7 +2026,7 @@ template <class VolumeMesh>
 void VolumeMeshBufferManager<VolumeMesh>::free()
 {
     if (mBuffer != 0)
-        glDeleteBuffers(1, &mBuffer);
+        ACG::GLState::deleteBuffers(1, &mBuffer);
 
     mBuffer = 0;
 

@@ -40,6 +40,8 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <GL/glew.h>
+
 #include "PlaneNode.hh"
 #include <ACG/GL/gl.hh>
 #include <iostream>
