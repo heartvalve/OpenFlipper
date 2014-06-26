@@ -60,13 +60,13 @@
 #include <OpenMesh/Core/Utils/Property.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
-#include <ACG/Config/ACGDefines.hh>
-
+#include <ACG/GL/globjects.hh>
 #include <ACG/GL/GLState.hh>
 #include <ACG/GL/IRenderer.hh>
 #include <ACG/GL/MeshCompiler.hh>
-#include <ACG/GL/globjects.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
+
+#include <ACG/Config/ACGDefines.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -76,6 +76,80 @@
 namespace ACG {
 
 //== CLASS DEFINITION =========================================================
+
+/**
+ * This class holds non-templated code and is intended to be inherited
+ * by the templated DrawMeshT class.
+ */
+class ACGDLLEXPORT DrawMeshBase {
+    protected:
+        DrawMeshBase();
+        ~DrawMeshBase();
+
+        void deleteIbo();
+        void bindVbo();
+        void bindIbo();
+        void bindLineIbo();
+        void bindPickVertexIbo();
+
+        void createIndexBuffer();
+        void fillLineBuffer(size_t n_edges, void *data);
+        void fillVertexBuffer();
+        void fillInvVertexMap(size_t n_vertices, void *data);
+
+    public:
+        unsigned int getNumTris() const { return numTris_; }
+        unsigned int getNumVerts() const { return numVerts_; }
+
+        /** \brief get mesh compiler used to create the draw mesh
+        */
+        MeshCompiler* getMeshCompiler() {return meshComp_;}
+        unsigned int getNumSubsets() const {return meshComp_->getNumSubsets();}
+
+        /** \brief get index type of index buffer
+        */
+        GLenum getIndexType() const {return indexType_;}
+
+        /** \brief get an index buffer mapping from openmesh vertices to drawmesh vbo vertices
+        *
+        * @return index buffer object (UNSIGNED_INT), might be 0 if the openmesh object is a point cloud
+        */
+        GLuint pickVertexIBO_opt() {return pickVertexIBO_;} // does not work
+
+
+
+    protected:
+        GLuint vbo_, ibo_;
+        size_t numTris_, numVerts_;
+        MeshCompiler* meshComp_;
+
+        /// index buffer used in Wireframe / Hiddenline mode
+        GLuint lineIBO_;
+
+        /// support for 2 and 4 byte unsigned integers
+        GLenum indexType_;
+
+        /** final vertex buffer used for rendering
+          * raw byte array, use write__() functions for access
+          */
+        std::vector<char> vertices_;
+
+        /// vertex buffer layout declaration with per vertex colors
+        VertexDeclaration* vertexDecl_;
+
+        /// vertex buffer layout declaration with per edge colors
+        VertexDeclaration* vertexDeclEdgeCol_;
+
+        /// vertex buffer layout declaration with per halfedge colors
+        VertexDeclaration* vertexDeclHalfedgeCol_;
+
+        /// vertex buffer layout declaration with halfedge positions only
+        VertexDeclaration* vertexDeclHalfedgePos_;
+
+        /// map from openmesh vertex to vbo vertex id
+        GLuint pickVertexIBO_;
+
+};
 
 
 /** \brief Mesh Drawing Class
@@ -88,7 +162,7 @@ namespace ACG {
  */
 
 template <class Mesh>
-class DrawMeshT
+class DrawMeshT : public DrawMeshBase
 {
 private:
 
@@ -131,14 +205,6 @@ public:
   */
   GLuint getIBO();
 
-  /** \brief get index type of index buffer
-  */
-  GLenum getIndexType() const {return indexType_;}
-  
-
-  /** \brief get mesh compiler used to create the draw mesh
-  */
-  MeshCompiler* getMeshCompiler() {return meshComp_;}
 
   /** \brief get vertex declaration of the current vbo layout
   */
@@ -192,10 +258,6 @@ public:
   */
   void addPointRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
 
-
-  unsigned int getNumTris() const {return numTris_;}
-  unsigned int getNumVerts() const {return numVerts_;}
-  unsigned int getNumSubsets() const {return meshComp_->getNumSubsets();}
 
 
   /** \brief measures the size in bytes of allocated memory.
@@ -431,13 +493,6 @@ public:
 
 #endif // GL_ARB_texture_buffer_object
 
-
-  /** \brief get an index buffer mapping from openmesh vertices to drawmesh vbo vertices
-  *
-  * @return index buffer object (UNSIGNED_INT), might be 0 if the openmesh object is a point cloud
-  */
-  GLuint pickVertexIBO_opt() {return pickVertexIBO_;} // does not work
-
 private:
 
   /// The vertex buffer used for vertex picking
@@ -450,9 +505,6 @@ private:
   // map from vbo vertex id to openmesh vertex id
   TextureBuffer pickVertexMapTBO_;
 #endif // GL_ARB_texture_buffer_object
-
-  // map from openmesh vertex to vbo vertex id
-  GLuint pickVertexIBO_;
 
   // vertex picking shader
   GLSL::Program* pickVertexShader_;
@@ -762,17 +814,8 @@ private:
   /// OpenMesh object to be rendered
   Mesh& mesh_;
 
-  MeshCompiler* meshComp_;
-
-  size_t numTris_, numVerts_;
-
   /// final index buffer used for rendering
   unsigned int* indices_;
-
-  /** final vertex buffer used for rendering
-    * raw byte array, use write__() functions for access
-    */
-  std::vector<char> vertices_;
 
   /// hint on what to rebuild
   unsigned int rebuild_;
@@ -782,15 +825,6 @@ private:
     */
   size_t prevNumFaces_,prevNumVerts_;
 
-
-  GLuint vbo_,
-         ibo_;
-
-  /// index buffer used in Wireframe / Hiddenline mode
-  GLuint lineIBO_;
-
-  /// support for 2 and 4 byte unsigned integers
-  GLenum indexType_;
 
   /// Color Mode: 0: none, 1: per vertex,  else: per face
   int colorMode_;
@@ -822,18 +856,6 @@ private:
   */
   unsigned int* invVertexMap_;
 
-
-  /// vertex buffer layout declaration with per vertex colors
-  VertexDeclaration* vertexDecl_;
-
-  /// vertex buffer layout declaration with per edge colors
-  VertexDeclaration* vertexDeclEdgeCol_;
-
-  /// vertex buffer layout declaration with per halfedge colors
-  VertexDeclaration* vertexDeclHalfedgeCol_;
-
-  /// vertex buffer layout declaration with halfedge positions only
-  VertexDeclaration* vertexDeclHalfedgePos_;
 
 
   //========================================================================
@@ -1041,9 +1063,9 @@ private:
 //=============================================================================
 } // namespace ACG
 //=============================================================================
-#if defined(INCLUDE_TEMPLATES) && !defined(ACG_DRAW_MESH_C)
+#if defined(INCLUDE_TEMPLATES) && !defined(ACG_DRAW_MESH_TCC)
 #define ACG_DRAW_MESH_TEMPLATES
-#include "DrawMesh.cc"
+#include "DrawMesh.tcc"
 #endif
 //=============================================================================
 #endif // ACG_DRAW_MESH_HH defined

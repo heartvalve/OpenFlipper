@@ -42,6 +42,7 @@
 
 #include <iostream>
 
+#include <GL/glew.h>
 #include <ACG/GL/GLError.hh>
 #include "UniformPool.hh"
 

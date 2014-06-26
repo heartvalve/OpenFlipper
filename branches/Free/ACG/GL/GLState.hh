@@ -484,6 +484,50 @@ public:
   * @{ */
   //===========================================================================
 
+  /**
+   * Simple wrapper around glGenBuffersARB.
+   * Useful where glew cannot be included.
+   */
+  static void genBuffersARB(GLsizei n, GLuint* buffers);
+
+  /**
+   * Simple wrapper around glGenBuffers.
+   * Useful where glew cannot be included.
+   */
+  static void genBuffers(GLsizei n, GLuint* buffers);
+
+  /**
+   * Simple wrapper around glBufferDataARB.
+   * Useful where glew cannot be included.
+   */
+  static void bufferDataARB(
+          GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
+
+  /**
+   * Simple wrapper around glBufferData.
+   * Useful where glew cannot be included.
+   */
+  static void bufferData(
+          GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage);
+
+  /**
+   * Simple wrapper around glMapBuffer.
+   * Useful where glew cannot be included.
+   */
+  static GLvoid* mapBuffer (GLenum target, GLenum access);
+
+  /**
+   * Simple wrapper around glUnmapBuffer.
+   * Useful where glew cannot be included.
+   */
+  static GLboolean unmapBuffer (GLenum target);
+
+  /**
+   * Simple wrapper around glDeleteBuffers.
+   * Useful where glew cannot be included.
+   */
+  static void deleteBuffers(GLsizei n, const GLuint* buffers);
+
   /// replaces glBindBuffer, supports locking
   static void bindBuffer(GLenum _target, GLuint _buffer);  
   /// same function as bindBuffer

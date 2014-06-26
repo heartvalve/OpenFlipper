@@ -40,6 +40,8 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <GL/glew.h>
+
 #include <QApplication>
 #include <QDir>
 #include <QString>

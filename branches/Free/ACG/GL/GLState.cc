@@ -49,6 +49,7 @@
 
 //== INCLUDES =================================================================
 
+#include <GL/glew.h>
 #include "GLState.hh"
 
 
@@ -2058,6 +2059,38 @@ void GLState::useProgram(GLuint _program)
     }
   }
 }
+
+void GLState::genBuffersARB(GLsizei n, GLuint* buffers) {
+    glGenBuffersARB(n, buffers);
+}
+
+void GLState::genBuffers(GLsizei n, GLuint* buffers) {
+    glGenBuffers(n, buffers);
+}
+
+void GLState::bufferDataARB(
+        GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage) {
+    glBufferDataARB(target, size, data, usage);
+}
+
+void GLState::bufferData(
+        GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) {
+    glBufferData(target, size, data, usage);
+}
+
+void GLState::deleteBuffers(GLsizei n, const GLuint* buffers) {
+    glDeleteBuffers(n, buffers);
+}
+
+GLvoid* GLState::mapBuffer (GLenum target, GLenum access) {
+    return glMapBuffer(target, access);
+}
+
+
+GLboolean GLState::unmapBuffer (GLenum target) {
+    return unmapBuffer(target);
+}
+
 
 //---------------------------------------------------------------------
 

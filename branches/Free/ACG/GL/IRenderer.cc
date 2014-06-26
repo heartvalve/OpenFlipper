@@ -40,6 +40,7 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <GL/glew.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>

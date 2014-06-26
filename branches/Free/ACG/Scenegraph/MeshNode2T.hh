@@ -73,6 +73,32 @@ namespace SceneGraph {
 //== CLASS DEFINITION =========================================================
 
 
+/** Non-generic base class intended to be inherited by MeshNodeT.
+ */
+class ACGDLLEXPORT MeshNodeBase : public BaseNode {
+    protected:
+        MeshNodeBase(BaseNode* _parent, std::string _name);
+
+        void supplyDrawMesh(DrawMeshBase *drawMesh);
+
+    public:
+        void updatePolyEdgeBuf();
+
+    protected:
+
+      DrawMeshBase *drawMesh_;
+
+      // poly edge buffer used for wireframe/hiddenline rendering with barycentric interpolation in geometry shader
+      GLuint polyEdgeBuf_;
+
+      // size in bytes of the poly edge buffer
+      int polyEdgeBufSize_;
+
+      // texture object for polyEdgeBuf
+      GLuint polyEdgeBufTex_;
+};
+
+
 
 /** \class MeshNodeT MeshNodeT.hh <ACG/Scenegraph/MeshNodeT.hh>
 
@@ -80,7 +106,7 @@ namespace SceneGraph {
 */
 
 template <class Mesh>
-class MeshNodeT  : public BaseNode
+class MeshNodeT : public MeshNodeBase
 {
 public:
   ACG_CLASSNAME(MeshNode);
@@ -482,24 +508,7 @@ public:
   /** \brief measures the size in bytes of allocated memory
   */
   unsigned int getMemoryUsage();
-    
-
-
-private:
-
-  // poly edge buffer used for wireframe/hiddenline rendering with barycentric interpolation in geometry shader
-  GLuint polyEdgeBuf_;
-
-  // size in bytes of the poly edge buffer
-  int polyEdgeBufSize_;
-
-  // texture object for polyEdgeBuf
-  GLuint polyEdgeBufTex_;
-
-
-  void updatePolyEdgeBuf();
 };
-
 
 //=============================================================================
 } // namespace SceneGraph

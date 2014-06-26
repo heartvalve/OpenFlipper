@@ -54,6 +54,7 @@
 
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/GL/ColorTranslator.hh>
+#include "../GL/gl.hh"
 
 
 //== NAMESPACES ============================================================== 

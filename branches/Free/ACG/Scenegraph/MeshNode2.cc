@@ -40,100 +40,111 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <GL/glew.h>
+#include "MeshNode2T.hh"
 
-
-//=============================================================================
-//
-//  CLASS QtColorTranslator
-//
-//=============================================================================
-
-
-#ifndef ACG_QTCOLORTRANSLATOR_HH
-#define ACG_QTCOLORTRANSLATOR_HH
-
-
-//== INCLUDES =================================================================
-
-#include <QGLContext>
-
-#include "../Config/ACGDefines.hh"
-
-//== NAMESPACES ===============================================================
+#include <stdexcept>
 
 namespace ACG {
+namespace SceneGraph {
 
+MeshNodeBase::MeshNodeBase(BaseNode* _parent, std::string _name) :
+    BaseNode(_parent, _name),
+    drawMesh_(0),
+    polyEdgeBuf_(0),
+    polyEdgeBufSize_(0),
+    polyEdgeBufTex_(0) {
+}
 
-//== CLASS DEFINITION =========================================================
+void MeshNodeBase::supplyDrawMesh(DrawMeshBase *drawMesh) {
+    /*
+     * We take the luxury of checking these conditions even in release
+     * mode as it this method is rarely called.
+     */
+    if (drawMesh_)
+        throw std::runtime_error("MeshNodeBase::supplyDrawMesh called "
+                "more than once.");
+    if (!drawMesh)
+        throw std::runtime_error("MeshNodeBase::supplyDrawMesh called "
+                "with NULL parameter.");
 
+    drawMesh_ = drawMesh;
+}
 
-/** \class QtColorTranslator QtColorTranslator.hh <ACG/QtWidgets/QtColorTranslator.hh>
-
-    This class translates index <-> RGB color.
-
-    The QtColorTranslator is attached to a QGLContext and translates
-    index to color and vice versa. If the RGB bits of one buffer are
-    not sufficient, both front and back buffer can be used.
-**/
-
-class ACGDLLEXPORT QtColorTranslator
+void MeshNodeBase::updatePolyEdgeBuf()
 {
-public:
 
-  /// Default constructor.
-  QtColorTranslator()
-    : initialized_(false) {};
+#ifdef GL_ARB_texture_buffer_object
+  // drawMesh_ must have been supplied.
+  assert(drawMesh_);
 
-  /// construct with QGLcontext
-  QtColorTranslator(QGLContext& _context)
-  { initialize(_context); }
+  MeshCompiler * const mc = drawMesh_->getMeshCompiler();
+  if (mc && !mc->isTriangleMesh())
+  {
+    // create/update the poly-edge buffer
+    if (!polyEdgeBuf_)
+      glGenBuffers(1, &polyEdgeBuf_);
 
-  /// Destructor.
-  ~QtColorTranslator(){};
+    const int nTris = mc->getNumTriangles();
 
+    const int newBufSize = (nTris/2+1);
 
-  /// init (takes current QGLcontext)
-  void initialize();
+    if (polyEdgeBufSize_ != newBufSize)
+    {
+      glBindBuffer(GL_TEXTURE_BUFFER, polyEdgeBuf_);
 
-  /// init with given QGLcontext
-  void initialize(QGLContext& _context)
-  { _context.makeCurrent();  initialize(); }
+      // The poly-edge buffer is a texture buffer that stores one byte for each triangle, which encodes triangle edge properties.
+      // An inner edge is an edge that was added during the triangulation of a n-poly,
+      // whereas outer edges are edges that already exist in the input mesh object.
+      // This information is used in the wireframe/hiddenline geometry shader to identify edges, which should not be rendered.
+      // Buffer storage:
+      // each triangle uses 3 bits to mark edges as visible or hidden
+      //  outer edge -> bit = 1 (visible)
+      //  inner edge -> bit = 0 (hidden)
+      // each byte can store edges for two triangles and the remaining 2 bits are left unused
 
-  /// has it been initialized?
-  bool initialized() const { return initialized_; }
+      polyEdgeBufSize_ = newBufSize;
+      unsigned char* polyEdgeBufData = new unsigned char[newBufSize];
 
+      // set zero
+      memset(polyEdgeBufData, 0, newBufSize);
 
-  /// index -> color (one buffer)
-  bool index2color( unsigned int _idx, QRgb& _col ) const;
-  /// index -> color (two buffers)
-  bool index2color( unsigned int _idx,
-		    QRgb& _frontColor,
-		    QRgb& _backColor ) const;
+      // build buffer
+      for (int i = 0; i < nTris; ++i)
+      {
+        int byteidx = i>>1;
+        int bitidx = (i&1) * 3;
 
+        for (int k = 0; k < 3; ++k)
+          if (mc->isFaceEdge(i, k))
+            polyEdgeBufData[byteidx] += 1 << (k + bitidx);
+      }
 
-  /// color -> index (one buffer)
-  int color2index( QRgb _c ) const;
-  /// color -> index (two buffers)
-  int color2index( QRgb _frontColor, QRgb _backColor ) const;
-
-
-  /// returns max convertable index (using ONE buffer)
-  unsigned int maxIndex() const;
-
-
-private:
-
-  bool     initialized_;
-  GLint    redBits_, greenBits_, blueBits_;
-  GLuint   redMask_, greenMask_, blueMask_,
-           redShift_, greenShift_, blueShift_,
-           redRound_, greenRound_, blueRound_;
-};
+      glBufferData(GL_TEXTURE_BUFFER, polyEdgeBufSize_, polyEdgeBufData, GL_STATIC_DRAW);
 
 
-//=============================================================================
-} // namespace ACG
-//=============================================================================
-#endif // ACG_QTCOLORTRANSLATOR_HH defined
-//=============================================================================
+      delete [] polyEdgeBufData;
+      polyEdgeBufData = 0;
 
+      // create texture object for the texture buffer
+
+      if (!polyEdgeBufTex_)
+      {
+        glGenTextures(1, &polyEdgeBufTex_);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_BUFFER, polyEdgeBufTex_);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_R8UI, polyEdgeBuf_);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }
+
+      ACG::glCheckErrors();
+    }
+  }
+#endif
+}
+
+
+} /* namespace SceneGraph */
+} /* namespace ACG */

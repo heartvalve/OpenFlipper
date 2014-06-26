@@ -6,6 +6,7 @@
 
 //== INCLUDES =================================================================
 
+#include <GL/glew.h>
 #include "FBO.hh"
 #include "GLState.hh"
 #include "GLError.hh"
