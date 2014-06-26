@@ -241,7 +241,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
   bool optionFaceColors      = false;
   bool optionVertexNormals   = false;
-  bool optionVertexTexCoords = false;
+  bool optionVertexTexCoords = true;
   bool optionTextures        = false;
   bool optionCopyTextures    = false;
   bool optionCreateTexFolder = false;
