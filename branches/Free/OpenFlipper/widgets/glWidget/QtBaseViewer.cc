@@ -69,6 +69,28 @@
 #include <string>
 #include <cassert>
 
+#include <QGLFormat>
+#include <QBoxLayout>
+#include <QtNetwork/QUdpSocket>
+#include <QWheelEvent>
+#include <QDropEvent>
+#include <QContextMenuEvent>
+#include <QDragEnterEvent>
+#include <QMouseEvent>
+#include <QAction>
+#include <QKeyEvent>
+#include <QSize>
+#include <QMap>
+#include <QString>
+#include <QMenu>
+#include <QToolBar>
+#include <QTime>
+#include <QTimer>
+#include <QGraphicsWidget>
+#include <QGraphicsSceneDragDropEvent>
+#include <QPropertyAnimation>
+#include <QOpenGLFramebufferObject>
+
 #include <QMimeData>
 #include <QToolButton>
 #include <QFrame>
@@ -110,13 +132,7 @@
 
 #include <QImageWriter>
 
-#if QT_VERSION < 0x050000
-  #include <QGLFramebufferObject>
-#else // QT_VERSION > 0x050000
-  #undef QT_NO_OPENGL
-  #include <QOpenGLFramebufferObject>
-  #define QT_NO_OPENGL
-#endif //QT_VERSION < 0x050000
+#include <QGLFramebufferObject>
 
 #ifdef max
 #  undef max
@@ -707,10 +723,10 @@ void glViewer::drawScene()
   // =================================================================================
 
   // unbind vbo for qt log window
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, 0);
+  ACG::GLState::activeTexture(GL_TEXTURE0);
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
 
 //  fbo.release();
 //
@@ -2467,24 +2483,6 @@ void glViewer::strafeRight() {
 
         emit viewChanged();
     }
-}
-
-
-void glViewer::readBackBuffer(ACG::GLState* _glstate)
-{
-  GLint curFbo = 0;
-  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
-
-  ACG::GLState::bindFramebuffer(GL_READ_FRAMEBUFFER, curFbo);
-  ACG::GLState::bindFramebuffer(GL_DRAW_FRAMEBUFFER, readBackFbo_.getFboID());
-
-  glBlitFramebuffer(0, 0, readBackFbo_.width(), readBackFbo_.height(), 
-    0, 0, readBackFbo_.width(), readBackFbo_.height(), 
-    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-  checkGLError();
-
-  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER, curFbo);
 }
 
 

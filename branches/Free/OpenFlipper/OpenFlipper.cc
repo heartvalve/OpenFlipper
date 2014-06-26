@@ -45,6 +45,7 @@
 // Mainwindow
 
 #include "OpenFlipper/Core/Core.hh"
+#include "common/glew_wrappers.hh"
 
 // Qt
 #include <QApplication>
@@ -77,7 +78,6 @@
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
-
 
 /* ==========================================================
  *
@@ -458,12 +458,7 @@ int main(int argc, char **argv)
     w->init();
 
     #ifndef __APPLE__
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-      /* Problem: glewInit failed, something is seriously wrong. */
-      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-    }
+    initGlew();
     #endif
  
     for ( int i = 0 ; i < args.FileCount(); ++i )

@@ -34,95 +34,37 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 18692 $                                                       *
+*   $LastChangedBy: moeller $                                                *
+*   $Date: 2014-05-21 15:31:54 +0200 (Wed, 21 May 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+#include <GL/glew.h>
+#include <ACG/GL/GLError.hh>
 
-#ifndef SIMPLEVIEWER_HH
-#define SIMPLEVIEWER_HH
+#include "QtBaseViewer.hh"
 
-//=============================================================================
-//
-//  CLASS simpleViewer - IMPLEMENTATION
-//
-//=============================================================================
-
-//== INCLUDES =================================================================
-
-#include <OpenFlipper/common/ViewerProperties.hh>
-#include <OpenFlipper/common/GlobalDefines.hh>
-#include <QGraphicsView>
-#include <QGLFormat>
+/**
+ * @file The intention of this file is to split QtBaseViewer up into two
+ * compile units, one including glew.h and one including Qt. This is
+ * necessary as glew and Qt5 conflict.
+ */
 
 
-
-//== NAMESPACES ===============================================================
-
-//== FORWARDDECLARATIONS ======================================================
-class SimpleGLGraphicsScene;
-class glViewer;
-
-
-//== CLASS DEFINITION =========================================================
-
-
-/** Simple scene graph viewer. Plugins can use this class to display the scenegraph
-  * in own widgets. SimpleViewer acts as a bridge between the normal Qt widget
-  * system and the QtGraphicsWidget based glViewer (OpenFlipper/widgets/glWidget/QtBaseViewer.hh).
-  * 
-*/
-
-class DLLEXPORT SimpleViewer : public QGraphicsView
+void glViewer::readBackBuffer(ACG::GLState* _glstate)
 {
- Q_OBJECT
+  GLint curFbo = 0;
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
 
-  public:
-    /// Constructor
-    SimpleViewer(QWidget* _parent = NULL, bool useDefaultSceneGraph = true);
+  ACG::GLState::bindFramebuffer(GL_READ_FRAMEBUFFER, curFbo);
+  ACG::GLState::bindFramebuffer(GL_DRAW_FRAMEBUFFER, readBackFbo_.getFboID());
 
-    /// Destructor
-    ~SimpleViewer();
+  glBlitFramebuffer(0, 0, readBackFbo_.width(), readBackFbo_.height(),
+    0, 0, readBackFbo_.width(), readBackFbo_.height(),
+    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
-    /// Viewer properties
-    Viewer::ViewerProperties& properties ();
+  checkGLError();
 
-    /// Viewer
-    glViewer * viewer ();
-
-    void setSceneGraph(ACG::SceneGraph::BaseNode *rootNode);
-
-  protected:
-    // handle resizes
-    virtual void resizeEvent(QResizeEvent *_event);
-
-  private:
-    // initalisation
-    void initialize (const QGLFormat &_format, QGLWidget *_shareWidget = NULL, bool useDefaultSceneGraph = true);
-
-  private slots:
-
-    // action mode handling for ViewerProperties
-    void setActionMode(const Viewer::ActionMode  _am);
-    void getActionMode(Viewer::ActionMode& _am);
-
-    // pick mode name handling for ViewerProperties
-    void getPickMode(std::string& _name);
-
-  private:
-    QGLWidget *glWidget_;
-
-    Viewer::ViewerProperties props_;
-
-    SimpleGLGraphicsScene *scene_;
-    glViewer *mainWidget_;
-
-    Viewer::ActionMode actionMode_;
-};
-
-//=============================================================================
-
-//=============================================================================
-#endif
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER, curFbo);
+}

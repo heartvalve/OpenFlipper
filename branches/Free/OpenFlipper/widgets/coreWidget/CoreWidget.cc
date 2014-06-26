@@ -72,6 +72,7 @@
 // -------------------- Qt event Includes
 #include <QEvent>
 #include <QWhatsThisClickedEvent>
+#include <QGLFormat>
 
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800

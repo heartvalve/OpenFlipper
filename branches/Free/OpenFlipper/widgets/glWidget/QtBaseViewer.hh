@@ -65,32 +65,14 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/globjects.hh>
 
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
-#include <QBoxLayout>
-#include <QtNetwork/QUdpSocket>
-#include <QWheelEvent>
-#include <QDropEvent>
-#include <QContextMenuEvent>
-#include <QDragEnterEvent>
-#include <QMouseEvent>
-#include <QAction>
-#include <QKeyEvent>
-#include <QSize>
-#include <QMap>
-#include <QString>
-#include <QMenu>
-#include <QToolBar>
-#include <QTime>
-#include <QTimer>
-#include <QGraphicsWidget>
-#include <QGraphicsSceneDragDropEvent>
-#include <QPropertyAnimation>
-
 #include <vector>
 #include <string>
 #include <limits>
+
+#include <QGraphicsWidget>
+#include <QTimer>
+#include <QMouseEvent>
+#include <QTime>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -98,9 +80,10 @@
 class QPushButton;
 class QToolButton;
 class QSplitter;
-class QTimer;
 class QImage;
 class QSocketNotifier;
+class QPropertyAnimation;
+class QGLWidget;
 struct PostProcessorInput;
 
 

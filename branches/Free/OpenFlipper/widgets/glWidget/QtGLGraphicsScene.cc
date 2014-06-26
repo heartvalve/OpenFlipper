@@ -51,6 +51,7 @@
 
 //== INCLUDES =================================================================
 
+#include <GL/glew.h>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "QtGLGraphicsScene.hh"
 #include "QtMultiViewLayout.hh"

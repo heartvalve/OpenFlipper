@@ -51,7 +51,7 @@
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
-#include <QGLWidget>
+//#include <QGLWidget>
 
 #include <../ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <../ObjectTypes/PolyMesh/PolyMesh.hh>
