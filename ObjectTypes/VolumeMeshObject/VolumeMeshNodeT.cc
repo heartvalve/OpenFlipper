@@ -477,7 +477,7 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
     GLint currentProgramm;
     glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgramm);
     //disable shader for drawing of the selecttion
-    glUseProgram(0);
+    ACG::GLState::useProgram(0);
 
     GLState::enable(GL_DEPTH_TEST);
     GLState::depthFunc(GL_LEQUAL);
@@ -541,7 +541,7 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
 
     glLineWidth(_state.line_width());
 
-    glUseProgram(currentProgramm);
+    ACG::GLState::useProgram(currentProgramm);
 
 }
 

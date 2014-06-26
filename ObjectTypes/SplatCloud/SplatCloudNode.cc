@@ -49,6 +49,7 @@
 
 //== INCLUDES ====================================================
 
+#include <GL/glew.h>
 
 #include "SplatCloudNode.hh"
 
