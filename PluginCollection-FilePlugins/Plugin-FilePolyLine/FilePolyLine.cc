@@ -52,7 +52,8 @@ int FilePolyLinePlugin::loadObject(QString _filename)
       serializer.deserialize(fin);
       fin.close();
 
-      pol->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+      pol->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME |
+              ACG::SceneGraph::DrawModes::POINTS);
       pol->setFromFileName(_filename);
       pol->setName(QFileInfo(_filename).fileName());
   }
