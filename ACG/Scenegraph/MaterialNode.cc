@@ -58,9 +58,20 @@
 
 #include <cstdio>
 
-#ifdef ENABLE_QJSON
+#include <Qt>
+
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#include <QJsonObject>
+#elif defined(ENABLE_QJSON)
 #include <QJson/Serializer>
 #include <QJson/Parser>
+#endif
+
+#if defined(ENABLE_QJSON) || QT_VERSION >= 0x050000
+#define JSON_SERIALIZABLE 1
+#else
+#define JSON_SERIALIZABLE 0
 #endif
 
 //== NAMESPACES ===============================================================
@@ -68,7 +79,7 @@
 namespace {
 
 enum ClassProperties {
-#ifdef ENABLE_QJSON
+#if JSON_SERIALIZABLE
     CP_JSON_SERIALIZABLE = 1
 #else
     CP_JSON_SERIALIZABLE = 0
@@ -95,6 +106,12 @@ QVariantMap json_to_variant_map(QString json) {
     QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
     if (!ok) return QVariantMap();
     return matMap;
+#elif QT_VERSION >= 0x050000
+    QJsonParseError error;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(json.toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError || !jsonDoc.isObject())
+        return QVariantMap();
+    return jsonDoc.object().toVariantMap();
 #else
     return QVariantMap();
 #endif
@@ -110,7 +127,7 @@ bool Material::support_json_serialization() {
 }
 
 QString Material::serializeToJson() const {
-#ifdef ENABLE_QJSON
+#ifdef JSON_SERIALIZABLE
     QVariantMap matMap;
 
     matMap["baseColor"] = col2vl(baseColor_);
@@ -133,9 +150,16 @@ QString Material::serializeToJson() const {
     matMap["backfaceCulling"] = backfaceCulling_;
     matMap["multiSampling"] = multiSampling_;
 
+#ifdef ENABLE_QJSON
     QJson::Serializer serializer;
     QByteArray bytes = serializer.serialize(matMap);
     return QString::fromUtf8(bytes.constData(), bytes.size());
+#elif QT_VERSION >= 0x050000
+    const QJsonDocument json_doc(QJsonObject::fromVariantMap(matMap));
+    return QString::fromUtf8(
+            json_doc.toJson(QJsonDocument::Indented));
+#endif
+
 #else
     return QString("<No suitable serializer at the moment. Sorry.>");
 #endif
@@ -164,13 +188,7 @@ void Material::deserializeFromVariantMap(const QVariantMap &matMap) {
 }
 
 void Material::deserializeFromJson(const QString &json) {
-#ifdef ENABLE_QJSON
-    QJson::Parser parser;
-    bool ok;
-    QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
-    if (!ok) return;
-    deserializeFromVariantMap(matMap);
-#endif
+    deserializeFromVariantMap(ACG::json_to_variant_map(json));
 }
 
 MaterialNode::MaterialNode( BaseNode*            _parent,
