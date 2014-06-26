@@ -530,7 +530,7 @@ updateVBO() {
 
   // create vbo if it does not exist
   if (!vbo_)
-    glGenBuffersARB(1, &vbo_);
+    GLState::genBuffersARB(1, &vbo_);
 
   // Temporary float array we need to convert doubles to this type
   float*       vboData_ = NULL;
@@ -588,8 +588,8 @@ updateVBO() {
       *(pBuffer++) = polyline_.vertex_normal(0)[j];
 
   // Move data to the buffer in gpu memory
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * bufferPoints * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+  GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  GLState::bufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * bufferPoints * 4 , vboData_ , GL_STATIC_DRAW_ARB);
 
   // Remove the local storage
   delete[] vboData_;
