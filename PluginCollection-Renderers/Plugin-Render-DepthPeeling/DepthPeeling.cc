@@ -1,11 +1,10 @@
 
+#include <GL/glew.h>
+
 #include "DepthPeeling.hh"
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
 
 
 #include <ACG/GL/gl.hh>
@@ -170,29 +169,6 @@ DepthPeeling::~DepthPeeling()
 void DepthPeeling::initializePlugin()
 {
   ACG::ShaderProgGenerator::setShaderDir(OpenFlipper::Options::shaderDirStr());
-}
-
-QAction* DepthPeeling::optionsAction()
-{
-  QMenu* menu = new QMenu("Depth Peeling Mode");
-
-  // Recreate actionGroup
-  QActionGroup* modeGroup = new QActionGroup( this );
-  modeGroup->setExclusive( true );
-
-  QAction * action = new QAction("Front to Back" , modeGroup );
-  action->setCheckable( true );
-
-  action = new QAction("Dual" , modeGroup );
-  action->setCheckable( true );
-  action->setChecked(true);
-
-
-  menu->addActions(modeGroup->actions());
-
-  connect(modeGroup,SIGNAL(triggered( QAction * )),this,SLOT(slotModeChanged( QAction * )));
-
-  return menu->menuAction();
 }
 
 void DepthPeeling::slotModeChanged( QAction *  _action) 
@@ -772,34 +748,6 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
 //       renderObject(sortedObjects_[i]);
 
   }
-}
-
-
-
-
-
-QString DepthPeeling::checkOpenGL()
-{
-  // Get version and check
-  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
-    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
-
-  // Check extensions
-  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
-  QString missing("");
-  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
-    missing += "GL_ARB_vertex_buffer_object extension missing\n";
-
-#ifndef __APPLE__
-  if ( !glExtensions.contains("GL_ARB_vertex_program") )
-    missing += "GL_ARB_vertex_program extension missing\n";
-#endif
-
-  if ( !glExtensions.contains("GL_ARB_occlusion_query") )
-    missing += "GL_ARB_occlusion_query extension missing\n";
-
-  return missing;
 }
 
 void DepthPeeling::addRenderObject( RenderObject* _renderObject )

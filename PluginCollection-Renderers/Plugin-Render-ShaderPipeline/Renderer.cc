@@ -4,9 +4,7 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#undef QT_NO_OPENGL
 #include <QGLFormat>
-#define QT_NO_OPENGL
 
 
 // =================================================
