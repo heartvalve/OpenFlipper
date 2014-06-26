@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <GL/glew.h>
 #include <ACG/GL/gl.hh>
 
 #include "Renderer.hh"

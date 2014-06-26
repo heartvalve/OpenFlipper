@@ -34,100 +34,23 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 18127 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2014-02-05 10:12:54 +0100 (Wed, 05 Feb 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-#include "NormalRenderer.hh"
+/**
+ * @file Contains definitions that require qt headers which are incompatible
+ * with glew.h.
+ */
 
-#include <OpenFlipper/common/GlobalOptions.hh>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#include <ACG/GL/ShaderCache.hh>
+#include "SSAO.hh"
 #include <QGLFormat>
 
 
-// =================================================
+QString SSAOPlugin::checkOpenGL() {
 
-class NormalFragmentModifier : public ACG::ShaderModifier
-{
-public:
-
-  void modifyVertexIO( ACG::ShaderGenerator* _shader )
-  {
-    _shader->addOutput("vec3 fragNormal");
-  }
-
-  void modifyVertexEndCode( QStringList* _code )
-  {
-    _code->push_back("#ifdef SG_NORMALS");
-    _code->push_back("fragNormal = vec3(inNormal);");
-    _code->push_back("#endif ");
-  }
-
-  void modifyFragmentIO(ACG::ShaderGenerator* _shader)
-  {
-    _shader->addInput("vec3 fragNormal");
-  }
-
-  void modifyFragmentEndCode(QStringList* _code)
-  {
-    _code->push_back("#ifdef SG_NORMALS");
-    _code->push_back("outFragment = vec4(fragNormal.x/2.0+0.5,fragNormal.y/2.0+0.5,fragNormal.z/2.0+0.5,1.0);");
-    _code->push_back("#endif ");
-  }
-
-  static NormalFragmentModifier instance;
-};
-
-
-NormalFragmentModifier NormalFragmentModifier::instance;
-
-// =================================================
-
-NormalRenderer::NormalRenderer()
-{
-  ACG::ShaderProgGenerator::registerModifier(&NormalFragmentModifier::instance);
-}
-
-
-NormalRenderer::~NormalRenderer()
-{
-}
-
-
-void NormalRenderer::initializePlugin()
-{
-  ACG::ShaderProgGenerator::setShaderDir(OpenFlipper::Options::shaderDirStr());
-}
-
-QString NormalRenderer::renderObjectsInfo(bool _outputShaderInfo) {
-  std::vector<ACG::ShaderModifier*> modifiers;
-  modifiers.push_back(&NormalFragmentModifier::instance);
-  return dumpCurrentRenderObjectsToString(&sortedObjects_[0], _outputShaderInfo, &modifiers);
-}
-
-void NormalRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
-{
-  // collect renderobjects + prepare OpenGL state
-  prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
-
-  // render every object
-  for (int i = 0; i < getNumRenderObjects(); ++i) {
-
-    // Take original shader and modify the output to take only the normal as the color
-    GLSL::Program* prog = ACG::ShaderCache::getInstance()->getProgram(&sortedObjects_[i]->shaderDesc, NormalFragmentModifier::instance);
-    renderObject(sortedObjects_[i],prog);
-  }
-
-  // restore common opengl state
-  // log window remains hidden otherwise
-  finishRenderingPipeline();
-}
-
-QString NormalRenderer::checkOpenGL()
-{
   // Get version and check
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
   if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
@@ -144,11 +67,11 @@ QString NormalRenderer::checkOpenGL()
     missing += "GL_ARB_vertex_program extension missing\n";
 #endif
 
+  if ( !glExtensions.contains("GL_ARB_texture_float") )
+    missing += "GL_ARB_texture_float extension missing\n";
+
+  if ( !glExtensions.contains("GL_EXT_framebuffer_object") )
+    missing += "GL_EXT_framebuffer_object extension missing\n";
+
   return missing;
 }
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2( normalrenderer , NormalRenderer );
-#endif
-
-

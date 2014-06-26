@@ -55,9 +55,8 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-#undef QT_NO_OPENGL
 #include <QGLFormat>
-#define QT_NO_OPENGL
+#include <QMenu>
 
 void RenderPickingPlugin::initializePlugin()
 {

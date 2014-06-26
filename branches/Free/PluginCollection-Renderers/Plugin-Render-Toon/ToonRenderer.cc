@@ -40,6 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <GL/glew.h>
 #include "ToonRenderer.hh"
 
 #include <OpenFlipper/common/GlobalOptions.hh>
@@ -47,12 +48,6 @@
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/ScreenQuad.hh>
 #include <ACG/GL/GLError.hh>
-#include <ACG/QtWidgets/QtColorChooserButton.hh>
-
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
-
 
 // =================================================
 
@@ -270,26 +265,6 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   finishRenderingPipeline();
 }
 
-QString ToonRenderer::checkOpenGL() {
-  // Get version and check
-  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
-    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
-
-  // Check extensions
-  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
-  QString missing("");
-  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
-    missing += "GL_ARB_vertex_buffer_object extension missing\n";
-
-#ifndef __APPLE__
-  if ( !glExtensions.contains("GL_ARB_vertex_program") )
-    missing += "GL_ARB_vertex_program extension missing\n";
-#endif
-
-  return missing;
-}
-
 
 QAction* ToonRenderer::optionsAction()
 {
@@ -298,40 +273,6 @@ QAction* ToonRenderer::optionsAction()
   connect(action,SIGNAL(triggered( bool )),this,SLOT(actionDialog( bool )));
 
   return action;
-}
-
-void ToonRenderer::actionDialog( bool )
-{
-  //generate widget
-  QDialog* optionsDlg = new QDialog();
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->setAlignment(Qt::AlignTop);
-
-  QColor curColor;
-  curColor.setRgbF(outlineCol_[0],outlineCol_[1],outlineCol_[2]);
-
-  QLabel* label = new QLabel(tr("Palette Size [0, 10]:"));
-  layout->addWidget(label);
-  
-  QSlider* paletteSizeSlider = new QSlider(Qt::Horizontal);
-  paletteSizeSlider->setRange(0, 1000);
-  paletteSizeSlider->setValue(int(paletteSize_ * 100.0));
-  paletteSizeSlider->setTracking(true);
-  layout->addWidget(paletteSizeSlider);
-
-  QtColorChooserButton* outlineColorBtn = new QtColorChooserButton("Outline Color");
-  layout->addWidget(outlineColorBtn);
-
-  outlineColorBtn->setColor( curColor );
-
-  optionsDlg->setLayout(layout);
-
-
-  connect(paletteSizeSlider, SIGNAL(sliderMoved(int)), this, SLOT(paletteSizeChanged(int)));
-  connect(outlineColorBtn, SIGNAL(colorChanged(QColor)), this, SLOT(outlineColorChanged(QColor)));
-
-
-  optionsDlg->show();
 }
 
 void ToonRenderer::paletteSizeChanged( int _val ) {
