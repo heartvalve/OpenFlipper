@@ -127,7 +127,7 @@ bool Material::support_json_serialization() {
 }
 
 QString Material::serializeToJson() const {
-#ifdef JSON_SERIALIZABLE
+#if JSON_SERIALIZABLE
     QVariantMap matMap;
 
     matMap["baseColor"] = col2vl(baseColor_);
