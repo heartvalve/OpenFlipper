@@ -51,6 +51,8 @@
 
 //== INCLUDES =================================================================
 
+#include <GL/glew.h>
+
 #include "QtBaseViewer.hh"
 #include "QtGLGraphicsScene.hh"
 #include "QtGLGraphicsView.hh"

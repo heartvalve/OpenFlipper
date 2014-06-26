@@ -61,7 +61,6 @@
 
 #include "BaseNode.hh"
 #include "DrawModes.hh"
-#include "../GL/gl.hh"
 #include "../Math/VectorT.hh"
 #include <cfloat>
 

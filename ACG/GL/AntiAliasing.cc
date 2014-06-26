@@ -51,6 +51,7 @@
 
 //== INCLUDES =================================================================
 
+#include <GL/glew.h>
 #include <ACG/GL/AntiAliasing.hh>
 #include <ACG/Math/VectorT.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>

@@ -56,8 +56,8 @@
 //== INCLUDES =================================================================
 
 // GL
-#include <ACG/GL/gl.hh>
 #include <ACG/GL/globjects.hh>
+#include <ACG/GL/gl.hh>
 
 // C++
 #include <vector>

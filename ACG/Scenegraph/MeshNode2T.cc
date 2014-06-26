@@ -72,7 +72,7 @@ MeshNodeT<Mesh>::
 MeshNodeT(Mesh&        _mesh,
               BaseNode*    _parent,
               std::string  _name ): 
-  BaseNode(_parent, _name),
+  MeshNodeBase(_parent, _name),
   mesh_(_mesh),
   drawMesh_(0),
   enableNormals_(true),
@@ -88,10 +88,7 @@ MeshNodeT(Mesh&        _mesh,
   anyPickingBaseIndex_(0),
   perFaceTextureIndexAvailable_(false),
   perFaceTextureCoordsAvailable_(false),
-  textureMap_(0),
-  polyEdgeBuf_(0),
-  polyEdgeBufSize_(0),
-  polyEdgeBufTex_(0)
+  textureMap_(0)
 {
  
   /// \todo : Handle vbo not supported
@@ -100,7 +97,9 @@ MeshNodeT(Mesh&        _mesh,
   }
   
   drawMesh_ = new DrawMeshT<Mesh>(mesh_);
-  
+
+  // Hand draw mesh down to super class.
+  MeshNodeBase::supplyDrawMesh(drawMesh_);
 }  
 
 template<class Mesh>
@@ -1685,79 +1684,6 @@ DrawMeshT<Mesh>*
 MeshNodeT<Mesh>::getDrawMesh()
 {
   return drawMesh_;
-}
-
-
-template<class Mesh>
-void MeshNodeT<Mesh>::updatePolyEdgeBuf()
-{
-
-#ifdef GL_ARB_texture_buffer_object
-  MeshCompiler* mc = drawMesh_->getMeshCompiler();
-  if (mc && !mc->isTriangleMesh())
-  {
-    // create/update the poly-edge buffer
-    if (!polyEdgeBuf_)
-      glGenBuffers(1, &polyEdgeBuf_);
-
-    const int nTris = mc->getNumTriangles();
-
-    const int newBufSize = (nTris/2+1);
-
-    if (polyEdgeBufSize_ != newBufSize)
-    {
-      glBindBuffer(GL_TEXTURE_BUFFER, polyEdgeBuf_);
-
-      // The poly-edge buffer is a texture buffer that stores one byte for each triangle, which encodes triangle edge properties.
-      // An inner edge is an edge that was added during the triangulation of a n-poly, 
-      // whereas outer edges are edges that already exist in the input mesh object.
-      // This information is used in the wireframe/hiddenline geometry shader to identify edges, which should not be rendered.
-      // Buffer storage:
-      // each triangle uses 3 bits to mark edges as visible or hidden
-      //  outer edge -> bit = 1 (visible)
-      //  inner edge -> bit = 0 (hidden)
-      // each byte can store edges for two triangles and the remaining 2 bits are left unused
-
-      polyEdgeBufSize_ = newBufSize;
-      unsigned char* polyEdgeBufData = new unsigned char[newBufSize];
-      
-      // set zero
-      memset(polyEdgeBufData, 0, newBufSize);
-
-      // build buffer
-      for (int i = 0; i < nTris; ++i)
-      {
-        int byteidx = i>>1;
-        int bitidx = (i&1) * 3;
-
-        for (int k = 0; k < 3; ++k)
-          if (mc->isFaceEdge(i, k))
-            polyEdgeBufData[byteidx] += 1 << (k + bitidx);
-      }
-
-      glBufferData(GL_TEXTURE_BUFFER, polyEdgeBufSize_, polyEdgeBufData, GL_STATIC_DRAW);
-
-
-      delete [] polyEdgeBufData;
-      polyEdgeBufData = 0;
-
-      // create texture object for the texture buffer
-
-      if (!polyEdgeBufTex_)
-      {
-        glGenTextures(1, &polyEdgeBufTex_);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_BUFFER, polyEdgeBufTex_);
-        glTexBuffer(GL_TEXTURE_BUFFER, GL_R8UI, polyEdgeBuf_);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-      }
-
-      ACG::glCheckErrors();
-    }
-  }
-#endif
 }
 
 

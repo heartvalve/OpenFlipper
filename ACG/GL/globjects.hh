@@ -125,22 +125,16 @@ public:
 
   virtual ~VertexBufferObject() { del(); }
 
-  void del() { if(valid) glDeleteBuffersARB(1, &vbo); valid = false; }
+  void del();
   bool is_valid() const { return valid; }
 
   void bind()   { if(!valid) gen(); ACG::GLState::bindBuffer(target, vbo); }
   void unbind() { ACG::GLState::bindBuffer(target, 0); }
 
-  void upload(GLsizeiptr size, const GLvoid* data, GLenum usage)
-  {
-    if(!valid) gen();
-    glBufferDataARB(target, size, data, usage);
-  }
+  void upload(GLsizeiptr size, const GLvoid* data, GLenum usage);
 
   // Upload a subset of the buffer data
-  void uploadSubData(GLuint _offset, GLuint _size, const GLvoid* _data ) {
-    glBufferSubDataARB(target, _offset, _size, _data);
-  }
+  void uploadSubData(GLuint _offset, GLuint _size, const GLvoid* _data );
 
   char* offset(unsigned int _offset) const
   {
@@ -151,7 +145,7 @@ public:
 
 private:
 
-  void gen() { glGenBuffersARB(1, &vbo); if(vbo > 0u) valid = true; }
+  void gen();
 
   GLenum target;
   bool   valid;
@@ -353,36 +347,13 @@ public:
   TextureBuffer(GLenum u=GL_NONE)
     : Texture(GL_TEXTURE_BUFFER, u), bufferSize_(0), buffer_(0) {}
 
-  ~TextureBuffer()
-  {
-    if (buffer_)
-      glDeleteBuffers(1, &buffer_);
-  }
+  ~TextureBuffer();
 
   // _size  size in bytes of buffer data
   // _data  buffer data
   // _internalFormat format of buffer - http://www.opengl.org/sdk/docs/man3/xhtml/glTexBuffer.xml
   // _usage buffer usage hint - https://www.opengl.org/sdk/docs/man3/xhtml/glBufferData.xml
-  void setBufferData(int _size, const void* _data, GLenum _internalFormat, GLenum _usage = GL_STATIC_DRAW)
-  {
-    // setup buffer object
-    if (!buffer_)
-      glGenBuffers(1, &buffer_);
-
-    glBindBuffer(GL_TEXTURE_BUFFER, buffer_);
-    glBufferData(GL_TEXTURE_BUFFER, _size, _data, _usage);
-
-
-    // bind buffer to texture
-    if (getUnit() == GL_NONE)
-      setUnit(GL_TEXTURE0);
-
-    bind();
-
-    glTexBuffer(GL_TEXTURE_BUFFER, _internalFormat, buffer_);
-
-    bufferSize_ = _size;
-  }
+  void setBufferData(int _size, const void* _data, GLenum _internalFormat, GLenum _usage = GL_STATIC_DRAW);
 
   int getBufferSize() const {return bufferSize_;}
 
@@ -458,31 +429,15 @@ public:
   ProgramBaseNV(GLenum tgt) : ProgramBase(tgt) {}
   ~ProgramBaseNV() { del(); }
 
-  void bind()   { if(!valid) gen(); glBindProgramNV(target, program); }
-  void unbind() { glBindProgramNV(target, 0); }
+  void bind();
+  void unbind();
 
-  bool load(const char* prog_text)
-  {
-    int size= int(strlen(prog_text));
-    if(!valid) gen();
-    glLoadProgramNV(target, program, size, (const GLubyte *) prog_text);
-    GLint errpos;
-    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_NV, &errpos);
-    if(errpos != -1)
-    {
-      fprintf(stderr, "\nprogram error:\n");
-      int bgn=std::max(0, errpos - 10), end=std::min(size, bgn+30);
-      for(int i=bgn; i<end; ++i) fputc(prog_text[i], stderr);
-      fputc('\n', stderr);
-      return false;
-    }
-    return true;
-  }
+  bool load(const char* prog_text);
 
 
 private:
-  void gen() { glGenProgramsNV(1, &program); valid=true; }
-  void del() { if(valid) glDeleteProgramsNV(1, &program); valid=false; }
+  void gen();
+  void del();
 };
 
 #endif
@@ -500,35 +455,16 @@ public:
   ProgramBaseARB(GLenum tgt) : ProgramBase(tgt) {}
   ~ProgramBaseARB() { del(); }
 
-  void bind()   { if(!valid) gen(); glBindProgramARB(target, program); }
-  void unbind() { glBindProgramARB(target, 0); }
+  void bind();
+  void unbind();
 
-  bool load(const char* prog_text)
-  {
-    int size = int(strlen(prog_text));
-    if(!valid) gen();
-    bind();
-    glProgramStringARB(target, GL_PROGRAM_FORMAT_ASCII_ARB, size, prog_text);
-    GLint errpos;
-    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errpos);
-    if(errpos != -1)
-    {
-      fprintf(stderr, "\nprogram error:\n");
-      int bgn=std::max(0, errpos - 10), end=std::min(size, bgn+30);
-      for(int i=bgn; i<end; ++i) fputc(prog_text[i], stderr);
-      fputc('\n', stderr);
-      return false;
-    }
-    return true;
-  }
+  bool load(const char* prog_text);
 
-  void parameter()
-  {
-  }
+  void parameter() {}
 
 private:
-  void gen() { glGenProgramsARB(1, &program); valid=true; }
-  void del() { if(valid) glDeleteProgramsARB(1, &program); valid=false; }
+  void gen();
+  void del();
 };
 
 #endif
