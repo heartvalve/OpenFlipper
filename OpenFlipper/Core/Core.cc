@@ -71,6 +71,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QSettings>
+#include <QGLFormat>
 
 #include <QPluginLoader>
 #include "OpenFlipper/BasePlugin/BaseInterface.hh"

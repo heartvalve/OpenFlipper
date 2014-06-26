@@ -48,6 +48,8 @@
   #include <QtGui>
 #endif
 
+#include <QMessageBox>
+
 #include "keygenWidget.hh"
 #include <iostream>
 
@@ -74,7 +76,7 @@ QString KeyGen::computeSignature() const {
     QString keyRequest = saltPre + name + coreHash + pluginHash + cpuHash
             + productHash + macHashes.join("") + saltPost;
     QString requestSigCheck =
-            QCryptographicHash::hash(keyRequest.toAscii(),
+            QCryptographicHash::hash(keyRequest.toUtf8(),
                                      QCryptographicHash::Sha1).toHex();
 
     return requestSigCheck;
@@ -94,7 +96,7 @@ QString KeyGen::Generate(QString expiryDate) const
 	ADD_SALT_POST(saltPost);
 
 	QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-	QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+	QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
 
 	if ( requestSig != requestSigCheck ){
 		return "ERROR";
@@ -112,7 +114,7 @@ QString KeyGen::Generate(QString expiryDate) const
 		license_ += macHashes.join("\n") + "\n";
 
 		QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-		QString licenseHash = QCryptographicHash::hash ( licenseTmp.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+		QString licenseHash = QCryptographicHash::hash ( licenseTmp.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
 
 		// Prepend signature
 		license_ = licenseHash + "\n" + license_;

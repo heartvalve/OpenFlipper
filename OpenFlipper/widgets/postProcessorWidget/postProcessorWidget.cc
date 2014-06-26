@@ -54,6 +54,8 @@
 #include <OpenFlipper/common/RendererInfo.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QMenu>
+
 
 PostProcessorDialog::PostProcessorDialog(QWidget *_parent)
     : QDialog(_parent)

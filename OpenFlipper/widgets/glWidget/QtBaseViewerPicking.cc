@@ -57,12 +57,10 @@
 #include "QtGLGraphicsView.hh"
 
 #if QT_VERSION < 0x050000
-  #include <QGLFramebufferObject>
-#else // QT_VERSION > 0x050000
-  #undef QT_NO_OPENGL
-  #include <QOpenGLFramebufferObject>
-  #define QT_NO_OPENGL
-#endif //QT_VERSION < 0x050000
+#include <QGLFramebufferObject>
+#else
+#include <QOpenGLFramebufferObject>
+#endif
 
 //== NAMESPACES ===============================================================
 

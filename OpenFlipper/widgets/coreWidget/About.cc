@@ -52,6 +52,7 @@
 
 //== INCLUDES =================================================================
 
+#include <common/glew_wrappers.hh>
 #include "CoreWidget.hh"
 #include <OpenFlipper/common/FileTypes.hh>
 
@@ -604,7 +605,7 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append(tr("GLEW Specific Info:"));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
-  QString glewVersion = QString((const char *)glewGetString(GLEW_VERSION));
+  QString glewVersion = QString(getGlewVersion());
   aboutWidget_->OpenFlipperAbout->append(tr("GLEW Version:\t") + glewVersion);
   #endif
   

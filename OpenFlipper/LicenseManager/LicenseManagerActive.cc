@@ -228,7 +228,7 @@ bool LicenseManager::authenticate() {
           if ( (currentMac.count(":") == 5) && 
                ( pCurrAddresses->IfType == IF_TYPE_IEEE80211 || pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD )  ) {
                 // Cleanup and remember mac adress
-                currentMac = currentMac.toAscii().toUpper();
+                currentMac = currentMac.toUtf8().toUpper();
                 currentMac = currentMac.remove(":");
                 macHashes.push_back(currentMac);
           }
@@ -262,7 +262,7 @@ bool LicenseManager::authenticate() {
     }
 
     // Cleanup mac adress
-    QString currentMac = netInterface.hardwareAddress().toAscii().toUpper();
+    QString currentMac = netInterface.hardwareAddress().toUtf8().toUpper();
     currentMac = currentMac.remove(":");
     
     macHashes.push_back(currentMac);
@@ -276,7 +276,7 @@ bool LicenseManager::authenticate() {
 
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
-    macHashes[i] = QCryptographicHash::hash ( macHashes[i].toAscii() , QCryptographicHash::Sha1 ).toHex();  
+    macHashes[i] = QCryptographicHash::hash ( macHashes[i].toUtf8() , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Compute hash of processor information
@@ -327,7 +327,7 @@ bool LicenseManager::authenticate() {
     }
   #endif
 
-  QString cpuHash = QCryptographicHash::hash ( processor.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  QString cpuHash = QCryptographicHash::hash ( processor.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Get windows product id
@@ -342,7 +342,7 @@ bool LicenseManager::authenticate() {
     QString productId = "-";
   #endif
   
-  QString productHash = QCryptographicHash::hash ( productId.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  QString productHash = QCryptographicHash::hash ( productId.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Check License or generate request
@@ -370,7 +370,7 @@ bool LicenseManager::authenticate() {
     for ( int i = 1 ; i < elements.size(); ++i )
       license += elements[i];
     license += saltPost;
-    QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+    QString licenseHash = QCryptographicHash::hash ( license.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
     bool signatureOk = licenseHash == elements[0];
 
     // Check expiry date
@@ -433,7 +433,7 @@ bool LicenseManager::authenticate() {
       authstring_ += macHashes[i] +"\n";
 
     QString keyRequest = saltPre + pluginFileName() + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-    QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+    QString requestSig = QCryptographicHash::hash ( keyRequest.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
     authstring_ += requestSig + "\n";
 
     authenticated_ = false;
