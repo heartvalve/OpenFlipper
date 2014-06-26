@@ -60,7 +60,6 @@
 
 #include <QString>
 #include <OpenFlipper/common/GlobalDefines.hh>
-#include <OpenFlipper/common/DataTypes.hh>
 #include <OpenFlipper/BasePlugin/FileInterface.hh>
 
 
