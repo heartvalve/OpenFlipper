@@ -34,66 +34,25 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 12292 $                                                       *
+*   $Revision: 18127 $                                                       *
 *   $LastChangedBy: moebius $                                                *
-*   $Date: 2011-09-08 10:47:22 +0200 (Do, 08 Sep 2011) $                     *
+*   $Date: 2014-02-05 10:12:54 +0100 (Wed, 05 Feb 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+/**
+ * @file Contains definitions that require qt headers which are incompatible
+ * with glew.h.
+ */
 
-#include <QObject>
+#include "PostProcessorSobelPlugin.hh"
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
+#include <QGLFormat>
 
-#include <ACG/GL/globjects.hh>
+QString PostProcessorSobelPlugin::checkOpenGL() {
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
 
-class PhilipsStereoSettingsWidget;
-
-class PostProcessorPhilipsStereoPlugin : public QObject, BaseInterface, PostProcessorInterface
-{
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(PostProcessorInterface)
-
-#if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorPhilipsStereo")
-#endif
-
-  public:
-   PostProcessorPhilipsStereoPlugin();
-  
-  public :
-    QString name() { return (QString("Philips Stereo Postprocessor Plugin")); };
-    QString description( ) { return (QString(tr("Takes the rendered Image and renders it to be compatible with philips autostereoscopic displays"))); };
-
-    
-  public slots:
-    QString version() { return QString("1.0"); };
-
-    // PostProcessorInterface
-    QString postProcessorName();
-
-  signals:
-    //BaseInterface
-    void updateView();
-
-  private slots:
-
-    // PostProcessorInterface
-    QAction* optionsAction();
-    void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
-
-    void slotShowOptionsMenu();
-
-    QString checkOpenGL();
-
-  private:
-
-    GLSL::PtrProgram pProgram_;
-
-    PhilipsStereoSettingsWidget* settingsWidget_;
-
-
-};
-
+  return QString("");
+}
