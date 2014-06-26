@@ -41,12 +41,7 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
+#include <GL/glew.h>
 
 #include "PostProcessorPhilipsStereo.hh"
 
@@ -58,14 +53,6 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include "CRC/crc32.hh"
-
-#include <QCursor>
-
-// QT_NO_OPENGL currently has to be undefined first in QT5 because of QT5 and GLEW conflicts
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
-
 
 PostProcessorPhilipsStereoPlugin::PostProcessorPhilipsStereoPlugin():
   pProgram_(0),
@@ -82,65 +69,6 @@ QAction* PostProcessorPhilipsStereoPlugin::optionsAction() {
  QAction* action = new QAction("Philips Stereo Options",0);
  connect(action,SIGNAL(triggered()),this,SLOT(slotShowOptionsMenu()));
  return action;
-}
-
-QString PostProcessorPhilipsStereoPlugin::checkOpenGL() {
-  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
-    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
-
-  // Check extensions
-  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
-  QString missing("");
-  if ( !glExtensions.contains("GL_ARB_texture_rectangle") )
-    missing += "GL_ARB_texture_rectangle extension missing\n";
-
-  return missing;
-}
-
-//-----------------------------------------------------------------------------
-
-void  PostProcessorPhilipsStereoPlugin::slotShowOptionsMenu() {
-
-  // Create widget if it does not exist
-  if ( settingsWidget_ == 0) {
-    settingsWidget_ = new PhilipsStereoSettingsWidget(0);
-    connect(settingsWidget_,SIGNAL(updateView()),this,SIGNAL(updateView()));
-  }
-
-  // Set values Philips stereo mode
-
-  // Block signals such that slotApplyStereoSettings
-  // won't be called when setting the initial values here...
-  settingsWidget_->headerContentType->blockSignals(true);
-  settingsWidget_->headerSelect->blockSignals(true);
-  settingsWidget_->offsetCounter->blockSignals(true);
-  settingsWidget_->headerFactor->blockSignals(true);
-  settingsWidget_->factorCounter->blockSignals(true);
-  settingsWidget_->headerOffsetCC->blockSignals(true);
-
-  settingsWidget_->headerContentType->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Content",3).toInt());
-  settingsWidget_->headerFactor->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Factor",64).toInt());
-  settingsWidget_->headerOffsetCC->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Offset",128).toInt());
-  settingsWidget_->factorCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Factor",64).toInt());
-  settingsWidget_->offsetCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Offset",128).toInt());
-  settingsWidget_->headerSelect->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Select",0).toInt());
-
-  // Unblock signals
-  settingsWidget_->headerContentType->blockSignals(false);
-  settingsWidget_->headerSelect->blockSignals(false);
-  settingsWidget_->offsetCounter->blockSignals(false);
-  settingsWidget_->headerFactor->blockSignals(false);
-  settingsWidget_->factorCounter->blockSignals(false);
-  settingsWidget_->headerOffsetCC->blockSignals(false);
-
-
-
-  // Move widget to the position of the cursor
-  settingsWidget_->move( QCursor::pos() - QPoint((int)(settingsWidget_->width()/2), 0));
-
-  settingsWidget_->show();
-
 }
 
 //-----------------------------------------------------------------------------
