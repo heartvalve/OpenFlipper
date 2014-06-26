@@ -271,6 +271,10 @@ macro (acg_qt5)
     find_package (Qt5Concurrent REQUIRED)
     find_package (Qt5PrintSupport REQUIRED)
     
+    if (NOT WIN32 AND NOT APPLE)
+    	find_package (Qt5X11Extras)
+    endif ()
+    
 
     set (QT5_FOUND ${Qt5Core_FOUND} AND ${Qt5Declarative} AND ${Qt5Widgets_FOUND}
       AND ${Qt5Gui_FOUND} AND ${Qt5OpenGL_FOUND} AND ${Qt5Network_FOUND}
@@ -312,6 +316,11 @@ macro (acg_qt5)
       add_definitions(${Qt5Concurrent_DEFINITIONS})
       add_definitions(${Qt5PrintSupport_DEFINITIONS})
       
+      if (Qt5X11Extras_FOUND)
+	      include_directories(${Qt5X11Extras_INCLUDE_DIRS})
+	      add_definitions(${Qt5X11Extras_DEFINITIONS})
+      endif ()
+      
       if ( NOT MSVC )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
       endif()
@@ -321,12 +330,16 @@ macro (acg_qt5)
         ${Qt5Script_LIBRARIES} ${Qt5ScriptTools_LIBRARIES} ${Qt5Sql_LIBRARIES}
         ${Qt5Xml_LIBRARIES} ${Qt5XmlPatterns_LIBRARIES} ${Qt5Help_LIBRARIES}
         ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} ${Qt5PrintSupport_LIBRARIES})
+        
+      if (Qt5X11Extras_FOUND)
+	      list (APPEND QT_LIBRARIES ${Qt5X11Extras_LIBRARIES})
+	  endif ()
        
       if (MSVC)
         set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_QTMAIN_LIBRARIES})
       endif()
 
-	  add_definitions(-DQT_NO_OPENGL)
+	  #add_definitions(-DQT_NO_OPENGL)
 
 	  #adding QT_NO_DEBUG to all release modes. 
 	  #  Note: for multi generators like msvc you cannot set this definition depending of
