@@ -89,7 +89,6 @@
 #include <QGraphicsWidget>
 #include <QGraphicsSceneDragDropEvent>
 #include <QPropertyAnimation>
-#include <QOpenGLFramebufferObject>
 
 #include <QMimeData>
 #include <QToolButton>
@@ -132,7 +131,11 @@
 
 #include <QImageWriter>
 
+#if QT_VERSION < 0x050000
 #include <QGLFramebufferObject>
+#else
+#include <QOpenGLFramebufferObject>
+#endif
 
 #ifdef max
 #  undef max
@@ -146,8 +149,6 @@
 #include <OpenFlipper/common/ViewObjectMarker.hh>
 
 #include <OpenFlipper/common/GlobalOptions.hh>
-
-#include <QGLFramebufferObject>
 
 #include <OpenFlipper/common/RendererInfo.hh>
 #include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
