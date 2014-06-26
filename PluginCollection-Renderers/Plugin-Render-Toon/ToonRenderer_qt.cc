@@ -44,6 +44,7 @@
  * @file Contains definitions that require qt headers which are incompatible
  * with glew.h.
  */
+#include "ToonRenderer.hh"
 
 #include <QGLFormat>
 #include <QDialog>
@@ -52,7 +53,6 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <ACG/QtWidgets/QtColorChooserButton.hh>
-#include "ToonRenderer.hh"
 
 
 QString ToonRenderer::checkOpenGL() {
