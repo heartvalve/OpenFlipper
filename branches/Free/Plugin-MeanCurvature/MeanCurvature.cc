@@ -163,6 +163,3 @@ void MeanCurvaturePlugin::computeMeanCurvature(MeshT* _mesh) {
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( meancurvatureplugin , MeanCurvaturePlugin );
 #endif
-
-
-
