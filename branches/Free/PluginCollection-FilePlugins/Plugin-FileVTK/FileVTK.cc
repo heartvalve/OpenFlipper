@@ -40,6 +40,21 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "FileVTK.hh"
+
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
+
+#include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
@@ -50,26 +65,12 @@
 #include <QSettings>
 #include <QPushButton>
 
-#include "FileVTK.hh"
+
 
 #include <iostream>
 #include <set>
 #include <vector>
 #include <algorithm>
-
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
-
-#include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-
-
-#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
-#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
-#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
-#endif
 
 //-----------------------------------------------------------------------------------------------------
 namespace{

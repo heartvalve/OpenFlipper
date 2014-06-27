@@ -34,16 +34,18 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 18440 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2014-04-08 08:26:27 +0200 (Tue, 08 Apr 2014) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
 #ifndef GLEW_WRAPPERS_HH_
 #define GLEW_WRAPPERS_HH_
 
-void initGlew();
-const char *getGlewVersion();
+#include <OpenFlipper/common/GlobalDefines.hh>
+
+DLLEXPORT void initGlew();
+DLLEXPORT const char * getGlewVersion();
 
 #endif /* GLEW_WRAPPERS_HH_ */

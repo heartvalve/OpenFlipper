@@ -39,13 +39,12 @@
 *   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
+#include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #include "PluginDialog.hh"
 
 #include <QMessageBox>
-
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/common/GlobalOptions.hh>
 
 const QColor PluginDialog::blockColor_  = QColor(228, 155, 18);
 const QColor PluginDialog::unloadColor_ = QColor(172, 172, 172);

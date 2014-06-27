@@ -34,12 +34,15 @@
 
 /*===========================================================================*\
 *                                                                           *
-*   $Revision: 7936 $                                                       *
-*   $Author: kremer $                                                      *
-*   $Date: 2009-12-15 14:01:19 +0100 (Tue, 15 Dec 2009) $                   *
+*   $Revision$                                                       *
+*   $Author$                                                      *
+*   $Date$                   *
 *                                                                           *
 \*===========================================================================*/
 
+#include "FileBVH.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -49,14 +52,9 @@
 
 #include <QFileInfo>
 
-#include "FileBVH.hh"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
 
 #include <ACG/Geometry/AlgorithmsAngleT.hh>
 

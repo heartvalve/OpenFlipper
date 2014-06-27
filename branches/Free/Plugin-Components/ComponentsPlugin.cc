@@ -40,9 +40,13 @@
  *                                                                            *
  \*===========================================================================*/
 
-#include <QtGui>
-
 #include "ComponentsPlugin.hh"
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 #include <MeshTools/MeshInfoT.hh>
 

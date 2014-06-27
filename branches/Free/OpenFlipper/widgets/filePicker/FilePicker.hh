@@ -8,11 +8,13 @@
 #ifndef FILEPICKER_HH_
 #define FILEPICKER_HH_
 
+#include <OpenFlipper/common/RecentFiles.hh>
+
 #include <QWidget>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
-#include <OpenFlipper/common/RecentFiles.hh>
+
 
 class DLLEXPORT FilePicker : public QWidget {
     Q_OBJECT

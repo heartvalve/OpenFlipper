@@ -34,16 +34,18 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 18440 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2014-04-08 08:26:27 +0200 (Tue, 08 Apr 2014) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
+
+#include "glew_wrappers.hh"
 
 #include <GL/glew.h>
 #include <stdio.h>
 
-void initGlew() {
+DLLEXPORT void initGlew() {
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
@@ -52,6 +54,6 @@ void initGlew() {
     }
 }
 
-const char *getGlewVersion() {
+DLLEXPORT const char * getGlewVersion() {
     return (const char *)glewGetString(GLEW_VERSION);
 }

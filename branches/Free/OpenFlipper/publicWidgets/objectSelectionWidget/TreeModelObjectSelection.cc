@@ -40,6 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <OpenFlipper/common/Types.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -54,7 +55,7 @@
 #include <iostream>
 
 
-#include <OpenFlipper/common/Types.hh>
+
 #include "../OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 

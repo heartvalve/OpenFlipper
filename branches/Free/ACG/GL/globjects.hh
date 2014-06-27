@@ -174,7 +174,7 @@ public:
 //== CLASS DEFINITION =========================================================
 
 
-class Texture
+class ACGDLLEXPORT Texture
 {
 public:
 
@@ -341,7 +341,7 @@ public:
 
 #if defined(GL_ARB_texture_buffer_object)
 
-class TextureBuffer : public Texture
+class ACGDLLEXPORT TextureBuffer : public Texture
 {
 public:
   TextureBuffer(GLenum u=GL_NONE)

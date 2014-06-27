@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-
+#include "TreeModel.hh"
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -49,8 +49,6 @@
 #endif
 
 #include <QBrush>
-
-#include "TreeModel.hh"
 
 #include <iostream>
 

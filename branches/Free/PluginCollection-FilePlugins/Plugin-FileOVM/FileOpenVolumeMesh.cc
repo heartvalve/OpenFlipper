@@ -45,15 +45,6 @@
 #include <map>
 #include <string>
 
-
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-#include <QFileInfo>
-
 #include <ACG/GL/GLState.hh>
 
 #include <OpenMesh/Core/IO/IOManager.hh>
@@ -64,6 +55,15 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
 #include "FileOpenVolumeMesh.hh"
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
+#include <QFileInfo>
+
 
 FileOpenVolumeMeshPlugin::FileOpenVolumeMeshPlugin() :
 loadOptions_(0),

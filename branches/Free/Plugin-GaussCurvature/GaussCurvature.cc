@@ -40,19 +40,17 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "GaussCurvature.hh"
+
+#include <ACG/GL/GLState.hh>
+
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
   #include <QtGui>
 #endif
-
-
-#include "GaussCurvature.hh"
-
-#include <ACG/GL/GLState.hh>
-
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 #include <MeshTools/Curvature.hh>
 

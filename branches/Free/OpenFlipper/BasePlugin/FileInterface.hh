@@ -44,12 +44,8 @@
 #ifndef FILEINTERFACE_HH
 #define FILEINTERFACE_HH
 
- 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
+ class QWidget;
+#include <QString>
 
  #include <OpenFlipper/common/Types.hh>
 

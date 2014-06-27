@@ -41,13 +41,6 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-
 #include "SubdividerPlugin.hh"
 
 #include <iostream>
@@ -65,6 +58,12 @@
 #include <OpenMesh/Tools/Subdivider/Uniform/LongestEdgeT.hh>
 
 #include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 
 SubdividerPlugin::SubdividerPlugin() :

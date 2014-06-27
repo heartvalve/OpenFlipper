@@ -40,14 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "ColorPlugin.hh"
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
   #include <QtGui>
 #endif
-
-#include "ColorPlugin.hh"
 
 #include <iostream>
 #include <ACG/GL/GLState.hh>

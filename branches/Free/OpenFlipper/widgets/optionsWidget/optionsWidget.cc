@@ -42,15 +42,15 @@
 
 
 
-
-#include "optionsWidget.hh"
-#include <iostream>
-#include <OpenFlipper/common/GlobalOptions.hh>
-#include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/ShaderCache.hh>
+
+#include "optionsWidget.hh"
+#include <iostream>
 
 #include <QColorDialog>
 #include <QMessageBox>

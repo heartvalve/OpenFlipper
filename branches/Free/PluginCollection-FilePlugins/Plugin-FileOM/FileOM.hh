@@ -44,6 +44,8 @@
 #define FILEOMPLUGIN_HH
 
 #include <QObject>
+class QCheckBox;
+class QComboBox;
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>

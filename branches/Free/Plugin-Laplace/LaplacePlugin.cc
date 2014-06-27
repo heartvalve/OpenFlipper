@@ -41,13 +41,6 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-
 #include "LaplacePlugin.hh"
 
 #include <iostream>
@@ -59,6 +52,12 @@
 
 #ifdef USE_OPENMP
 #include <omp.h>
+#endif
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
 #endif
 
 #define UNIFORM_LAPLACE_NAME "Uniform Laplace Length"

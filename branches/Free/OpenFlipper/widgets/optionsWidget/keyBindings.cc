@@ -40,11 +40,11 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <OpenFlipper/BasePlugin/BaseInterface.hh>
+
 #include "optionsWidget.hh"
 
 #include <OpenFlipper/common/GlobalOptions.hh>
-
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
 
 #include "ShortcutButton.hh"
 

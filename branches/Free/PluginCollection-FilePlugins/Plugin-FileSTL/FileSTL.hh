@@ -45,6 +45,9 @@
 #define FILESTLPLUGIN_HH
 
 #include <QObject>
+class QCheckBox;
+class QLabel;
+class QSpinBox;
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>

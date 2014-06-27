@@ -49,6 +49,7 @@
 #include <QStringList>
 #include <QList>
 #include <QDockWidget>
+#include <QToolBar>
 
 struct KeyBinding{
   int                   key;

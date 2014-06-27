@@ -50,6 +50,10 @@
 
 //== INCLUDES =================================================================
 
+#include "DecimaterPlugin.hh"
+#include <ACG/GL/GLState.hh>
+#include <ACG/Scenegraph/ManipulatorNode.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -58,15 +62,10 @@
 #endif
 
 #include <memory>
-
-#include "DecimaterPlugin.hh"
-
 #include <iostream>
-#include <ACG/GL/GLState.hh>
-#include <QStringList>
-#include <ACG/Scenegraph/ManipulatorNode.hh>
 
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <QStringList>
+
 
 #define DECIMATER "DecimaterData"
 

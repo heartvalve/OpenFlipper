@@ -34,11 +34,15 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 15910 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2012-12-05 12:53:39 +0100 (Mi, 05 Dez 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
+
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/RendererInfo.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #if QT_VERSION >= 0x050000
   #include <QtWidgets>
@@ -49,10 +53,6 @@
 #include "postProcessorWidget.hh"
 #include <functional>
 #include <algorithm>
-
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#include <OpenFlipper/common/RendererInfo.hh>
-#include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <QMenu>
 

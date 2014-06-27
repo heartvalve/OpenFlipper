@@ -8,13 +8,6 @@
 //== INCLUDES =================================================================
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-
 #include "PolyLinePlugin.hh"
 
 #include <iostream>
@@ -28,6 +21,12 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <ACG/Geometry/bsp/BSPImplT.hh>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 namespace {
 

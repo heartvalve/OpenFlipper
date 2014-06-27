@@ -50,13 +50,6 @@
 //== INCLUDES =================================================================
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-
 #include "SmootherPlugin.hh"
 
 #include <iostream>
@@ -67,6 +60,12 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include "SmootherObject.hh"
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 #define SMOOTHER "SmootherData"
 

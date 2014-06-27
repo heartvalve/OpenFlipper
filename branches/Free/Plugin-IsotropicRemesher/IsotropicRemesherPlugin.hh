@@ -44,13 +44,6 @@
 #define ISOTROPICREMESHERPLUGIN_HH
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
@@ -64,6 +57,12 @@
 
 #include "IsotropicRemesherToolbox.hh"
 #include "ProgressEmitter.hh"
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 
 class IsotropicRemesherPlugin : public QObject, BaseInterface, BackupInterface , ToolboxInterface, LoggingInterface,

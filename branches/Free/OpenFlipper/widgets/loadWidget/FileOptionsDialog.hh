@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/Core/Core.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -47,9 +49,6 @@
   #include <QtGui>
 #endif
 
-
-#include <OpenFlipper/common/Types.hh>
-#include <OpenFlipper/Core/Core.hh>
 
 class FileOptionsDialog : public QDialog
 {
