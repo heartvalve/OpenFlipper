@@ -43,14 +43,6 @@
 #ifndef COLORPLUGIN_HH
 #define COLORPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-#include "ColorPlugin.hh"
-
-#include "ColorOptions.hh"
-
-#include "OpenFlipper/INIFile/INIFile.hh"
-
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
@@ -59,6 +51,14 @@
 #include "OpenFlipper/BasePlugin/StatusbarInterface.hh"
 #include "OpenFlipper/BasePlugin/OptionsInterface.hh"
 #include "OpenFlipper/BasePlugin/INIInterface.hh"
+
+#include <QObject>
+#include <QMenuBar>
+#include "ColorPlugin.hh"
+
+#include "ColorOptions.hh"
+
+#include "OpenFlipper/INIFile/INIFile.hh"
 
 class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface, ToolbarInterface, StatusbarInterface, OptionsInterface, INIInterface
 {

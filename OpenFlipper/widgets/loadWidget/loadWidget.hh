@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/Core/Core.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -49,8 +51,6 @@
 
 #include <QDirModel>
 
-#include <OpenFlipper/common/Types.hh>
-#include <OpenFlipper/Core/Core.hh>
 #include <map>
 
 class LoadWidget : public QFileDialog

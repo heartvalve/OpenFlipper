@@ -43,12 +43,6 @@
 #ifndef ADVANCEDREMESHERPLUGIN_HH
 #define ADVANCEDREMESHERPLUGIN_HH
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
@@ -62,6 +56,8 @@
 
 #include "RemesherToolbox.hh"
 #include "ProgressEmitter.hh"
+
+
 
 class RemesherPlugin : public QObject, BaseInterface, BackupInterface, ToolboxInterface, LoggingInterface, RPCInterface, ProcessInterface, ScriptInterface
 {

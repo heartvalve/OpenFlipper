@@ -41,12 +41,6 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 #include <QPrintDialog>
 #include <QPrinter>
 
@@ -57,6 +51,12 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 void PrintPlugin::pluginsInitialized()
 {

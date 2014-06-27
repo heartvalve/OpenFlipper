@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "FileHeightFieldImage.hh"
+#include "ImageDialog.hh"
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -49,11 +51,7 @@
 
 #include <QFileInfo>
 #include <QSettings>
-
-#include "FileHeightFieldImage.hh"
-#include "ImageDialog.hh"
-
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 void FileHeightFieldPNGPlugin::initializePlugin() {
 }

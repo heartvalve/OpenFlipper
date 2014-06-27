@@ -46,6 +46,9 @@
 #ifndef OPTIONSWIDGET_HH
 #define OPTIONSWIDGET_HH
 
+#include <OpenFlipper/Core/PluginInfo.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
+
 #include "ui_optionsWidget.hh"
   
 #if QT_VERSION >= 0x050000 
@@ -58,8 +61,6 @@
 #include <QProgressDialog>
 #include <QtNetwork>
 
-#include <OpenFlipper/Core/PluginInfo.hh>
-#include <ACG/Scenegraph/DrawModes.hh>
 
 //map for keyBindings
 typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;

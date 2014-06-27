@@ -48,12 +48,12 @@
 
 //== INCLUDES =================================================================
 
+#include "PropertyVisPlugin.hh"
+
 #include <Qt>
 
 #include <QSpacerItem>
 #include <QFileDialog>
-
-#include "PropertyVisPlugin.hh"
 
 #include <iostream>
 #include <vector>

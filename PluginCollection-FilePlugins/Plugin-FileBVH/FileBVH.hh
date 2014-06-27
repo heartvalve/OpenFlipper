@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                           *
-*   $Revision: 7918 $                                                       *
-*   $Author: wilden $                                                       *
-*   $Date: 2009-12-15 10:05:44 +0100 (Tue, 15 Dec 2009) $                   *
+*   $Revision$                                                       *
+*   $Author$                                                       *
+*   $Date$                   *
 *                                                                           *
 \*===========================================================================*/
 
@@ -55,6 +55,9 @@
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <ObjectTypes/Skeleton/Skeleton.hh>
+
+class QCheckBox;
+class QPushButton;
 
 class FileBVHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
     LoggingInterface, ScriptInterface

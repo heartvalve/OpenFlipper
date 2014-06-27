@@ -34,18 +34,11 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 10990 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2011-02-24 10:08:09 +0100 (Do, 24 Feb 2011) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
-
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 
 #include "RenderPickingPlugin.hh"
 
@@ -57,6 +50,12 @@
 
 #include <QGLFormat>
 #include <QMenu>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 void RenderPickingPlugin::initializePlugin()
 {

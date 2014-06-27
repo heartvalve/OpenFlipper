@@ -39,7 +39,15 @@
 *   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
+#include <ACG/GL/GLState.hh>
 
+#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include "OpenFlipper/common/GlobalOptions.hh"
+
+#include <OpenMesh/Core/IO/IOManager.hh>
+
+#include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -54,15 +62,7 @@
 #include "FileOBJ.hh"
 
 #include <iostream>
-#include <ACG/GL/GLState.hh>
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
-
-#include <OpenMesh/Core/IO/IOManager.hh>
-
-#include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 // Defines for the type handling drop down box
 #define TYPEAUTODETECT 0

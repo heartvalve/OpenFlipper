@@ -49,12 +49,6 @@
 
 //== INCLUDES =================================================================
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 
 #include "MeshObjectInfoPlugin.hh"
 
@@ -71,6 +65,12 @@
 #include <Math_Tools/Math_Tools.hh>
 
 #include <cfloat>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 //== IMPLEMENTATION ==========================================================
 

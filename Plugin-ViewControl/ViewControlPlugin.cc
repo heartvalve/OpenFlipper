@@ -41,12 +41,6 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 #include "ViewControlPlugin.hh"
 #include <iostream>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -56,6 +50,12 @@
 #include <ACG/Geometry/Algorithms.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <ACG/Scenegraph/CoordsysNode.hh>
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 #define SHOW_SELECTION    "Selections"
 #define SHOW_AREAS        "Modeling Areas"

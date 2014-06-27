@@ -43,9 +43,6 @@
 #ifndef BACKUPPLUGIN_HH
 #define BACKUPPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
@@ -55,6 +52,9 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/common/Types.hh>
+
+#include <QObject>
+#include <QMenuBar>
 
 #include "GroupData.hh"
 

@@ -41,12 +41,6 @@
 \*===========================================================================*/
 
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
-
 #include "MovePlugin.hh"
 
 #include <iostream>
@@ -62,6 +56,12 @@
 
 #ifdef USE_OPENMP
 #include <omp.h>
+#endif
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
 #endif
 
 #ifdef ENABLE_POLYLINE_SUPPORT

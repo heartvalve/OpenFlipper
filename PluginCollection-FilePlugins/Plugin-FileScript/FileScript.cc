@@ -40,6 +40,10 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "FileScript.hh"
+
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -50,12 +54,9 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include "FileScript.hh"
-
 #include <iostream>
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
+
 
 QString FileScriptPlugin::getLoadFilters() {
   return QString( tr("OpenFlipper Scripting Files ( *.ofs )") );

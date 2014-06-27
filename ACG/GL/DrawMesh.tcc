@@ -46,6 +46,7 @@
 
 #include "DrawMesh.hh"
 
+#include <ACG/GL/gl.hh>
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/ShaderCache.hh>
@@ -1413,7 +1414,7 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
         }
         else // no texture map specified, use whatever texture is currently bound to the first texture stage
         {
-          glActiveTexture(GL_TEXTURE0);
+          glActiveTextureARB(GL_TEXTURE0);
           GLint textureID = 0;
           glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureID);
 

@@ -40,6 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "FileOFF.hh"
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -51,15 +52,13 @@
 #include <QSettings>
 #include <QPushButton>
 
-#include "FileOFF.hh"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <ACG/GL/GLState.hh>
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <OpenMesh/Core/IO/IOManager.hh>
 #include <OpenMesh/Core/Utils/color_cast.hh>

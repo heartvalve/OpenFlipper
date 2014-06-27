@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
 #include "ui_setProps.hh"
 
 #if QT_VERSION >= 0x050000 
@@ -47,9 +49,6 @@
 #else
   #include <QtGui>
 #endif
-
-
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 class movePropsWidget : public QWidget, public Ui::setProps
 {

@@ -46,6 +46,8 @@
 #ifndef ADDEMPTYWIDGET_HH
 #define ADDEMPTYWIDGET_HH
 
+#include <OpenFlipper/common/Types.hh>
+
 #include "ui_addEmpty.hh"
 
 #if QT_VERSION >= 0x050000 
@@ -55,7 +57,7 @@
 #endif
 
 
-#include "OpenFlipper/common/Types.hh"
+
 
 class addEmptyWidget : public QDialog, public Ui::addEmpty
 {

@@ -40,11 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
   
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
 
 #include "TopologyPlugin.hh"
 #include <iostream>
@@ -61,6 +56,13 @@
 
 #include <OpenMesh/Core/System/omstream.hh>
 #include <cfloat>
+
+
+#if QT_VERSION >= 0x050000 
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 //******************************************************************************
 

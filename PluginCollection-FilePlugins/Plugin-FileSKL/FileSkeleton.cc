@@ -34,12 +34,19 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 10274 $                                                       *
-*   $LastChangedBy: wilden $                                                 *
-*   $Date: 2010-11-24 17:49:09 +0100 (Wed, 24 Nov 2010) $                    *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                 *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 
+#include "FileSkeleton.hh"
+#include <ACG/GL/GLState.hh>
+
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
+
+#include <OpenMesh/Core/IO/IOManager.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -49,16 +56,11 @@
 
 #include <QFileInfo>
 
-#include "FileSkeleton.hh"
+
 
 #include <iostream>
 #include <fstream>
-#include <ACG/GL/GLState.hh>
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
-
-#include <OpenMesh/Core/IO/IOManager.hh>
 
 void FileSKLPlugin::initializePlugin() {
 }

@@ -60,6 +60,9 @@
 
 
 #include <QObject>
+class QCheckBox;
+class QComboBox;
+class QPushButton;
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/FileInterface.hh>
