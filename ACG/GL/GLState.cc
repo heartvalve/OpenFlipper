@@ -2088,7 +2088,7 @@ GLvoid* GLState::mapBuffer (GLenum target, GLenum access) {
 
 
 GLboolean GLState::unmapBuffer (GLenum target) {
-    return unmapBuffer(target);
+    return glUnmapBuffer(target);
 }
 
 
