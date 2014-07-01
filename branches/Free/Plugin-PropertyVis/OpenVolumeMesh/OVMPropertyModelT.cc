@@ -188,7 +188,7 @@ void OVMPropertyModel<MeshT>::mouseEvent(QMouseEvent* _event)
         ACG::Vec3d     hit_point;
 
 
-        OVMPropertyVisualizer<MeshT>* viz = (OVMPropertyVisualizer<MeshT>*) propertyVisualizers[currentlySelectedIndices.first().row()];
+        OVMPropertyVisualizer<MeshT>* viz = dynamic_cast<OVMPropertyVisualizer<MeshT>*>(propertyVisualizers[currentlySelectedIndices.first().row()]);
         unsigned int entityId = 0;
 
         ACG::SceneGraph::PickTarget pickTarget;
@@ -910,7 +910,7 @@ void OVMPropertyModel<MeshT>::addProperty(QString propName, QString friendlyType
 template <typename MeshT>
 void OVMPropertyModel<MeshT>::initializeSupportedPropertyTypes()
 {
-    
+
 #define INSERT_PROPTYPES(primitive) \
 supportedPropertyTypes.insert(proptype_##primitive##_bool);   \
 supportedPropertyTypes.insert(proptype_##primitive##_int);    \
@@ -928,8 +928,8 @@ supportedPropertyTypes.insert(proptype_##primitive##_Vec3f);  \
 
 #undef INITIALIZE_PROPTYPES
 
-    
-    
+
+
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
