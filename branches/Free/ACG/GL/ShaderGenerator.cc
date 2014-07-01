@@ -1809,7 +1809,7 @@ void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString 
       QString trimmedLine = it->trimmed();
 
       // scan and adjust glsl version
-      QByteArray lineBytes = trimmedLine.toAscii();
+      QByteArray lineBytes = trimmedLine.toUtf8();
 
       int templateVersion = 0;
       if (sscanf(lineBytes.constData(), "#version %d", &templateVersion) == 1)
