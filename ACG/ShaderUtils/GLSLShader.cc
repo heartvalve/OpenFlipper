@@ -345,6 +345,97 @@ namespace GLSL {
     checkGLError2(_name);
   }
 
+  /** \brief Set Vec2i uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec2i &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform2iv(location, 1, _value.data());
+    checkGLError();
+  }
+
+  /** \brief Set Vec3i uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec3i &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform3iv(location, 1, _value.data());
+    checkGLError();
+  }
+
+  /** \brief Set Vec4i uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec4i &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform4iv(location, 1, _value.data());
+    checkGLError();
+  }
+
+  /** \brief Set uint uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, GLuint _value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform1ui(location, _value);
+    checkGLError2(_name);
+  }
+
+  /** \brief Set Vec2ui uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec2ui &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform2uiv(location, 1, _value.data());
+    checkGLError();
+  }
+
+  /** \brief Set Vec3ui uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec3ui &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform3uiv(location, 1, _value.data());
+    checkGLError();
+  }
+
+  /** \brief Set Vec4ui uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec4ui &_value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform4uiv(location, 1, _value.data());
+    checkGLError();
+  }
+
   /** \brief Set float uniform to specified value
    *
    * @param _name  Name of the uniform

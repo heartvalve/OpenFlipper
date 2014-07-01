@@ -210,6 +210,15 @@ namespace GLSL {
        //===========================================================================
 
        void setUniform(const char *_name, GLint _value);
+       void setUniform(const char *_name, const ACG::Vec2i &_value);
+       void setUniform(const char *_name, const ACG::Vec3i &_value);
+       void setUniform(const char *_name, const ACG::Vec4i &_value);
+
+       void setUniform(const char *_name, GLuint _value);
+       void setUniform(const char *_name, const ACG::Vec2ui &_value);
+       void setUniform(const char *_name, const ACG::Vec3ui &_value);
+       void setUniform(const char *_name, const ACG::Vec4ui &_value);
+
        void setUniform(const char *_name, GLfloat _value);
        void setUniform(const char *_name, const ACG::Vec2f &_value);
        void setUniform(const char *_name, const ACG::Vec3f &_value);
