@@ -56,6 +56,12 @@ namespace ACG
 
 #define LIGHTING_CODE_FILE "ShaderGen/SG_LIGHTING.GLSL"
 
+// attribute request keywords
+#define SG_REQUEST_POSVS "#define SG_REQUEST_POSVS"
+#define SG_REQUEST_POSOS "#define SG_REQUEST_POSOS"
+#define SG_REQUEST_TEXCOORD "#define SG_REQUEST_TEXCOORD"
+#define SG_REQUEST_VERTEXCOLOR "#define SG_REQUEST_VERTEXCOLOR"
+#define SG_REQUEST_NORMAL "#define SG_REQUEST_NORMAL"
 
 
 int ShaderProgGenerator::numModifiers_ = 0;
@@ -64,9 +70,8 @@ ShaderModifier* ShaderProgGenerator::modifiers_[32] = {0};
 
 
 ShaderGenerator::ShaderGenerator()
+  : version_(150), inputArrays_(false), outputArrays_(false)
 {
-//  version_ = "#version 150"; 
-  version_ = 150;
 }
 
 ShaderGenerator::~ShaderGenerator()
@@ -75,9 +80,18 @@ ShaderGenerator::~ShaderGenerator()
 }
 
 
-void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
+void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc, 
+  bool _requestPosVS,
+  bool _requestPosOS,
+  bool _requestNormal,
+  bool _requestTexCoord,
+  bool _requestColor)
 {
-
+  // set type of IO
+  inputArrays_ = false;
+  outputArrays_ = false;
+  inputPrefix_ = "in";         // inputs: inPosition, inTexCoord...
+  outputPrefix_ = "outVertex"; // outputs: outVertexPosition, outVertexTexCoord..
 
   addInput("vec4 inPosition");
   addOutput("vec4 outVertexPosCS");
@@ -101,7 +115,9 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
     }
 
   }
-  if (_desc->vertexColors)
+
+
+  if (_desc->vertexColors || _requestColor)
     addInput("vec4 inColor");
 
 
@@ -123,15 +139,69 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
       addStringToList("vec4 outVertexColor", &outputs_, "flat out ", ";");
     }
   else {
-    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors)
+    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors || _requestColor)
       strColorOut = "vec4 outVertexColor";
   }
 
   if (strColorOut.size())
     addOutput(strColorOut.c_str());
+
+
+  // handle other requests: normals, positions, texcoords
+
+  if (_requestPosVS)
+    addOutput("vec4 outVertexPosVS");
+
+  if (_requestPosOS)
+    addOutput("vec4 outVertexPosOS");
+
+  if (_requestTexCoord && !_desc->textured())
+  {
+    // assume 2d texcoords
+    addInput("vec2 inTexCoord");
+    addOutput("vec2 outVertexTexCoord");
+  }
+
+  if (_requestNormal)
+  {
+    addInput("vec3 inNormal");
+    addOutput("vec3 outVertexNormal");
+  }
 }
 
-void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
+void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+{
+  // set type of IO
+  inputArrays_ = true;
+  outputArrays_ = true;
+  inputPrefix_ = _prevStage->outputPrefix_;
+  outputPrefix_ = "outTc"; // outputs: outTcPosition, outTcTexCoord..
+
+  matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
+}
+
+void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+{
+  // set type of IO
+  inputArrays_ = true;
+  outputArrays_ = false;
+  inputPrefix_ = _prevStage->outputPrefix_;
+  outputPrefix_ = "outTe"; // outputs: outTePosition, outTeTexCoord..
+
+  matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
+}
+
+void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+{
+  // set type of IO
+  inputArrays_ = true;
+  outputArrays_ = false;
+  inputPrefix_ = _prevStage->outputPrefix_;
+  outputPrefix_ = "outGeometry"; // outputs: outGeometryPosition, outGeometryTexCoord..
+
+  matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
+
+  return;
 
   addInput("vec4 outVertexPosCS[]");
   addOutput("vec4 outGeometryPosCS");
@@ -183,51 +253,15 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
 
 
 
-void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
+void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage)
 {
+  // set type of IO
+  inputArrays_ = false;
+  outputArrays_ = false;
+  inputPrefix_ = _prevStage->outputPrefix_;
+  outputPrefix_ = "outFragment";
 
-  QString inputShader = "Vertex";
-
-  if ( !_desc->geometryTemplateFile.isEmpty() )
-    inputShader = "Geometry";
-
-
-  if (_desc->textured()) {
-
-    std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = _desc->textureTypes().begin();
-
-    /// TODO Setup for multiple texture coordinates as input
-    if (iter->second.type == GL_TEXTURE_3D) {
-      addInput("vec3 out"+inputShader+"TexCoord");
-    } else {
-      addInput("vec2 out"+inputShader+"TexCoord");
-    }
-
-  }
-
-  addInput("vec4 out"+inputShader+"PosCS");
-
-  QString strColorIn = "";
-
-  if (_desc->shadeMode == SG_SHADE_FLAT)
-    addStringToList("vec4 out"+inputShader+"Color", &inputs_, "flat in ", ";");
-  else
-  {
-    if (_desc->shadeMode == SG_SHADE_GOURAUD ||
-      _desc->vertexColors)
-      strColorIn = "vec4 out"+inputShader+"Color";
-  }
-
-  if (strColorIn.size())
-    addInput(strColorIn);
-
-
-  if (_desc->shadeMode == SG_SHADE_PHONG)
-  {
-    addInput("vec3 out"+inputShader+"Normal");
-    addInput("vec4 out"+inputShader+"PosVS");
-  }
-
+  matchInputs(_prevStage, false);
   addOutput("vec4 outFragment");
 }
 
@@ -317,12 +351,39 @@ void ShaderGenerator::addDefine(QString _def)
   addStringToList(_def, &genDefines_, "#define ");
 }
 
+bool ShaderGenerator::hasDefine(QString _define) const
+{
+  if (genDefines_.contains(_define))
+    return true;
 
+  // check trimmed strings and with startsWith()
+
+  QString trimmedDef = _define.trimmed();
+
+  for (QStringList::const_iterator it = genDefines_.constBegin(); it != genDefines_.constEnd(); ++it)
+  {
+    QString trimmedRef = it->trimmed();
+
+    if (trimmedRef.startsWith(trimmedDef))
+      return true;
+  }
+
+  return false;
+}
+
+void ShaderGenerator::addLayout(QString _def)
+{
+  addStringToList(_def, &layouts_);
+}
 
 
 void ShaderGenerator::addUniform(QString _uniform, QString _comment)
 {
-  addStringToList(_uniform, &uniforms_, "uniform ", "; " + _comment );
+  QString prefix = "";
+  if (!_uniform.startsWith("uniform ") && !_uniform.contains(" uniform "))
+    prefix = "uniform ";
+
+  addStringToList(_uniform, &uniforms_, prefix, "; " + _comment );
 }
 
 
@@ -342,7 +403,7 @@ void ShaderGenerator::addIOToCode(const QStringList& _cmds)
 
 
 
-void ShaderGenerator::buildShaderCode(QStringList* _pMainCode)
+void ShaderGenerator::buildShaderCode(QStringList* _pMainCode, const QStringList& _defaultLightingFunctions)
 {
   QString glslversion;
   glslversion.sprintf("#version %d", version_);
@@ -355,20 +416,57 @@ void ShaderGenerator::buildShaderCode(QStringList* _pMainCode)
   foreach(it, genDefines_)
     code_.push_back(it);
 
+  // layouts
+  foreach(it, layouts_)
+    code_.push_back(it);
+
   // IO
   addIOToCode(inputs_);
   addIOToCode(outputs_);
   addIOToCode(uniforms_);
 
+  // eventually attach lighting functions if required
+  bool requiresLightingCode = false;
+
+  // search for references in imports
+  foreach(it, imports_)
+  {
+    if (it.contains("LitDirLight") || it.contains("LitPointLight") || it.contains("LitSpotLight"))
+      requiresLightingCode = true;
+  }
+
+  if (requiresLightingCode)
+  {
+    foreach(it, _defaultLightingFunctions)
+      code_.push_back(it);
+  }
+
   // provide imports
   foreach(it, imports_)
     code_.push_back(it);
 
+
+  // search for lighting references in main code
+
+  if (!requiresLightingCode)
+  {
+    foreach(it, (*_pMainCode))
+    {
+      if (it.contains("LitDirLight") || it.contains("LitPointLight") || it.contains("LitSpotLight"))
+        requiresLightingCode = true;
+    }
+
+    if (requiresLightingCode)
+    {
+      foreach(it, _defaultLightingFunctions)
+        code_.push_back(it);
+    }
+  }
+
+
   // main function
   foreach(it, (*_pMainCode))
     code_.push_back(it);
-
-
 }
 
 
@@ -431,13 +529,19 @@ void ShaderGenerator::setGLSLVersion( int _version )
   version_ = _version;
 }
 
-void ShaderGenerator::matchInputs(ShaderGenerator& _previousShaderStage,
+void ShaderGenerator::matchInputs(const ShaderGenerator* _previousShaderStage,
   bool _passToNextStage,
   QString _inputPrefix, 
   QString _outputPrefix)
 {
+  if (!_previousShaderStage)
+  {
+    std::cout << "error: ShaderGenerator::matchInputs called without providing input stage" << std::endl;
+    return;
+  }
+
   QString it;
-  foreach(it, _previousShaderStage.outputs_)
+  foreach(it, _previousShaderStage->outputs_)
   {
     QString input = it;
 
@@ -446,6 +550,17 @@ void ShaderGenerator::matchInputs(ShaderGenerator& _previousShaderStage,
 
     // replace first occurrence of "out" with "in"
     input.replace(input.indexOf(outKeyword), outKeyword.size(), inKeyword);
+
+    // special case for array IO
+
+    if (inputArrays_ && !_previousShaderStage->outputArrays_)
+    {
+      QRegExp alphaNum("[a-zA-Z0-9]");
+      int lastNameChar = input.lastIndexOf(alphaNum);
+      input.insert(lastNameChar+1, "[]");
+//      input.insert(lastNameChar+1, "[gl_in.length()]");
+    }
+
 
     // add to input list with duplicate check
     addStringToList(input, &inputs_);
@@ -456,6 +571,23 @@ void ShaderGenerator::matchInputs(ShaderGenerator& _previousShaderStage,
 
       QString output = input;
       output.replace(output.indexOf(_inputPrefix), _inputPrefix.size(), _outputPrefix);
+      output.replace(output.indexOf(inKeyword), inKeyword.size(), outKeyword);
+
+      // take care of arrays
+      if (inputArrays_ && !outputArrays_)
+      {
+        int bracketStart = output.indexOf("[");
+        int bracketEnd = output.indexOf("]");
+        output.remove(bracketStart, bracketEnd-bracketStart+1);
+      }
+      else if (!inputArrays_ && outputArrays_)
+      {
+        QRegExp alphaNum("[a-zA-Z0-9]");
+        int lastNameChar = output.lastIndexOf(alphaNum);
+        output.insert(lastNameChar+1, "[]");
+//        output.insert(lastNameChar+1, "[gl_in.length()]");
+      }
+
 
       // add to output list with duplicate check
       addStringToList(output, &outputs_);
@@ -463,14 +595,71 @@ void ShaderGenerator::matchInputs(ShaderGenerator& _previousShaderStage,
   }
 }
 
+int ShaderGenerator::getNumOutputs() const
+{
+  return outputs_.size();
+}
 
+QString ShaderGenerator::getOutputName(int _id) const
+{
+  QString output = outputs_.at(_id);
+
+  output.remove(";");
+  output.remove("out ");
+
+  int bracketStart = output.indexOf("[");
+  int bracketEnd = output.lastIndexOf("]");
+
+  if (bracketStart >= 0)
+    output.remove(bracketStart, bracketEnd-bracketStart+1);
+
+  // decompose output declaration
+  QStringList decompOutput = output.split(" ");
+  return decompOutput.last();
+}
+
+int ShaderGenerator::getNumInputs() const
+{
+  return inputs_.size();
+}
+
+QString ShaderGenerator::getInputName(int _id) const
+{
+  QString input = inputs_.at(_id);
+
+  input.remove(";");
+  input.remove("out ");
+  
+  int bracketStart = input.indexOf("[");
+  int bracketEnd = input.lastIndexOf("]");
+
+  if (bracketStart >= 0)
+    input.remove(bracketStart, bracketEnd-bracketStart+1);
+
+  // decompose output declaration
+  QStringList decompInput = input.split(" ");
+  return decompInput.last();
+}
+
+QString ShaderGenerator::getIOMapName(int _inId) const
+{
+  QString inputName = getInputName(_inId);
+
+  // output name = input name with swapped prefix
+  QString outputName = inputName;
+  outputName.replace(outputName.indexOf(inputPrefix_), inputPrefix_.size(), outputPrefix_);
+
+  return outputName;
+}
 
 QString ShaderProgGenerator::shaderDir_;
 QStringList ShaderProgGenerator::lightingCode_;
 
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
                                          unsigned int _usage)
-: vertex_(0), geometry_(0), fragment_(0), usage_(_usage)
+: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage),
+  inputTexCoord_(false), inputColor_(false), inputNormal_(false),
+  passPosVS_(false), passPosOS_(false), passTexCoord_(false), passColor_(false), passNormal_(false)
 {
   if (shaderDir_.isEmpty())
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
@@ -482,6 +671,22 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
     if ( !ACG::openGLVersion(3,2) )
       desc_.geometryTemplateFile.clear();
 
+    // We need at least version 4.0 or higher to support tessellation
+    if ( !ACG::openGLVersion(4, 0) )
+    {
+      desc_.tessControlTemplateFile.clear();
+      desc_.tessEvaluationTemplateFile.clear();
+    }
+
+    // adjust glsl version to requirement
+
+    if (!desc_.geometryTemplateFile.isEmpty())
+      desc_.version = std::max(desc_.version, 150);
+
+    if (!desc_.tessControlTemplateFile.isEmpty() || !desc_.tessEvaluationTemplateFile.isEmpty())
+      desc_.version = std::max(desc_.version, 400);
+
+
     loadLightingFunctions();
 
     generateShaders();
@@ -492,6 +697,9 @@ ShaderProgGenerator::~ShaderProgGenerator(void)
 {
   delete vertex_;
   delete fragment_;
+  delete geometry_;
+  delete tessControl_;
+  delete tessEval_;
 }
 
 
@@ -560,8 +768,15 @@ void ShaderProgGenerator::initGenDefines(ShaderGenerator* _gen)
   if (desc_.vertexColors)
     _gen->addDefine("SG_VERTEX_COLOR 1");
 
-  if (desc_.shadeMode != SG_SHADE_UNLIT)
+//  if (desc_.shadeMode != SG_SHADE_UNLIT)
+  if (passNormal_)
     _gen->addDefine("SG_NORMALS 1");
+
+  if (passPosVS_)
+    _gen->addDefine("SG_POSVS 1");
+
+  if (passPosOS_)
+    _gen->addDefine("SG_POSOS 1");
 
   // # lights define
   QString strNumLights;
@@ -582,6 +797,8 @@ void ShaderProgGenerator::initGenDefines(ShaderGenerator* _gen)
     strLightType.sprintf("SG_LIGHT_TYPE_%d %s", i, lightTypeNames[desc_.lightTypes[i]]);
     _gen->addDefine(strLightType);
   }
+
+  _gen->addDefine("SG_ALPHA g_vMaterial.y");
 }
 
 
@@ -595,7 +812,7 @@ void ShaderProgGenerator::buildVertexShader()
   vertex_->setGLSLVersion(desc_.version);
 
 //  vertex_->initDefaultVertexShaderIO();
-  vertex_->initVertexShaderIO(&desc_);
+  vertex_->initVertexShaderIO(&desc_, passPosVS_, passPosOS_, passNormal_, passTexCoord_, passColor_);
 
   vertex_->initDefaultUniforms();
 
@@ -625,8 +842,6 @@ void ShaderProgGenerator::buildVertexShader()
 
   // assemble main function
   QStringList mainCode;
-
-  addLightingFunctions(&mainCode);
 
   if (!vertexTemplate_.size())
   {
@@ -669,7 +884,7 @@ void ShaderProgGenerator::buildVertexShader()
 
   }
 
-  vertex_->buildShaderCode(&mainCode);
+  vertex_->buildShaderCode(&mainCode, lightingCode_);
 
 }
 
@@ -692,7 +907,7 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
     }
   }
 
-  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
+  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, SG_ALPHA);");
 
   if (desc_.shadeMode != SG_SHADE_UNLIT)
     _code->push_back("sg_vNormalVS = normalize(g_mWVIT * inNormal);");
@@ -711,7 +926,11 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
     addLightingCode(_code);
   }
 
+  if (passPosOS_)
+    _code->push_back("outVertexPosOS = inPosition;");
 
+  if (passPosVS_)
+    _code->push_back("outVertexPosVS = sg_vPosVS;");
 
   // apply modifiers
   for (int i = 0; i < numModifiers_; ++i)
@@ -773,6 +992,250 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
   return 0;
 }
 
+int ShaderProgGenerator::checkForIncludes(QString _str, QStringList* _outImport, QString _includePath)
+{
+  if (_str.contains("#include "))
+  {
+    QString strIncludeFile = _str.remove("#include ").remove('\"').remove('<').remove('>').trimmed();
+
+    if (strIncludeFile.isEmpty())
+      std::cout << "wrong include syntax: " << _str.toStdString() << std::endl;
+    else
+    {
+      QString fullPathToIncludeFile = _includePath + QDir::separator() + strIncludeFile;
+
+      loadStringListFromFile(fullPathToIncludeFile, _outImport);
+    }
+
+    return 1;
+  }
+
+  return 0;
+}
+
+void ShaderProgGenerator::buildTessControlShader()
+{
+  // Only build a tess-control shader if enabled
+  if ( desc_.tessControlTemplateFile.isEmpty() )
+    return;
+
+  // the generator provides an IO mapping function and adds default uniforms to this stage
+  // - template is necessary
+  // - combination/modification of tess-control shader is not supported
+  // - template may call sg_MapIO(inId, gl_InvocationID) somewhere in code to take care of default IO pass-through
+  //         inId can be gl_InvocationID if the patch size is not modified
+
+  delete tessControl_;
+
+  tessControl_  = new ShaderGenerator();
+  tessControl_->setGLSLVersion(desc_.version);
+
+  QString it;
+  foreach(it, tessControlLayout_)
+    tessControl_->addLayout(it);
+
+  // find previous shader stage
+  ShaderGenerator* prevStage = vertex_;
+
+  tessControl_->initTessControlShaderIO(&desc_, prevStage);
+
+  tessControl_->initDefaultUniforms();
+
+
+  // apply i/o modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyTessControlIO(tessControl_);
+  }
+
+  initGenDefines(tessControl_);
+
+
+
+  // assemble main function
+  QStringList mainCode; 
+
+  // add simple io passthrough mapper
+
+  {
+    mainCode.push_back("void sg_MapIO(const int inIdx, const int outIdx)");
+    mainCode.push_back("{");
+
+    // built-in IO
+    mainCode.push_back("gl_out[outIdx].gl_Position = gl_in[inIdx].gl_Position;");
+    
+    // custom IO
+    for (int i = 0; i < tessControl_->getNumInputs(); ++i)
+    {
+      QString inputName = tessControl_->getInputName(i);
+      QString outputName = tessControl_->getIOMapName(i);
+
+      QString outputAssignCode = outputName + QString("[outIdx] = ") + inputName + QString("[inIdx];");
+
+      mainCode.push_back(outputAssignCode);
+    }
+
+    mainCode.push_back("}");
+  }
+
+
+  // interpret loaded shader template:
+  //  import #includes
+  foreach(it,tessControlTemplate_)
+  {
+    if (!checkForIncludes(it, tessControl_, getPathName(tessControlShaderFile_)))
+    {
+      // str line is no include directive
+      mainCode.push_back(it);
+    }
+  }
+
+  tessControl_->buildShaderCode(&mainCode, lightingCode_);
+}
+
+void ShaderProgGenerator::buildTessEvalShader()
+{
+  // Only build a tess-eval shader if enabled
+  if ( desc_.tessEvaluationTemplateFile.isEmpty() )
+    return;
+
+  // the generator provides default interpolation functions and adds default uniforms to this stage
+  // - template is necessary
+  // - combination/modification of tess-eval shader is not supported
+  // - template may call sg_MapIOBarycentric() or sg_MapIOBilinear() somewhere in code to take care of default IO pass-through
+  //        - barycentric interpolation can be used for triangle patches
+  //        - bilinear interpolation can be used for quad patches
+  //        - other interpolation schemes have to be user defined
+
+  delete tessEval_;
+
+  tessEval_  = new ShaderGenerator();
+  tessEval_->setGLSLVersion(desc_.version);
+
+
+  // find previous shader stage
+  ShaderGenerator* prevStage = tessControl_;
+
+  if (!prevStage)
+    prevStage = vertex_;
+
+  tessEval_->initTessEvalShaderIO(&desc_, prevStage);
+
+  tessEval_->initDefaultUniforms();
+
+  QString itLayout;
+  foreach(itLayout, tessEvalLayout_)
+    tessEval_->addLayout(itLayout);
+
+  // apply i/o modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyTessControlIO(tessEval_);
+  }
+
+  initGenDefines(tessEval_);
+
+
+  // assemble main function
+  QStringList mainCode; 
+
+  // add simple io passthrough mapper
+
+  {
+    // barycentric interpolation
+
+    mainCode.push_back("void sg_MapIOBarycentric()");
+    mainCode.push_back("{");
+
+    // built-in IO
+    mainCode.push_back("gl_Position = gl_TessCoord.x * gl_in[0].gl_Position + gl_TessCoord.y * gl_in[1].gl_Position + gl_TessCoord.z * gl_in[2].gl_Position;");
+
+    // custom IO
+    for (int i = 0; i < tessEval_->getNumInputs(); ++i)
+    {
+      QString inputName = tessEval_->getInputName(i);
+      QString outputName = tessEval_->getIOMapName(i);
+
+      QString outputAssignCode = outputName + QString(" = ") +
+        QString("gl_TessCoord.x*") + inputName + QString("[0] + ") +
+        QString("gl_TessCoord.y*") + inputName + QString("[1] + ") +
+        QString("gl_TessCoord.z*") + inputName + QString("[2];");
+
+      mainCode.push_back(outputAssignCode);
+    }
+
+    mainCode.push_back("}");
+
+    
+    // bilinear interpolation
+
+    mainCode.push_back("void sg_MapIOBilinear()");
+    mainCode.push_back("{");
+
+    // built-in IO
+    mainCode.push_back("gl_Position = mix(  mix(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_TessCoord.x), mix(gl_in[2].gl_Position, gl_in[3].gl_Position, gl_TessCoord.x), gl_TessCoord.y);");
+
+    // custom IO
+    for (int i = 0; i < tessEval_->getNumInputs(); ++i)
+    {
+      QString inputName = tessEval_->getInputName(i);
+      QString outputName = tessEval_->getIOMapName(i);
+
+      QString outputAssignCode = outputName + QString(" = mix( ") +
+        QString("mix(") + inputName + QString("[0], ") + inputName + QString("[1], gl_TessCoord.x), ") + 
+        QString("mix(") + inputName + QString("[2], ") + inputName + QString("[3], gl_TessCoord.x), gl_TessCoord.y); ");
+
+      mainCode.push_back(outputAssignCode);
+    }
+
+    mainCode.push_back("}");
+  }
+
+
+  // interpret loaded shader template:
+  //  replace (SG_INPUT, SG_OUTPUT) with matching io pairs
+  QStringList::iterator it;
+  for (it = tessEvalTemplate_.begin(); it != tessEvalTemplate_.end(); ++it)
+  {
+    QString line = *it;
+
+    // replace IO line matching the pattern:
+    //  SG_OUTPUT = r_expression(SG_INPUT);
+    // the complete expression must be contained in a single line for this to work
+    // more complex interpolation code should use #if SG_NORMALS etc.
+
+    if (line.contains("SG_INPUT") || line.contains("SG_OUTPUT"))
+    {
+      
+      mainCode.push_back("// ----------------------------------------");
+      mainCode.push_back("// ShaderGen: resolve SG_OUTPUT = expression(SG_INPUT);");
+
+      for (int i = 0; i < tessEval_->getNumInputs(); ++i)
+      {
+        QString inputName = tessEval_->getInputName(i);
+        QString outputName = tessEval_->getIOMapName(i);
+
+        // replace SG_INPUT, SG_OUTPUT with actual names
+        QString resolvedLine = line;
+
+        resolvedLine.replace("SG_INPUT", inputName);
+        resolvedLine.replace("SG_OUTPUT", outputName);
+
+        mainCode.push_back(resolvedLine);
+      }
+
+      mainCode.push_back("// ----------------------------------------");
+
+    }
+    else
+      mainCode.push_back(line);
+  }
+
+  tessEval_->buildShaderCode(&mainCode, lightingCode_);
+}
+
 void ShaderProgGenerator::buildGeometryShader()
 {
   // Only build a geometry shader if enabled
@@ -785,7 +1248,14 @@ void ShaderProgGenerator::buildGeometryShader()
   geometry_  = new ShaderGenerator();
   geometry_->setGLSLVersion(desc_.version);
 
-  geometry_->initGeometryShaderIO(&desc_);
+
+  // find previous shader stage
+  ShaderGenerator* prevStage = tessEval_;
+
+  if (!prevStage)
+    prevStage = vertex_;
+
+  geometry_->initGeometryShaderIO(&desc_, prevStage);
 
   geometry_->initDefaultUniforms();
 
@@ -794,8 +1264,10 @@ void ShaderProgGenerator::buildGeometryShader()
   for (int i = 0; i < numModifiers_; ++i)
   {
     if (usage_ & (1 << i))
-      modifiers_[i]->modifyGeometryIO(fragment_);
+      modifiers_[i]->modifyGeometryIO(geometry_);
   }
+
+  initGenDefines(geometry_);
 
 
   // assemble main function
@@ -807,23 +1279,20 @@ void ShaderProgGenerator::buildGeometryShader()
     mainCode.push_back("void sg_MapIO(const int inIdx)");
     mainCode.push_back("{");
 
+    // built-in IO
     mainCode.push_back("gl_Position = gl_in[inIdx].gl_Position;");
-    mainCode.push_back("outGeometryPosCS = outVertexPosCS[inIdx];");
-
-    if (desc_.textured())
-      mainCode.push_back("outGeometryTexCoord = outVertexTexCoord[inIdx];");
-
-    if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-        desc_.shadeMode == SG_SHADE_FLAT    ||
-        desc_.vertexColors)
-      mainCode.push_back("outGeometryColor = outVertexColor[inIdx];");
-
-    if (desc_.shadeMode == SG_SHADE_PHONG) {
-      mainCode.push_back("outGeometryNormal = outVertexNormal[inIdx];");
-      mainCode.push_back("outGeometryPosVS  = outVertexPosVS[inIdx];");
-    }
-
     mainCode.push_back("gl_PrimitiveID = gl_PrimitiveIDIn;");
+
+    // custom IO
+    for (int i = 0; i < geometry_->getNumInputs(); ++i)
+    {
+      QString inputName = geometry_->getInputName(i);
+      QString outputName = geometry_->getIOMapName(i);
+
+      QString outputAssignCode = outputName + QString(" = ") + inputName + QString("[inIdx];");
+
+      mainCode.push_back(outputAssignCode);
+    }
 
     mainCode.push_back("}");
   }
@@ -841,7 +1310,7 @@ void ShaderProgGenerator::buildGeometryShader()
     }
   }
 
-  geometry_->buildShaderCode(&mainCode);
+  geometry_->buildShaderCode(&mainCode, lightingCode_);
 }
 
 
@@ -852,8 +1321,18 @@ void ShaderProgGenerator::buildFragmentShader()
   fragment_  = new ShaderGenerator();
   fragment_->setGLSLVersion(desc_.version);
 
+  // find previous shader stage
+  ShaderGenerator* prevStage = geometry_;
 
-  fragment_->initFragmentShaderIO(&desc_);
+  if (!prevStage)
+    prevStage = tessEval_;
+  if (!prevStage)
+    prevStage = tessControl_;
+  if (!prevStage)
+    prevStage = vertex_;
+
+
+  fragment_->initFragmentShaderIO(&desc_, prevStage);
 
 
   fragment_->initDefaultUniforms();
@@ -923,9 +1402,6 @@ void ShaderProgGenerator::buildFragmentShader()
   // assemble main function
   QStringList mainCode;
 
-  addLightingFunctions(&mainCode);
-
-
   if (!fragmentTemplate_.size())
   {
     mainCode.push_back("void main()");
@@ -970,7 +1446,7 @@ void ShaderProgGenerator::buildFragmentShader()
 
 
 
-  fragment_->buildShaderCode(&mainCode);
+  fragment_->buildShaderCode(&mainCode, lightingCode_);
 }
 
 
@@ -979,14 +1455,16 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
   QString inputShader = "Vertex";
 
-  if ( !desc_.geometryTemplateFile.isEmpty() )
+  if ( tessEval_ )
+    inputShader = "Te";
+  if ( geometry_ )
     inputShader = "Geometry";
 
   // support for projective texture mapping
   _code->push_back("vec4 sg_vPosCS = out" + inputShader + "PosCS;");
   _code->push_back("vec2 sg_vScreenPos = out" + inputShader + "PosCS.xy / out" + inputShader + "PosCS.w * 0.5 + vec2(0.5, 0.5);");
 
-  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
+  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, SG_ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
       desc_.shadeMode == SG_SHADE_FLAT    ||
@@ -1135,8 +1613,80 @@ void ShaderProgGenerator::addLightingFunctions(QStringList* _code)
 
 void ShaderProgGenerator::generateShaders()
 {
+  // import template source from files
   loadShaderTemplateFromFile();
+
+  // check what needs to be passed down from vertex shader
+
+  if (desc_.shadeMode != SG_SHADE_UNLIT)
+    inputNormal_ = true;
+
+  if (desc_.textured())
+  {
+    inputTexCoord_ = true;
+    passTexCoord_ = true;
+  }
+
+  if (desc_.vertexColors)
+    inputColor_ = true;
+
+  if (desc_.shadeMode == SG_SHADE_PHONG)
+  {
+    passNormal_ = true;
+    passPosVS_ = true;
+  }
+
+  if (desc_.shadeMode == SG_SHADE_FLAT || desc_.shadeMode == SG_SHADE_GOURAUD || desc_.vertexColors)
+    passColor_ = true;
+
+
+  // scan macros of modifiers for attribute requests,
+  // done by adding modifier io to an empty dummy
+  ShaderGenerator dummy;
+
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+    {
+      ShaderModifier* mod = modifiers_[i];
+
+      mod->modifyVertexIO(&dummy);
+      mod->modifyTessControlIO(&dummy);
+      mod->modifyTessEvalIO(&dummy);
+      mod->modifyGeometryIO(&dummy);
+      mod->modifyFragmentIO(&dummy);
+    }
+  }
+  // scan requested inputs from modifiers
+
+  if (dummy.hasDefine(SG_REQUEST_POSVS))
+    passPosVS_ = true;
+  if (dummy.hasDefine(SG_REQUEST_TEXCOORD))
+  {
+    inputTexCoord_ = true;
+    passTexCoord_ = true;
+  }
+  if (dummy.hasDefine(SG_REQUEST_VERTEXCOLOR))
+  {
+    inputColor_ = true;
+    passColor_ = true;
+  }
+  if (dummy.hasDefine(SG_REQUEST_NORMAL))
+  {
+    inputNormal_ = true;
+    passNormal_ = true;
+  }
+  if (dummy.hasDefine(SG_REQUEST_POSOS))
+    passPosOS_ = true;
+
+
+
+
+  // assemble shader codes
+
   buildVertexShader();
+  buildTessControlShader();
+  buildTessEvalShader();
   buildGeometryShader();
   buildFragmentShader();
 }
@@ -1145,6 +1695,16 @@ void ShaderProgGenerator::generateShaders()
 const QStringList& ShaderProgGenerator::getVertexShaderCode()
 {
   return vertex_->getShaderCode();
+}
+
+const QStringList& ShaderProgGenerator::getTessControlShaderCode()
+{
+  return tessControl_->getShaderCode();
+}
+
+const QStringList& ShaderProgGenerator::getTessEvaluationShaderCode()
+{
+  return tessEval_->getShaderCode();
 }
 
 const QStringList& ShaderProgGenerator::getGeometryShaderCode()
@@ -1177,15 +1737,126 @@ void ShaderProgGenerator::saveFragmentShToFile(const char* _fileName)
 void ShaderProgGenerator::loadShaderTemplateFromFile()
 {
   if (!desc_.vertexTemplateFile.isEmpty())
+  {
     loadStringListFromFile(desc_.vertexTemplateFile, &vertexTemplate_);
+    scanShaderTemplate(vertexTemplate_, desc_.vertexTemplateFile);
+  }
   if (!desc_.fragmentTemplateFile.isEmpty())
+  {
     loadStringListFromFile(desc_.fragmentTemplateFile, &fragmentTemplate_);
+    scanShaderTemplate(fragmentTemplate_, desc_.fragmentTemplateFile);
+  }
   if (!desc_.geometryTemplateFile.isEmpty())
+  {
     loadStringListFromFile(desc_.geometryTemplateFile, &geometryTemplate_);
+    scanShaderTemplate(geometryTemplate_, desc_.geometryTemplateFile);
+  }
+  if (!desc_.tessControlTemplateFile.isEmpty())
+  {
+    loadStringListFromFile(desc_.tessControlTemplateFile, &tessControlTemplate_);
+    scanShaderTemplate(tessControlTemplate_, desc_.tessControlTemplateFile, &tessControlLayout_);
+  }
+  if (!desc_.tessEvaluationTemplateFile.isEmpty())
+  {
+    loadStringListFromFile(desc_.tessEvaluationTemplateFile, &tessEvalTemplate_);
+    scanShaderTemplate(tessEvalTemplate_, desc_.tessEvaluationTemplateFile, &tessEvalLayout_);
+  }
+
 
   vertexShaderFile_   = desc_.vertexTemplateFile;
+  tessControlShaderFile_ = desc_.tessControlTemplateFile;
+  tessEvalShaderFile_ = desc_.tessEvaluationTemplateFile;
   geometryShaderFile_ = desc_.geometryTemplateFile;
   fragmentShaderFile_ = desc_.fragmentTemplateFile;
+}
+
+void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString _templateFilename, QStringList* _outLayoutDirectives)
+{
+  // interpret loaded shader template:
+  //  import #includes
+
+  QString filePath = getPathName(_templateFilename);
+
+  QStringList::iterator it;
+  for (it = _templateSrc.begin(); it != _templateSrc.end(); ++it)
+  {
+    QStringList import;
+
+    if (checkForIncludes(*it, &import, filePath))
+    {
+      // line is include directive
+
+      // remove line from source
+      it = _templateSrc.erase(it);
+
+      int offset = it - _templateSrc.begin();
+
+      // insert imported file
+
+      QString importLine;
+      foreach(importLine, import)
+      {
+        it = _templateSrc.insert(it, importLine);
+        ++it;
+      }
+
+      // included file might recursively include something again
+      // -> scan included file
+      it = _templateSrc.begin() + offset;
+    }
+    else
+    {
+      QString trimmedLine = it->trimmed();
+
+      // scan and adjust glsl version
+      QByteArray lineBytes = trimmedLine.toAscii();
+
+      int templateVersion = 0;
+      if (sscanf(lineBytes.constData(), "#version %d", &templateVersion) == 1)
+      {
+        desc_.version = std::max(templateVersion, desc_.version);
+
+        // remove version line from template since this is added later in the build functions
+        it = _templateSrc.erase(it);
+      }
+      // scan layout() directive
+      else if (trimmedLine.startsWith("layout(") || trimmedLine.startsWith("layout ("))
+      {
+        if (_outLayoutDirectives)
+        {
+          _outLayoutDirectives->push_back(trimmedLine);
+          // layout() will be inserted later at the correct position in the build functions
+          // - must be placed before shader IO declaration to make tess-control shaders compilable on ati
+          it = _templateSrc.erase(it);
+        }
+      }
+      else
+      {
+        // scan requested inputs
+
+        if (trimmedLine.startsWith(SG_REQUEST_POSVS))
+          passPosVS_ = true;
+        else if (trimmedLine.startsWith(SG_REQUEST_TEXCOORD))
+        {
+          inputTexCoord_ = true;
+          passTexCoord_ = true;
+        }
+        else if (trimmedLine.startsWith(SG_REQUEST_VERTEXCOLOR))
+        {
+          inputColor_ = true;
+          passColor_ = true;
+        }
+        else if (trimmedLine.startsWith(SG_REQUEST_NORMAL))
+        {
+          inputNormal_ = true;
+          passNormal_ = true;
+        }
+        else if (trimmedLine.startsWith(SG_REQUEST_POSOS))
+          passPosOS_ = true;
+      }
+
+    }
+  }
 
 }
 
@@ -1218,7 +1889,10 @@ unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
   }
 
   if (numModifiers_ == 32) 
+  {
+    std::cout << "warning: exceeded maximal ShaderModifier count!" << std::endl;
     return 0;
+  }
 
   _modifier->modifierID_ = (unsigned int)(1 << numModifiers_);
 
@@ -1256,6 +1930,22 @@ int ShaderProgGenerator::getNumActiveModifiers() const
 }
 
 
+bool ShaderProgGenerator::hasGeometryShader() const
+{
+  return !desc_.geometryTemplateFile.isEmpty();
+}
+
+bool ShaderProgGenerator::hasTessControlShader() const
+{
+  return !desc_.tessControlTemplateFile.isEmpty();
+}
+
+bool ShaderProgGenerator::hasTessEvaluationShader() const
+{
+  return !desc_.tessEvaluationTemplateFile.isEmpty();
+}
+
+
 //=============================================================================
 
 ShaderModifier::ShaderModifier( void )
@@ -1281,6 +1971,8 @@ QString ShaderGenDesc::toString() const
 
   QString res;
   QTextStream resStrm(&res);
+
+  resStrm << "version: " << version;
 
   resStrm << "shaderDesc.numLights: " << numLights;
 
@@ -1344,6 +2036,12 @@ QString ShaderGenDesc::toString() const
 
   if (!vertexTemplateFile.isEmpty())
     resStrm << "\nshaderDesc.vertexTemplateFile: " << vertexTemplateFile;
+
+  if (!tessControlTemplateFile.isEmpty())
+    resStrm << "\nshaderDesc.tessControlTemplateFile: " << tessControlTemplateFile;
+
+  if (!tessEvaluationTemplateFile.isEmpty())
+    resStrm << "\nshaderDesc.tessEvaluationTemplateFile: " << tessEvaluationTemplateFile;
 
   if (!geometryTemplateFile.isEmpty())
     resStrm << "\nshaderDesc.geometryTemplateFile: " << geometryTemplateFile;
