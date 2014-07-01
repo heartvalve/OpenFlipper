@@ -123,10 +123,14 @@ protected:
     // string-pointer in ShaderGenDesc may not be permanent,
     // so copy string data here
     QString strVertexTemplate;
+    QString strTessControlTemplate;
+    QString strTessEvaluationTemplate;
     QString strGeometryTemplate;
     QString strFragmentTemplate;
 
     QDateTime vertexFileLastMod;
+    QDateTime tessControlFileLastMod;
+    QDateTime tessEvaluationFileLastMod;
     QDateTime geometryFileLastMod;
     QDateTime fragmentFileLastMod;
   };

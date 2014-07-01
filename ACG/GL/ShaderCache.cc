@@ -105,6 +105,18 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
     newEntry.fragmentFileLastMod = QFileInfo(newEntry.strFragmentTemplate).lastModified();
   }
 
+  if (!_desc->tessControlTemplateFile.isEmpty())
+  {
+    newEntry.strTessControlTemplate = _desc->tessControlTemplateFile;
+    newEntry.tessControlFileLastMod = QFileInfo(newEntry.strTessControlTemplate).lastModified();
+  }
+
+  if (!_desc->tessEvaluationTemplateFile.isEmpty())
+  {
+    newEntry.strTessEvaluationTemplate = _desc->tessEvaluationTemplateFile;
+    newEntry.tessEvaluationFileLastMod = QFileInfo(newEntry.strTessEvaluationTemplate).lastModified();
+  }
+
   if (!_desc->geometryTemplateFile.isEmpty())
   {
       newEntry.strGeometryTemplate = _desc->geometryTemplateFile;
@@ -155,11 +167,29 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
       for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
         outStrm << progGen.getVertexShaderCode()[i] << "\n";
 
-      outStrm << "\n---------------------geometry-shader--------------------\n\n";
+      if (progGen.hasTessControlShader())
+      {
+        outStrm << "\n---------------------tesscontrol-shader--------------------\n\n";
 
-      if (progGen.hasGeometryShader() )
+        for (int i = 0; i < progGen.getTessControlShaderCode().size(); ++i)
+          outStrm << progGen.getTessControlShaderCode()[i] << "\n";
+      }
+
+      if (progGen.hasTessEvaluationShader())
+      {
+        outStrm << "\n---------------------tesseval-shader--------------------\n\n";
+
+        for (int i = 0; i < progGen.getTessEvaluationShaderCode().size(); ++i)
+          outStrm << progGen.getTessEvaluationShaderCode()[i] << "\n";
+      }
+
+      if (progGen.hasGeometryShader())
+      {
+        outStrm << "\n---------------------geometry-shader--------------------\n\n";
+
         for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
           outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+      }
 
       outStrm << "\n---------------------fragment-shader--------------------\n\n";
 
@@ -195,6 +225,31 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
     prog->attach(geomShader);
   }
 
+  // Check if we have tessellation shaders and if we have support for it, enable it here
+  if ( progGen.hasTessControlShader() || progGen.hasTessEvaluationShader() ) {
+    GLSL::Shader* tessControlShader = 0, *tessEvalShader = 0;
+
+#ifdef GL_ARB_tessellation_shader
+    tessControlShader = new GLSL::TessControlShader();
+    tessEvalShader = new GLSL::TessEvaluationShader();
+#endif // GL_ARB_tessellation_shader
+
+    if (tessControlShader && progGen.hasTessControlShader())
+    {
+      tessControlShader->setSource(progGen.getTessControlShaderCode());
+      tessControlShader->compile();
+      prog->attach(tessControlShader);
+    }
+
+    if (tessEvalShader && progGen.hasTessEvaluationShader())
+    {
+      tessEvalShader->setSource(progGen.getTessEvaluationShaderCode());
+      tessEvalShader->compile();
+      prog->attach(tessEvalShader);
+    }
+    
+  }
+
   prog->link();
   glCheckErrors();
 
@@ -219,13 +274,41 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
 {
   CacheEntry newEntry;
   newEntry.usage = 0;
-  
-  // store filenames and timestamps in new entry
-  newEntry.strFragmentTemplate = _fragmentShaderFile;
-  newEntry.fragmentFileLastMod = QFileInfo(_fragmentShaderFile).lastModified();
 
-  newEntry.strVertexTemplate = _vertexShaderFile;
-  newEntry.vertexFileLastMod = QFileInfo(_vertexShaderFile).lastModified();
+
+  // store filenames and timestamps in new entry
+
+  // fragment shader
+  QFileInfo fileInfo(_fragmentShaderFile);
+  if (fileInfo.isRelative())
+  {
+    QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_fragmentShaderFile);
+    fileInfo = QFileInfo(absFilename);
+
+    newEntry.strFragmentTemplate = absFilename;
+    newEntry.fragmentFileLastMod = fileInfo.lastModified();
+  }
+  else
+  {
+    newEntry.strFragmentTemplate = _fragmentShaderFile;
+    newEntry.fragmentFileLastMod = fileInfo.lastModified();
+  }
+  
+  // vertex shader
+  fileInfo = QFileInfo(_vertexShaderFile);
+  if (fileInfo.isRelative())
+  {
+    QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_vertexShaderFile);
+    fileInfo = QFileInfo(absFilename);
+
+    newEntry.strVertexTemplate = absFilename;
+    newEntry.vertexFileLastMod = fileInfo.lastModified();
+  }
+  else
+  {
+    newEntry.strVertexTemplate = _vertexShaderFile;
+    newEntry.vertexFileLastMod = fileInfo.lastModified();
+  }
 
   CacheList::iterator oldCache = cacheStatic_.end();
 
@@ -272,6 +355,12 @@ bool ACG::ShaderCache::compareTimeStamp(const CacheEntry* _a, const CacheEntry* 
 
   if (_a->fragmentFileLastMod != _b->fragmentFileLastMod)
     return false;
+
+  if (_a->tessControlFileLastMod != _b->tessControlFileLastMod)
+    return false;
+
+  if (_a->tessEvaluationFileLastMod != _b->tessEvaluationFileLastMod)
+    return false;
   return true;
 }
 
@@ -302,6 +391,12 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
       return -1;
 
   if (_a->strVertexTemplate != _b->strVertexTemplate)
+    return -1;
+
+  if (_a->strTessControlTemplate != _b->strTessControlTemplate)
+    return -1;
+
+  if (_a->strTessEvaluationTemplate != _b->strTessEvaluationTemplate)
     return -1;
 
 
