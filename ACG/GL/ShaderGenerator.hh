@@ -88,6 +88,8 @@ public:
     shadeMode(SG_SHADE_UNLIT),
     vertexColors(false),
     vertexTemplateFile(""),
+    tessControlTemplateFile(""),
+    tessEvaluationTemplateFile(""),
     geometryTemplateFile(""),
     fragmentTemplateFile(""),
     normalizeTexColors(true),
@@ -111,6 +113,8 @@ public:
 //    shadeMode                         = _rhs.shadeMode;
 //    vertexColors                      = _rhs.vertexColors;
 //    vertexTemplateFile                = _rhs.vertexTemplateFile;
+//    tessControlTemplateFile           = _rhs.tessControlTemplateFile;
+//    tessEvaluationTemplateFile        = _rhs.tessEvaluationTemplateFile;
 //    geometryTemplateFile              = _rhs.geometryTemplateFile;
 //    fragmentTemplateFile              = _rhs.fragmentTemplateFile;
 // 
@@ -134,6 +138,8 @@ public:
 
   // optionally specify shader template file names
   QString vertexTemplateFile;
+  QString tessControlTemplateFile;
+  QString tessEvaluationTemplateFile;
   QString geometryTemplateFile;
   QString fragmentTemplateFile;
 
@@ -288,7 +294,7 @@ void main()
   vec4 sg_vPosVS    = g_mWV  * inPosition;
   vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);
   vec2 sg_vTexCoord = vec2(0.0, 0.0);
-  vec4 sg_cColor    = vec4(g_cEmissive, ALPHA);
+  vec4 sg_cColor    = vec4(g_cEmissive, SG_ALPHA);
 
 #if normals available
   sg_vNormalVS = g_mWVIT * inNormal;
@@ -343,7 +349,7 @@ void main()
   // compute screen-projected coordinates, useful for various post-processing effects
   vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);
 
-  vec4 sg_cColor = vec4(g_cEmisive, ALPHA);
+  vec4 sg_cColor = vec4(g_cEmisive, SG_ALPHA);
 
 #if vertex-lighting
   sg_cColor = outColor;
@@ -397,15 +403,28 @@ public:
 
   /** \brief Adds fitting vertex shader io for a given description
   */
-  void initVertexShaderIO(const ShaderGenDesc* _desc);
+  void initVertexShaderIO(const ShaderGenDesc* _desc, 
+    bool _requestPosVS = false,
+    bool _requestPosOS = false,
+    bool _requestNormal = false,
+    bool _requestTexCoord = false,
+    bool _requestColor = false);
 
-  /** \brief Adds fitting vertex shader io for a given description
+  /** \brief Adds fitting tess-control shader io for a given description
   */
-  void initGeometryShaderIO(const ShaderGenDesc* _desc);
+  void initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+
+  /** \brief Adds fitting tess-evaluation shader io for a given description
+  */
+  void initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+
+  /** \brief Adds fitting geometry shader io for a given description
+  */
+  void initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
 
   /** \brief Adds fitting fragment shader io for a given description
   */
-  void initFragmentShaderIO(const ShaderGenDesc* _desc);
+  void initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
 
   /** \brief Adds frequently used uniform parameters
    *
@@ -453,16 +472,36 @@ public:
    *   #define SG_GOURAUD 1
    * \endcode
    */
-  void addDefine(QString _uniform);
+  void addDefine(QString _define);
 
+  /** \brief Check for define
+   *
+   * Example:
+   * \code
+   *   hasDefine("#define SG_REQUEST_NORMAL")
+   * \endcode
+   */
+  bool hasDefine(QString _define) const;
+
+  /** \brief Add a layout directive
+   *
+   * Example:
+   * \code
+   *   layout(vertices = 3) out;
+   * \endcode
+   */
+  void addLayout(QString _layout);
 
   /** \brief Add a light description to shader:
   */
   void addLight(int lightIndex_, ShaderGenLightType _light);
 
   /** \brief Shader assembly function
+   *
+   * Also scans shader code for references to default lighting functions LitPointLight(), LitDirLight(), LitSpotLight()
+   * and eventually adds these to the shader.
   */
-  void buildShaderCode(QStringList* _pMainCode);
+  void buildShaderCode(QStringList* _pMainCode, const QStringList& _defaultLightingFunctions);
 
   /** \brief Get result of buildShaderCode
   */
@@ -487,13 +526,41 @@ public:
    * @param _inputPrefix name prefix of inputs to this shader (only necessary if _passToNextStage is true)
    * @param _outputPrefix name prefix of outputs of this shader (only necessary if _passToNextStage is true)
   */
-  void matchInputs(ShaderGenerator& _previousShaderStage, bool _passToNextStage, QString _inputPrefix = "outVertex", QString _outputPrefix = "outGeometry");
+  void matchInputs(const ShaderGenerator* _previousShaderStage, bool _passToNextStage, QString _inputPrefix = "outVertex", QString _outputPrefix = "outGeometry");
+
+
+  /** \brief get number of outputs
+  */
+  int getNumOutputs() const;
+
+  /** \brief get variable name of output
+   *
+   * @param _id zero based index of output
+  */
+  QString getOutputName(int _id) const;
+
+  /** \brief get number of inputs
+  */
+  int getNumInputs() const;
+
+  /** \brief get variable name of input
+   *
+   * @param _id zero based index of input
+  */
+  QString getInputName(int _id) const;
+
+  /** \brief get corresponding output name of an input id
+   *
+   * @param _inId zero-based index of input id
+   * @return matching output name
+  */
+  QString getIOMapName(int _inId) const;
 
 private:
 
-  /** aborts, if string already present
-   *  prefix, postfix are very primitive,
-   *  only checks for occurrence disregard locations
+  /** aborts if string already present
+   *  prefix, postfix functionality is very basic:
+   *    only checks for occurrence and disregards location
    */
   void addStringToList(QString _str, QStringList* _list, QString _prefix = "", QString _postfix = "");
 
@@ -514,6 +581,19 @@ private:
   QStringList outputs_;
   QStringList uniforms_;
   QStringList genDefines_;
+  QStringList layouts_;
+
+  /// inputs of shader are arrays (tess-control, tess-eval, geometry)
+  bool inputArrays_;
+
+  /// outputs of shader are arrays (tess-control)
+  bool outputArrays_;
+
+  /// prefix of inputs to this shader, same as prefix of ouputs of previous stage
+  QString inputPrefix_;
+
+  /// prefix of outputs of this shader
+  QString outputPrefix_;
 };
 
 
@@ -636,6 +716,32 @@ public:
   */
   virtual void modifyGeometryIO(ShaderGenerator* _shader) {}
 
+  /** \brief Add your own inputs/outputs to the tessellation control shader.
+   *
+   * your implementation may look like this:
+   *
+   * \code
+   * _shader->addInput("sampler2D depthSampler");
+   * _shader->addUniform("vec4 shaderParam");
+   * \endcode
+   *
+   * @param _shader shader interface
+  */
+  virtual void modifyTessControlIO(ShaderGenerator* _shader) {}
+
+    /** \brief Add your own inputs/outputs to the tessellation evaluation shader.
+   *
+   * your implementation may look like this:
+   *
+   * \code
+   * _shader->addInput("sampler2D depthSampler");
+   * _shader->addUniform("vec4 shaderParam");
+   * \endcode
+   *
+   * @param _shader shader interface
+  */
+  virtual void modifyTessEvalIO(ShaderGenerator* _shader) {}
+
   /** \brief Add your own inputs/outputs to the fragment shader.
    *
    * your implementation may look like this:
@@ -753,7 +859,15 @@ public:
   */
   const QStringList& getVertexShaderCode();
 
-  /** \brief Returns generated geometry shader code
+  /** \brief Returns generated vertex shader code
+  */
+  const QStringList& getTessControlShaderCode();
+
+  /** \brief Returns generated tessellation control shader code
+  */
+  const QStringList& getTessEvaluationShaderCode();
+
+  /** \brief Returns generated tessellation evaluation shader code
   */
   const QStringList& getGeometryShaderCode();
 
@@ -779,7 +893,17 @@ public:
   */
   static unsigned int registerModifier(ShaderModifier* _modifier);
 
-  bool hasGeometryShader() { return !desc_.geometryTemplateFile.isEmpty(); };
+  /** \brief check whether there is a geometry shader present
+  */
+  bool hasGeometryShader() const;
+
+  /** \brief check whether there is a tess-control shader present
+  */
+  bool hasTessControlShader() const;
+
+  /** \brief check whether there is a tess-evaluation shader present
+  */
+  bool hasTessEvaluationShader() const;
 
   /** \brief Generates the shader code
   */
@@ -791,7 +915,14 @@ private:
   */
   void loadShaderTemplateFromFile();
 
+  /** \brief Scans loaded shader template for requested inputs, glsl version or includes
+  */
+  void scanShaderTemplate(QStringList& _templateSrc, QString _templateFilename, QStringList* _outLayoutDirectives = 0);
+
+
   void buildVertexShader();
+  void buildTessControlShader();
+  void buildTessEvalShader();
   void buildGeometryShader();
   void buildFragmentShader();
 
@@ -822,6 +953,11 @@ private:
   /// eventually imports the included file to the specified generator
   int checkForIncludes(QString _str, ShaderGenerator* _gen, QString _includePath);
 
+  /// checks if _str is an include directive
+  /// eventually imports the included file to the specified stringlist
+  int checkForIncludes(QString _str, QStringList* _outImport, QString _includePath);
+
+
   /// provide generated defines to shader
   void initGenDefines(ShaderGenerator* _gen);
 
@@ -830,10 +966,14 @@ private:
   static void loadStringListFromFile(QString _fileName, QStringList* _out);
 
   ShaderGenerator* vertex_;
+  ShaderGenerator* tessControl_;
+  ShaderGenerator* tessEval_;
   ShaderGenerator* geometry_;
   ShaderGenerator* fragment_;
 
   QStringList vertexTemplate_;
+  QStringList tessControlTemplate_;
+  QStringList tessEvalTemplate_;
   QStringList geometryTemplate_;
   QStringList fragmentTemplate_;
 
@@ -847,8 +987,28 @@ private:
 
   /// path + filename to shader templates
   QString vertexShaderFile_;
+  QString tessControlShaderFile_;
+  QString tessEvalShaderFile_;
   QString geometryShaderFile_;
   QString fragmentShaderFile_;
+
+  /// layout() directives scanned from loaded templates
+  QStringList tessControlLayout_;
+  QStringList tessEvalLayout_;
+
+  /// default attributes that should be imported in vertex shader
+  bool inputTexCoord_, // texcoords
+    inputColor_,    // vertex colors 
+    inputNormal_;   // view space normals
+
+  /// default attributes that should be passed down from vertex shader
+  bool passPosVS_, // view space position
+    passPosOS_, // object space position
+    passTexCoord_, // texcoords
+    passColor_,    // vertex colors 
+    passNormal_;   // view space normals
+
+
 
 
   static QString shaderDir_;
