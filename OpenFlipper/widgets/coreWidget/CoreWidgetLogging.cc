@@ -52,14 +52,10 @@
 
 //== INCLUDES =================================================================
 
-// -------------------- mview
 #include "CoreWidget.hh"
+
 // -------------------- ACG
 #include "OpenFlipper/common/GlobalOptions.hh"
-
-// -------------------- Qt
-#include <QScrollBar>
-#include <QApplication>
 
 //== IMPLEMENTATION ==========================================================
 
