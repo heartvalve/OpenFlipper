@@ -40,9 +40,10 @@
 *                                                                            *
 \*===========================================================================*/
 
-/**
- * @file Contains definitions that require qt headers which are incompatible
- * with glew.h.
+/** @file
+ *
+ *  Contains definitions of the PostProcessorPhilipsStereoPlugin that require qt headers
+ *  which are incompatible with glew.h.
  */
 
 #include "PostProcessorPhilipsStereo.hh"
