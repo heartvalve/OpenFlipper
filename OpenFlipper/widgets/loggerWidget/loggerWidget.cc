@@ -218,6 +218,13 @@ void LoggerWidget::append(QString _text, Logtype _type){
       if ( errorButton_->isChecked() )
         item->setHidden(false);
       break;
+    case LOGSTATUS:
+      item->setForeground( QBrush(QColor(Qt::blue)) );
+      item->setBackground( QBrush(QColor(255,225,225),Qt::Dense4Pattern) );
+
+      if ( errorButton_->isChecked() )
+        item->setHidden(false);
+      break;
   }
   
   // If the logger is hidden, we just ignore the update ... done by showEvent later
