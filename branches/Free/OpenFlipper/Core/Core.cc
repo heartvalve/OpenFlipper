@@ -1269,6 +1269,8 @@ void Core::slotLogToFile(Logtype _type, QString _message){
       (*logStream_) << "WARN:"; break;
     case LOGERR:
       (*logStream_) << "ERR :"; break;
+    case LOGSTATUS:
+      (*logStream_) << "STAT:"; break;
   }
 
   (*logStream_) << _message << "\n" << flush;

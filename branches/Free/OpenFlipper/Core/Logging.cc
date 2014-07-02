@@ -108,6 +108,9 @@ slotLog(Logtype _type, QString _message) {
       case LOGERR:
         std::cerr << "\33[31m" << output << std::endl;
         break;
+      case LOGSTATUS:
+        std::cerr << "\33[34m" << output << std::endl;
+        break;
     }
   }
   

@@ -86,7 +86,7 @@ slotLog(Logtype _type, QString _message) {
     case LOGERR:
       textColor = QColor(250,0,0);
       break;
-    case LOGNONE:
+    case LOGSTATUS:
       textColor = QColor(0,0,250);
       break;
   }
