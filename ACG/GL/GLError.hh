@@ -84,6 +84,12 @@
 namespace ACG {
 //=============================================================================
 
+/** \brief replaces the gluErrorToString function at least for the standard OpenGL Headers
+ *
+ */
+std::string ACGDLLEXPORT glErrorToString( GLenum _error );
+
+
 /** Nice wrapper that outputs all current OpenGL errors to std::cerr.
     If no error is present nothing is printed.
 **/
@@ -92,16 +98,11 @@ inline void glCheckErrors()
   GLenum error;
   while ((error = glGetError()) != GL_NO_ERROR)
   {
-    std::cerr << "GL error: " << gluErrorString(error) << std::endl;
+    std::cerr << "GL error: " << glErrorToString(error) << std::endl;
   }
 }
 
-inline void nurbsErrorCallback(GLenum errorCode)
-{
-  const GLubyte *estring;
-  estring = gluErrorString(errorCode);
-  std::cerr << "Nurbs Error: " << estring << std::endl;;
-}
+void ACGDLLEXPORT nurbsErrorCallback(GLenum errorCode);
 
 //=============================================================================
 }  // namespace ACG
