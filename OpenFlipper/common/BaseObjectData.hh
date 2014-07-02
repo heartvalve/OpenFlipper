@@ -203,7 +203,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
      * @param _mode  The draw mode that should be active for this object
      * @param _force If true, the mode is set ignoring if its supported by the node and its subnodes
      */
-    void setObjectDrawMode(const ACG::SceneGraph::DrawModes::DrawMode _mode, bool _force = false);
+    void setObjectDrawMode(const ACG::SceneGraph::DrawModes::DrawMode& _mode, const bool& _force = false);
 
   private :
 
