@@ -1124,6 +1124,110 @@ void glViewer::encodeView(QString& _view, const QSize& _windowSize /*= QSize()*/
 //----------------------------------------------------------------------------
 
 
+bool glViewer::decodeView(const QString& _view,
+        ACG::GLMatrixd &m, ACG::GLMatrixd &p, int &pMode, double &ortho_width,
+        QSize *_windowSize /*= NULL*/,
+        int* _splitterWidth /*= NULL*/, QSize *_viewportSize)
+{
+    // Remove the magic from the string
+    QString temp = _view;
+    temp.remove(0,sizeof(COPY_PASTE_VIEW_START_STRING));
+
+    //Split it into its components
+    QStringList split = temp.split(QRegExp("[\\n\\s]"),QString::SkipEmptyParts);
+
+    // New version
+    if ( split.size() >= 37 ) {
+
+      //*********************************************************
+      // Parse the components
+      // first, get the projection and the modelview matrices
+      //*********************************************************
+      for (std::size_t i = 0; i < 4; ++i)
+      {
+        for (std::size_t j = 0; j < 4; ++j)
+        {
+          m(i,j) = split[i*4 + j].toDouble();
+          p(i,j) = split[i*4 + j +16].toDouble();
+        }
+      }
+
+      //*********************************************************
+      //parse the window size if requested
+      //*********************************************************
+      if (_windowSize)
+      {
+        //restore the old window size
+        int w =  split[32].toInt();
+        int h =  split[33].toInt();
+        *_windowSize = QSize(w,h);
+      }
+
+      //*********************************************************
+      //parse the splitter width for the toolboxes if requested
+      //*********************************************************
+      if (_splitterWidth) {
+        *_splitterWidth = split[34].toInt();
+      }
+
+      //*********************************************************
+      // Projection mode and orthogonal width
+      //*********************************************************
+      pMode =  split[35].toInt();
+      ortho_width = split[36].toDouble();
+
+      if (_viewportSize && split.size() >= 39) {
+          *_viewportSize = QSize(split[37].toInt(), split[38].toInt());
+      }
+
+    } else if ( split.size() == 36 )  { // Old Version
+
+      //*********************************************************
+      // Parse the components
+      // first, get the projection and the modelview matrices
+      //*********************************************************
+      for (std::size_t i = 0; i < 4; ++i)
+      {
+        for (std::size_t j = 0; j < 4; ++j)
+        {
+          m(i,j) = split[i*4 + j].toDouble();
+          p(i,j) = split[i*4 + j +16].toDouble();
+        }
+      }
+
+      //*********************************************************
+      //parse the window size if requested
+      //*********************************************************
+      if (_windowSize)
+      {
+        //restore the old window size
+        int w =  split[32].toInt();
+        int h =  split[33].toInt();
+        *_windowSize = QSize(w,h);
+      }
+
+
+      //*********************************************************
+      // Return -1 to inform, that the value is unknown
+      //*********************************************************
+      if (_splitterWidth) {
+        *_splitterWidth = -1;
+      }
+
+      //*********************************************************
+      // Projection mode and orthogonal width
+      //*********************************************************
+      pMode =  split[34].toInt();
+      ortho_width = split[35].toDouble();
+
+    } else { // Garbage ?!
+      std::cerr << "Unable to paste view ... wrong parameter count!! is" <<  split.size()  << std::endl;
+      return false;
+    }
+
+    return true;
+}
+
 bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/,
         int* _splitterWidth /*= NULL*/, QSize *_viewportSize)
 {
@@ -1133,104 +1237,14 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/,
     return false;
   }
 
-  // Remove the magic from the string
-  QString temp = _view;
-  temp.remove(0,sizeof(COPY_PASTE_VIEW_START_STRING));
-
-  //Split it into its components
-  QStringList split = temp.split(QRegExp("[\\n\\s]"),QString::SkipEmptyParts);
-
   ACG::GLMatrixd m, p;
   int            pMode;
+  double ortho_width;
 
-  // New version
-  if ( split.size() >= 37 ) {
-
-    //*********************************************************
-    // Parse the components
-    // first, get the projection and the modelview matrices
-    //*********************************************************
-    for (std::size_t i = 0; i < 4; ++i)
-    {
-      for (std::size_t j = 0; j < 4; ++j)
-      {
-        m(i,j) = split[i*4 + j].toDouble();
-        p(i,j) = split[i*4 + j +16].toDouble();
-      }
-    }
-
-    //*********************************************************
-    //parse the window size if requested
-    //*********************************************************
-    if (_windowSize)
-    {
-      //restore the old window size
-      int w =  split[32].toInt();
-      int h =  split[33].toInt();
-      *_windowSize = QSize(w,h);
-    }
-
-    //*********************************************************
-    //parse the splitter width for the toolboxes if requested
-    //*********************************************************
-    if (_splitterWidth) {
-      *_splitterWidth = split[34].toInt();
-    }
-
-    //*********************************************************
-    // Projection mode and orthogonal width
-    //*********************************************************
-    pMode =  split[35].toInt();
-    properties_.orthoWidth( split[36].toDouble() );
-
-    if (_viewportSize && split.size() >= 39) {
-        *_viewportSize = QSize(split[37].toInt(), split[38].toInt());
-    }
-
-  } else if ( split.size() == 36 )  { // Old Version
-
-    //*********************************************************
-    // Parse the components
-    // first, get the projection and the modelview matrices
-    //*********************************************************
-    for (std::size_t i = 0; i < 4; ++i)
-    {
-      for (std::size_t j = 0; j < 4; ++j)
-      {
-        m(i,j) = split[i*4 + j].toDouble();
-        p(i,j) = split[i*4 + j +16].toDouble();
-      }
-    }
-
-    //*********************************************************
-    //parse the window size if requested
-    //*********************************************************
-    if (_windowSize)
-    {
-      //restore the old window size
-      int w =  split[32].toInt();
-      int h =  split[33].toInt();
-      *_windowSize = QSize(w,h);
-    }
-
-
-    //*********************************************************
-    // Return -1 to inform, that the value is unknown
-    //*********************************************************
-    if (_splitterWidth) {
-      *_splitterWidth = -1;
-    }
-
-    //*********************************************************
-    // Projection mode and orthogonal width
-    //*********************************************************
-    pMode =  split[34].toInt();
-    properties_.orthoWidth( split[35].toDouble() );
-
-  } else { // Garbage ?!
-    std::cerr << "Unable to paste view ... wrong parameter count!! is" <<  split.size()  << std::endl;
-    return false;
-  }
+  if (!decodeView(_view, m, p, pMode, ortho_width,
+          _windowSize, _splitterWidth, _viewportSize))
+      return false;
+  properties_.orthoWidth(ortho_width);
 
   // Switch to our gl context
   makeCurrent();

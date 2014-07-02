@@ -290,6 +290,24 @@ public:
       \note QSize(0,0) indicates that the window is maximized.
    */
   void encodeView(QString& _view, const QSize& _windowSize = QSize(-1,-1), const int _toolBarWidth = -1);
+
+  /** Decode text representation of view encoded by encodeView() into
+      the supplied output parameters.
+
+      If \c _view was successfully decoded \c true is returned, \c false is
+      returned otherwise.
+
+      You can save the current Window size via parameter _windowSize and one
+      splitter size via _splitterwidth
+
+      \note QSize(0,0) indicates that the window was maximized.
+      \note _splitterWidth is -1 if no splitterWidth was saved
+   */
+  static bool decodeView(const QString& _view,
+          ACG::GLMatrixd &m, ACG::GLMatrixd &p, int &pMode, double &ortho_width,
+          QSize *_windowSize = NULL,
+          int* _splitterWidth = NULL, QSize *_viewportSize = NULL);
+
   /** Decode and apply text representation of view encoded by encodeView().
       If \c _view was successfully decoded it will immediately be applied
       and \c true is returned, \c false is returned else.
