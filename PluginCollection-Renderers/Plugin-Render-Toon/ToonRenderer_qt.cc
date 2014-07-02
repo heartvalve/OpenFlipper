@@ -40,10 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-/**
- * @file Contains definitions that require qt headers which are incompatible
- * with glew.h.
+/** @file
+ *
+ *  Contains definitions of the ToonRenderer Renderer that require qt headers
+ *  which are incompatible with glew.h.
  */
+
 #include "ToonRenderer.hh"
 
 #include <QGLFormat>
