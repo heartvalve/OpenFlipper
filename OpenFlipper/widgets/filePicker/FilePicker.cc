@@ -13,7 +13,7 @@
 FilePicker::FilePicker(QWidget *parent) :
     QWidget(parent),
     textBox_(new QComboBox),
-    browseButton_(new QPushButton(trUtf8("Browse…"))),
+    browseButton_(new QPushButton(trUtf8("Browse..."))),
     recent_files_ini_key_("GenericFilePickerRecents"),
     dialog_type_(DT_OPEN_FILE),
     overwrite_confirmed_by_user_(false) {
@@ -26,7 +26,7 @@ FilePicker::FilePicker(QString recent_files_ini_key,
                            QWidget *parent)  :
     QWidget(parent),
     textBox_(new QComboBox),
-    browseButton_(new QPushButton(trUtf8("Browse…"))),
+    browseButton_(new QPushButton(trUtf8("Browse..."))),
     recent_files_ini_key_(recent_files_ini_key),
     dialog_type_(dialog_type),
     overwrite_confirmed_by_user_(false) {
