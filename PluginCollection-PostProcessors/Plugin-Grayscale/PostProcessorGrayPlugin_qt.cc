@@ -40,9 +40,10 @@
 *                                                                            *
 \*===========================================================================*/
 
-/**
- * @file Contains definitions that require qt headers which are incompatible
- * with glew.h.
+/** @file
+ *
+ *  Contains definitions of the PostProcessorGrayPlugin that require qt headers
+ *  which are incompatible with glew.h.
  */
 
 #include "PostProcessorGrayPlugin.hh"
