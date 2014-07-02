@@ -1065,7 +1065,7 @@ private:
 //=============================================================================
 #if defined(INCLUDE_TEMPLATES) && !defined(ACG_DRAW_MESH_TCC)
 #define ACG_DRAW_MESH_TEMPLATES
-#include "DrawMesh.tcc"
+#include "DrawMeshT.cc"
 #endif
 //=============================================================================
 #endif // ACG_DRAW_MESH_HH defined
