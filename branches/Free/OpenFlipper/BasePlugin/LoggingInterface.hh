@@ -91,7 +91,8 @@ The following code sends a log message
 *
 * Use this enum to specify the importance of log messages.
 */
-enum Logtype {  LOGOUT  , /*!< Standard log messages. Will be printed in black in the logwidget */
+enum Logtype {  LOGNONE , /*!< Dummy messages. These messages will not appear in the logwidget and are for testing only */
+                LOGOUT  , /*!< Standard log messages. Will be printed in black in the logwidget */
                 LOGINFO , /*!< Info log messages. Will be printed in green in the logwidget */
                 LOGWARN , /*!< Warning messages. Will be printed in yellow in the logwidget */
                 LOGERR   /*!< Error messages. Will be printed in red in the logwidget */
