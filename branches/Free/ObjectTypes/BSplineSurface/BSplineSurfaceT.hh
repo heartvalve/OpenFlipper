@@ -230,7 +230,7 @@ public:
    */
   inline Point& operator()(Vec2i _param)
   {
-    assert (0 <= _param[0] < dimm_ && 0 <= _param[1] < dimn_);
+    assert ( (0 <= _param[0]) && (_param[0] < dimm_) && (0 <= _param[1]) &&( _param[1] < dimn_ ) );
     return control_net_[_param[0]][_param[1]];
   }
 
@@ -240,7 +240,7 @@ public:
    */
   inline const Point& operator()(Vec2i _param) const
   {
-    assert (0 <= _param[0] < dimm_ && 0 <= _param[1] < dimn_);
+    assert ( (0 <= _param[0]) && (_param[0] < dimm_) && (0 <= _param[1]) &&( _param[1] < dimn_ ) );
     return control_net_[_param[0]][_param[1]];
   }
 
