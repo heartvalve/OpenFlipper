@@ -543,7 +543,6 @@ template<typename MeshT>
 void OMPropertyModel<MeshT>::addPropertyVisualizer(OpenMesh::BaseProperty* const baseProp, MeshT* mesh, PropertyInfo::ENTITY_FILTER filter)
 {
     PropertyInfo propInfo = PropertyInfo(baseProp->name(), getSupportedTypeInfoWrapper(baseProp) , filter);
-    bool vec3 = (propInfo.typeinfo() == proptype_Vec3d) || (propInfo.typeinfo() == proptype_Vec3f);
     if (propInfo.typeinfo() == proptype_bool)
         propertyVisualizers.push_back(new OMPropertyVisualizerBoolean<MeshT>(mesh, propInfo));
     else if (propInfo.typeinfo() == proptype_int)
