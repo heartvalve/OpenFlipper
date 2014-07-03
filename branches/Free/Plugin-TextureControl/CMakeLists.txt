@@ -24,9 +24,7 @@ if (NOT FORCE_QT4 AND QT5_FOUND)
 
   if (QWT6_FOUND)
     add_definitions(-DWITH_QWT)
-    openflipper_plugin( DEPS ${CURRENT_PLUGIN_DEPS}
-			INCDIRS ${QWT6_INCLUDE_DIRS} 
-			LIBRARIES ${QWT6_LIBRARIES})
+    openflipper_plugin( DEPS ${CURRENT_PLUGIN_DEPS} Qwt6)
   else()
     openflipper_plugin( DEPS ${CURRENT_PLUGIN_DEPS})
   endif()
@@ -35,9 +33,7 @@ else()
 
   if(Qwt5_Qt4_FOUND)
     add_definitions(-DWITH_QWT)
-    openflipper_plugin( DEPS ${CURRENT_PLUGIN_DEPS}
-		        INCDIRS ${Qwt5_INCLUDE_DIR} 
-			LIBRARIES ${Qwt5_Qt4_LIBRARY})
+    openflipper_plugin( DEPS ${CURRENT_PLUGIN_DEPS} Qwt5)
   else()
     openflipper_plugin(DEPS ${CURRENT_PLUGIN_DEPS})
   endif()
