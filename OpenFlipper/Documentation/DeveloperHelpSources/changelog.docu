@@ -1,6 +1,8 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 18744 )</b>
+- <b>OpenFlipper 2.1 ( ?/?/? , 19065 )</b>
+     - <b>General</b>
+        - Refactored multiple classes in order to separate glew from Qt5GL.
      - <b>ACG</b>
         - Algorithms
              - EdgeConvexPolygonIntersection added to Algorithms
@@ -23,6 +25,7 @@
              - GLMatrix: extraction of clipping planes in a projection matrix
              - GLSL::Shader: add suppport for tessellation shaders
              - Add convenience functions to property layers of DrawMode
+             - Added own glError to String function to avoid the glu version which is deprecated on mac
 	- IRenderer
 	     - Additional functions to make sure, the fbos are handled correctly
 	     - Convenience functions added
@@ -35,6 +38,8 @@
              - new feature: scene layer and overlay layer with RenderObjects
         - Line Node
              - use quad extrusion shader in line node to control the width refs #1305
+        - MaterialNode
+             - Made MaterialNode's JSON (de)serialization Qt5 compatible.
         - MeshNode
              - Fixed 0 pointer deref in meshnode. Closes 2048
              - RenderObjects of the MeshNode: fetch texture bound to opengl slot 0, if no textureMap was specified refs #2050
@@ -45,12 +50,14 @@
 	     - Fix for face colors on wrong faces by Christopher.
              - const correctness in mesh compiler refs #2060
              - implemented GL_TRIANGLES_ADJACENCY mode in meshcompiler
+             - more robust estimation of split-count in MeshCompiler refs #2195
 	- ShaderGenerator
              - Add support for include statement in ACG shader load function
 	     - Write source location of shader input files as comments into code
              - ShaderGen: control glsl version in shader descriptor
              - Extension to replace lightingcode
              - Add comments to shaders to keep track of input files used to compose shaders
+             - Tesselation Shader support
 	- ShaderCache
 	     - Added clear function
              - add function which compares shader files with the last modified timestamp
@@ -58,6 +65,8 @@
         - Shader Pipeline
              - Shader based pipeline takes the global ambient light into account now.
              - Lighting in fixed function and shader pipeline should be unified now.
+        - TextureNode
+             - npot texture support in TextureNode refs #2218
         - Tools
              - Unified color generator interfaces.
              - workaround for memory corruption, when a multisampled FBO is resized
@@ -79,7 +88,9 @@
 	     - PluginFunctions: Added fovy function.
 	     - ViewerProperties: Added const accessor for glState.
              - remove double updating of menubar it fixed crash on macos refs #2036
-             - Added setViewAndWindowGeometry to core scripting functions.            
+             - Added setViewAndWindowGeometry to core scripting functions.   
+             - Improved PluginFunctions::getSaveFileName
+             - Function to invalidate pick caches via plugin functions.
         - UI
              - add gui elements for shader timestemp function (see options -> files) and reload shaders
              - Added F2 shortcut for Viewer Snapshot
@@ -88,11 +99,14 @@
 	     - Let the glwidget do the buffer clearing, not the renderers (simplified renderer plugins)
              - Fixed opaque rendering of background for screenshots with alpha channel
              - fix snapshot output format for transparent objects
+             - Refactored glWidget::decodeView.
      - <b>Plugins</b>
          - Components
              - Add nogui support
          - Datacontrol
              - Allow copy and pasting of materials (Requires json support)
+             - add functions for adding empty groups. thanks to Vladimir Chalupecky for providing the code closes #2219
+             - update layout when object is deleted, fix ungroup-visibility problem closes #2222
          - Depth Peeling
 	     - Code refactoring and cleanup
              - Front to back peeling back to work
@@ -101,6 +115,9 @@
          - File-OBJ
              - fix: load pointclouds from obj files doesn't insert a face anymore refs #1995
              - fix grouping with non manifold geometry closes #2130
+         - File-PTS
+             - use default OpenFlipper settings instead of arbitrary default options for loading PTS files
+             - update the viewport once a PTS file is opened
          - File-VTK
              - fix wrong count in the POLYGONS header (Thanks to Vladimir Chalupecky for the patch)
          - Info Meshobject
@@ -109,6 +126,7 @@
              - adjust size of dialog after setting all the variables
              - add scrollbar
              - reduces base height closes #2121
+             - Added face valence info. (Important for PolyMeshes.)
          - MemInfo
              - Added better measurement of free memory for Linux platforms.
          - Move
@@ -117,6 +135,7 @@
              - Added Sphere generator based on subdivision (Thanks to Vladimir Chalupecky for the original patch). closes #2041
          - PropertyViz
              - Added new vector viz mode.
+             - Visualization (and picking) of Vec2*.
          - Remesher
              - Fix cppcheck warning in Remesher
              - Fixed boundary errors in Remesher 
@@ -138,6 +157,8 @@
          - Toon Shader
 	     - Added new renderer plugin for toon shading
      - <b>Data Types</b>
+         - HexahedralMesh and TypePolyHedralMesh
+	     - Added convenience functions to get a hexahedral or polyhedral mesh directly from the object id. closes #2199
          - Plane Object
              - update plane for the new renderer
              - deferred updating and creation of the plane vbo it fixes gpu crash on mac refs #1896
@@ -147,7 +168,7 @@
              - avoid initialization of ward shader, which might cause trouble on intel graphics refs #2064
              - remove old ward shader refs #2068
          - VolumeMesh Object
-             - Fixed issue #2061 -> Comparison of boolean to itself.
+             - Fixed issue #2061 -> Comparison of boolean to itself.         
      - <b>Build System</b>
          - set debug/release output_dir for mac with bundles enabled closes 1993
          - enable stacktrace for macos refs #2055
