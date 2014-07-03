@@ -98,9 +98,10 @@ public:
    *
    * @param _vertexShaderFile relative (from shader directory) or absolute filename of vertex shader
    * @param _fragmentShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _verbose log or suppress error output
    * @return The program (Either from cache or newly compiled and linked)
    */
-  GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile);
+  GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile, bool _verbose = true);
   
   /** \brief Delete all cached shaders
    */

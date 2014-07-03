@@ -147,7 +147,7 @@ namespace GLSL {
   * \returns True if compilation was successful, or false if it failed. Also
   * it prints out the shader source and the error message.
   */
-  bool Shader::compile() {
+  bool Shader::compile(bool verbose) {
     if ( this->m_shaderId == 0 ) {
       std::cerr << "shader not initialized" << std::endl;
       return false;
@@ -158,14 +158,17 @@ namespace GLSL {
     GLint compileStatus;
     glGetShaderiv(this->m_shaderId, GL_COMPILE_STATUS, &compileStatus);
     if (compileStatus == GL_FALSE) {
-      GLchar *errorLog = new GLchar[GLSL_MAX_LOGSIZE];
-      GLsizei errorLength;
-      char shaderSource[32768];
-      glGetShaderSource(this->m_shaderId, 32768, &errorLength, shaderSource);
-      std::cout << "shader source: " << std::endl << shaderSource << std::endl;
-      glGetShaderInfoLog(this->m_shaderId, GLSL_MAX_LOGSIZE, &errorLength, errorLog);
-      std::cout << "GLSL compile error:" << std::endl << errorLog << std::endl;
-      delete[] errorLog;
+
+      if (verbose) {
+        GLchar *errorLog = new GLchar[GLSL_MAX_LOGSIZE];
+        GLsizei errorLength;
+        char shaderSource[32768];
+        glGetShaderSource(this->m_shaderId, 32768, &errorLength, shaderSource);
+        std::cout << "shader source: " << std::endl << shaderSource << std::endl;
+        glGetShaderInfoLog(this->m_shaderId, GLSL_MAX_LOGSIZE, &errorLength, errorLog);
+        std::cout << "GLSL compile error:" << std::endl << errorLog << std::endl;
+        delete[] errorLog;
+      }
 
       return false;
     }
@@ -738,42 +741,48 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrVertexShader loadVertexShader(const char *name) {
+  GLSL::PtrVertexShader loadVertexShader(const char *name, bool verbose) {
     PtrVertexShader vertexShader = 0;
     StringList sourceVertex = loadShader(name);
 
     if (!sourceVertex.empty() ) {
-      vertexShader = GLSL::PtrVertexShader(new GLSL::VertexShader());
+      vertexShader = new GLSL::VertexShader();
       vertexShader->setSource(sourceVertex);
-      vertexShader->compile();
+      vertexShader->compile(verbose);
     }
     return vertexShader;
   }
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrFragmentShader loadFragmentShader(const char *name) {
+  GLSL::PtrFragmentShader loadFragmentShader(const char *name, bool verbose) {
     PtrFragmentShader fragmentShader = 0;
     StringList sourceVertex = loadShader(name);
 
     if ( !sourceVertex.empty() ) {
-      fragmentShader = GLSL::PtrFragmentShader(new GLSL::FragmentShader());
+      fragmentShader = new GLSL::FragmentShader();
       fragmentShader->setSource(sourceVertex);
-      fragmentShader->compile();
+      if (!fragmentShader->compile(verbose)) {
+        delete fragmentShader;
+        fragmentShader = 0;
+      }
     }
     return fragmentShader;
   }
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrGeometryShader loadGeometryShader(const char *name) {
+  GLSL::PtrGeometryShader loadGeometryShader(const char *name, bool verbose) {
     PtrGeometryShader geometryShader = 0;
     StringList sourceVertex = loadShader(name);
 
     if (!sourceVertex.empty()) {
-      geometryShader = GLSL::PtrGeometryShader(new GLSL::GeometryShader());
+      geometryShader = new GLSL::GeometryShader();
       geometryShader->setSource(sourceVertex);
-      geometryShader->compile();
+      if (!geometryShader->compile(verbose)) {
+        delete geometryShader;
+        geometryShader = 0;
+      }
     }
     return geometryShader;
   }
@@ -781,15 +790,18 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new tessellation control shader.
   */
-  GLSL::PtrShader loadTessControlShader(const char *name) {
+  GLSL::PtrShader loadTessControlShader(const char *name, bool verbose) {
     GLSL::PtrShader shader = 0;
 #ifdef GL_ARB_tessellation_shader
     StringList src = loadShader(name);
 
     if (!src.empty()) {
-      shader = GLSL::PtrTessControlShader(new GLSL::PtrTessControlShader());
+      shader = new GLSL::TessControlShader();
       shader->setSource(src);
-      shader->compile();
+      if (!shader->compile(verbose)) {
+        delete shader;
+        shader = 0;
+      }
     }
 #endif // GL_ARB_tessellation_shader
     return shader;
@@ -797,15 +809,18 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new tessellation evaluation shader.
   */
-  GLSL::PtrShader loadTessEvaluationShader(const char *name) {
+  GLSL::PtrShader loadTessEvaluationShader(const char *name, bool verbose) {
     GLSL::PtrShader shader = 0;
 #ifdef GL_ARB_tessellation_shader
     StringList src = loadShader(name);
 
     if (!src.empty()) {
-      shader = GLSL::PtrTessEvaluationShader(new GLSL::PtrTessEvaluationShader());
+      shader = new GLSL::TessEvaluationShader();
       shader->setSource(src);
-      shader->compile();
+      if (!shader->compile(verbose)) {
+        delete shader;
+        shader = 0;
+      }
     }
 #endif // GL_ARB_tessellation_shader
     return shader;
@@ -817,7 +832,8 @@ namespace GLSL {
     const char *tessControlShaderFile,
     const char *tessEvaluationShaderFile,
     const char *geometryShaderFile,
-    const char *fragmentShaderFile){
+    const char *fragmentShaderFile, 
+    bool verbose){
 
       GLSL::Program* result = 0;
 
@@ -829,18 +845,24 @@ namespace GLSL {
         QString shaderFile = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(ShaderFiles[i]);
 
         if (i == 0) // vertex shader
-          tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
+          tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8(), verbose);
         else if (i == 1 && tessControlShaderFile) // tesscontrol shader
-          tempShaders[i] = GLSL::loadTessControlShader(shaderFile.toUtf8());
+          tempShaders[i] = GLSL::loadTessControlShader(shaderFile.toUtf8(), verbose);
         else if (i == 2 && tessEvaluationShaderFile) // tesseval shader
-          tempShaders[i] = GLSL::loadTessEvaluationShader(shaderFile.toUtf8());
+          tempShaders[i] = GLSL::loadTessEvaluationShader(shaderFile.toUtf8(), verbose);
         else if (i == 3 && geometryShaderFile) // geometry shader
-          tempShaders[i] = GLSL::loadGeometryShader(shaderFile.toUtf8());
+          tempShaders[i] = GLSL::loadGeometryShader(shaderFile.toUtf8(), verbose);
         else if (i == 4) // fragment shader
-          tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
+          tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8(), verbose);
 
         if (!tempShaders[i] && ShaderFiles[i]) {
-          std::cerr << ShaderFiles[i] << " could not be loaded and compiled" << std::endl;
+          if (verbose)
+            std::cerr << ShaderFiles[i] << " could not be loaded and compiled" << std::endl;
+
+          // avoid memleak
+          for (int k = 0; k < numShaders; ++k)
+            delete tempShaders[k];
+
           return 0;
         }
       }
@@ -856,20 +878,21 @@ namespace GLSL {
       for (int i = 0; i < numShaders; ++i)
         delete tempShaders[i];
 
-      ACG::glCheckErrors();
+      if (verbose)
+        ACG::glCheckErrors();
 
 
       return result;
   }
 
-  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *geometryShaderFile, const char *fragmentShaderFile){
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *geometryShaderFile, const char *fragmentShaderFile, bool verbose){
 
-    return loadProgram(vertexShaderFile, 0, 0, geometryShaderFile, fragmentShaderFile);
+    return loadProgram(vertexShaderFile, 0, 0, geometryShaderFile, fragmentShaderFile, verbose);
   }
 
 
-  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile){
-    return loadProgram(vertexShaderFile, 0, fragmentShaderFile);
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile, bool verbose){
+    return loadProgram(vertexShaderFile, 0, fragmentShaderFile, verbose);
   }
 }
 
