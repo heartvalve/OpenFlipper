@@ -163,7 +163,6 @@ target_link_libraries ( ACG  ${OPENMESH_LIBRARIES}
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
-message("ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES}")
 
 #===================================================================
 # Setting up the unit tests
