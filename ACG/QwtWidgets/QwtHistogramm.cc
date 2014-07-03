@@ -41,8 +41,6 @@
 \*===========================================================================*/
 
 
-#ifdef WITH_QWT
-
 // Include the plot header to get the qwt version
 #include <qwt_plot.h>
 
@@ -290,5 +288,3 @@ void Histogram::drawBar(QPainter *painter, Qt::Orientation, const QRect& rect) c
 }
 
 #endif
-
-#endif // WITH_QWT

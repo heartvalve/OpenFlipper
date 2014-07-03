@@ -75,7 +75,7 @@
 
 #include <ui_QwtFunctionPlotBase.hh>
 
-#include <ACG/QtWidgets/QwtHistogramm.hh>
+#include <ACG/QwtWidgets/QwtHistogramm.hh>
 #include <vector>
 
 #include <QDialog>
