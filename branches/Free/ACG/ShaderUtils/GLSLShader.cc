@@ -288,7 +288,7 @@ namespace GLSL {
       GLint InfoLogLength = 0;
       glGetProgramiv(this->m_programId, GL_INFO_LOG_LENGTH, &InfoLogLength);
       std::string errorlog(InfoLogLength,'\0');
-      glGetShaderInfoLog(this->m_programId, InfoLogLength, NULL, &errorlog[0]);
+      glGetProgramInfoLog(this->m_programId, InfoLogLength, NULL, &errorlog[0]);
       std::cerr << "program link error: " << errorlog << std::endl;
     }
 
