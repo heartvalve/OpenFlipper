@@ -1640,9 +1640,9 @@ bool ACG::DrawMeshT<Mesh>::supportsPickingVertices_opt()
 
   // load from cache
   if (pickVertexMethod_ == 0)
-    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl");
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl", false);
   else
-    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", false);
 
   // check link status
   return pickVertexShader_ && pickVertexShader_->isLinked();
@@ -1912,12 +1912,8 @@ void DrawMeshT<Mesh>::updatePickingEdges_opt(ACG::GLState& _state )
 template <class Mesh>
 bool ACG::DrawMeshT<Mesh>::supportsPickingEdges_opt()
 {
-  // load and compile picking shader
-  //  its the same shader as for vertex picking with reordered index buffer
-//   if (!pickEdgeShader_)
-//     pickEdgeShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
-
-  pickEdgeShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+  // fetch picking shader from cache (edge picking uses same shader as vertex picking)
+  pickEdgeShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", false);
 
   // check link status
   return pickEdgeShader_ && pickEdgeShader_->isLinked();
@@ -2048,11 +2044,8 @@ bool ACG::DrawMeshT<Mesh>::supportsPickingFaces_opt()
   return 0;
 #endif
 
-  // load and compile picking shader
-//   if (!pickFaceShader_)
-//     pickFaceShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_face.glsl");
-
-  pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl");
+  // fetch picking shader from cache
+  pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl", false);
 
   // check link status
   return pickFaceShader_ && pickFaceShader_->isLinked();

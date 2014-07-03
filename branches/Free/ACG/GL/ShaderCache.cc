@@ -270,7 +270,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   return prog;
 }
 
-GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile )
+GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile, bool _verbose )
 {
   CacheEntry newEntry;
   newEntry.usage = 0;
@@ -324,12 +324,12 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
     }
   }
 
-  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile);
+  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile, _verbose);
   glCheckErrors();
 
   if (oldCache != cacheStatic_.end())
   {
-    if (!prog->isLinked())
+    if (prog && !prog->isLinked())
     {
       delete prog;
       return oldCache->second;
