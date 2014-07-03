@@ -3,9 +3,13 @@
 #  QWT6_FOUND - System has Qwt6
 #  QWT6_INCLUDE_DIRS - The Qwt6 include directories
 #  QWT6_LIBRARIES - The libraries needed to use Qwt6
-#  QWT6_DEFINITIONS - Compiler switches required for using Qwt6
+#  iQWT6_DEFINITIONS - Compiler switches required for using Qwt6
+#
+#
+#  QWT_SEARCH_PATH can be used to redirect the finder to a specific location
 
 
+set (QWT_SEARCH_PATH CACHE PATH "Path to look for the qwt6 library")
 
 if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
   SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
@@ -19,11 +23,9 @@ else ()
   SET(VS_SEARCH_PATH "")
 endif()
 
-
-
-
 find_path(QWT6_INCLUDE_DIR qwt.h
                PATHS ${QT_INCLUDE_DIR}
+               ${QWT_SEARCH_PATH}/include
                /usr/local/qwt/include
                /usr/local/include
                /opt/local/include
@@ -40,7 +42,9 @@ find_path(QWT6_INCLUDE_DIR qwt.h
                c:\\libs\\qwt-6.0.2
                c:\\libs\\qwt-6.0.1
                PATH_SUFFIXES qwt qwt6 qwt-6.1.0 qwt-6.0.2 qwt-6.0.1 include qwt/include qwt6/include
-               ENV PATH)
+               ENV PATH
+               NO_DEFAULT_PATH
+               )
 
 if (EXISTS "${QWT6_INCLUDE_DIR}/qwt_global.h")
   file( READ ${QWT6_INCLUDE_DIR}/qwt_global.h QWT_GLOBAL_H )
@@ -91,8 +95,9 @@ if (QWT6_VERSION_FOUND)
       )
 # MACOS and LINUX
   else()
-    find_library(QWT6_LIBRARY NAMES qwt
+    find_library(QWT6_LIBRARY NAMES qwt-qt5 qwt
       PATHS
+      ${QWT_SEARCH_PATH}/lib
       /usr/local/qwt/lib
       /opt/local/lib
       /usr/local/lib
@@ -101,11 +106,12 @@ if (QWT6_VERSION_FOUND)
 
     #sets the library dir 
     get_filename_component(_QWT6_LIBRARY_DIR ${QWT6_LIBRARY} PATH)
+    get_filename_component(_QWT6_LIBRARY_NAME ${QWT6_LIBRARY} NAME)
     set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR}" CACHE PATH "The directory where the QWT6 libraries can be found.")
 
   endif()
 
-  set(QWT6_LIBRARIES ${QWT6_LIBRARY} )
+  set(QWT6_LIBRARIES ${_QWT6_LIBRARY_NAME} CACHE PATH "The QWT6 libraries can be found.") 
   set(QWT6_INCLUDE_DIRS ${QWT6_INCLUDE_DIR} )
 endif()
 
