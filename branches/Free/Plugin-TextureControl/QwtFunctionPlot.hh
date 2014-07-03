@@ -81,7 +81,7 @@
 // #include "QtFunctionPlotBase.hh"
 
 #if QWT_VERSION >= 0x060000
- #include <ACG/QtWidgets/QwtHistogramm.hh>
+ #include <ACG/QwtWidgets/QwtHistogramm.hh>
 #else
  #include "HistogramItem.hh"
 #endif

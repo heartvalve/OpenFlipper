@@ -58,6 +58,7 @@ set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIRS}
                  ${GLUT_INCLUDE_DIR} )
 
 set(ADDITIONAL_LINK_LIBRARIES "" )
+set(ADDITIONAL_BUILD_DIRS "" )
 
 find_package (QJson)
 if (QJSON_FOUND)
@@ -70,34 +71,19 @@ if (NOT FORCE_QT4 AND QT5_FOUND)
   find_package(Qwt6)
 
   if (QWT6_FOUND)
-    add_definitions(-DWITH_QWT)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${QWT6_INCLUDE_DIRS} )
     set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${QWT6_LIBRARIES})
+    set(ADDITIONAL_BUILD_DIRS "QwtWidgets" )
   endif()
 else()
   find_package(Qwt5)
 
   if(Qwt5_Qt4_FOUND)
-    add_definitions(-DWITH_QWT)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
     set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
+    set(ADDITIONAL_BUILD_DIRS "QwtWidgets" )
   endif()
 endif()
-
-
-#find_package( Freetype)
-#if (NOT FREETYPE_FOUND)
-#  message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
-#else (NOT FREETYPE_FOUND)
-#  find_package (FTGL)
-#  if (NOT FTGL_FOUND)
-#    message (MESSAGE "FTGL not found! Disabled ftgl support!")
-#  else ()
-#    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
-#    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )
-#  endif ()
-#
-#endif ()
 
 include_directories (
   ..
@@ -128,6 +114,7 @@ set (directories
   QtScenegraph
   ShaderUtils
   Utils
+  ${ADDITIONAL_BUILD_DIRS}
 )
 
 # generate dllexport macros on windows
@@ -176,7 +163,7 @@ target_link_libraries ( ACG  ${OPENMESH_LIBRARIES}
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
-
+message("ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES}")
 
 #===================================================================
 # Setting up the unit tests
