@@ -58,7 +58,6 @@ set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIRS}
                  ${GLUT_INCLUDE_DIR} )
 
 set(ADDITIONAL_LINK_LIBRARIES "" )
-set(ADDITIONAL_LINK_DIRS "" )
 
 find_package (QJson)
 if (QJSON_FOUND)
@@ -74,7 +73,6 @@ if (NOT FORCE_QT4 AND QT5_FOUND)
     add_definitions(-DWITH_QWT)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${QWT6_INCLUDE_DIRS} )
     set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${QWT6_LIBRARIES})
-    set(ADDITIONAL_LINK_DIRS ${ADDITIONAL_LINK_DIRS} ${QWT6_LIBRARY_DIR})
   endif()
 else()
   find_package(Qwt5)
@@ -109,7 +107,6 @@ include_directories (
 link_directories (
   ${GLEW_LIBRARY_DIR}
   ${GLUT_LIBRARY_DIR}
-  ${ADDITIONAL_LINK_DIRS}
 )
 
 #===================================================================
