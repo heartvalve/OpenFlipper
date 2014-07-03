@@ -44,7 +44,7 @@
 #ifdef WITH_QWT
 
 // Include the plot header to get the qwt version
-#include <qwt_plot.h>
+#include <qwt.h>
 
 // This file is for QWT >= 6.0 only
 #if QWT_VERSION >= 0x060000
