@@ -45,7 +45,7 @@ include (package)
 include (ACGOutput)
 
 # try to use QT5 if possible otherwise stick to QT4
-set (FORCE_QT4 ON CACHE BOOL "Use Qt4 even if Qt5 was found")
+set (FORCE_QT4 OFF CACHE BOOL "Use Qt4 even if Qt5 was found")
 
 if (NOT FORCE_QT4)
   acg_qt5 ()
@@ -53,13 +53,18 @@ else()
   set (QT5_FOUND false)
 endif()
 
-
 if (NOT QT5_FOUND)
-  message(STATUS "Using QT4 for OpenFlipper")
+  message(STATUS "Could not find QT5, searching for QT4")
   acg_qt4 (4.7.0)
-else ()
-  message(STATUS "Using QT5 for OpenFlipper")
-endif ()
+endif()
+
+if (QT4_FOUND)
+	message(STATUS "Using QT4 for OpenFlipper")
+elseif(QT5_FOUND)
+	message(STATUS "Using QT5 for OpenFlipper")
+else()
+	message(FATAL_ERROR "Could not found any QT Version. Please specify QT5_INSTALL_PATH to build with QT5 or specify the QT_QMAKE_EXECUTABLE to the QT4 qmake")
+endif()
 
 acg_openmp ()
 #acg_ftgl ()
