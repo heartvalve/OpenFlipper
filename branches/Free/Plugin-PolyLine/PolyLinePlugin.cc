@@ -918,7 +918,7 @@ me_insert( QMouseEvent* _event )
           cur_polyline_obj_->materialNode()->set_random_color();
 
           cur_polyline_obj_->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
-          cur_polyline_obj_->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME|ACG::SceneGraph::DrawModes::POINTS_SHADED);
+          cur_polyline_obj_->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME|ACG::SceneGraph::DrawModes::POINTS);
 
           cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
 
@@ -937,7 +937,6 @@ me_insert( QMouseEvent* _event )
 
       // finish polyline
       case QEvent::MouseButtonDblClick: {
-
         // close polyline
         if (_event->modifiers() & (Qt::ShiftModifier)) {
           cur_polyline_obj_->line()->set_closed(true);
@@ -947,14 +946,7 @@ me_insert( QMouseEvent* _event )
             const PolyLine::Point &p1 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 1),
                     &p2 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 2);
 
-            // comment by David on removal: choosing an absolute epsilon here is not possible because we don't know anything
-            // about the scale of the scene!!!
-//            /*
-//             * Remove duplicate created as a move sentinel.
-//             */
-//            if ((p2 - p1).sqrnorm() < 1e-6) {
-//                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
-//            }
+            cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
         }
 
         // update
@@ -978,6 +970,21 @@ me_insert( QMouseEvent* _event )
 
 //-----------------------------------------------------------------------------
 
+double getRad(int meshIdx)
+{
+    TriMeshObject* mesh;
+    if(PluginFunctions::getObject(meshIdx, mesh)) {
+        //use the size of the mesh to compute the handle radii
+        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+        mesh->boundingBox(bbMin, bbMax);
+        return 0.005*(bbMax-bbMin).norm();
+    }
+    else {
+        return PluginFunctions::sceneRadius()*0.01;//use double of the above cause it is the radius
+    }
+}
+
 void PolyLinePlugin::
 createCircle_createUI(int _polyLineObjectID)
 {
@@ -986,20 +993,9 @@ createCircle_createUI(int _polyLineObjectID)
         return;
     PolyLineCircleData* lineData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
 
-    double rad = 0.0;
-    TriMeshObject* mesh;
-    if(PluginFunctions::getObject(lineData->circleMeshIndex_, mesh)) {
-        //use the size of the mesh to compute the handle radii
-        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
-        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-        mesh->boundingBox(bbMin, bbMax);
-        rad = 0.005*(bbMax-bbMin).norm();
-    }
-    else {
-        //use the circle radius to guess the handle radii
-        double r = std::max(lineData->circleMainRadius_, lineData->circleSideRadius_);
-        rad = r / 25.0;
-    }
+    lineObject->setObjectDrawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    double rad = getRad(lineData->circleMeshIndex_);
 
     GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Handle0");
     handle0->get_primitive(0).color = ACG::Vec4f(1,0,0,1);
@@ -1104,25 +1100,9 @@ createSpline_createUI(int _polyLineObjectID)
         return;
     PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
 
-    double rad = 0.0;
-    TriMeshObject* mesh;
-    if(PluginFunctions::getObject(splineData->meshIndex_, mesh)) {
-        //use the size of the mesh to compute the handle radii
-        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
-        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-        mesh->boundingBox(bbMin, bbMax);
-        rad = 0.005*(bbMax-bbMin).norm();
-    }
-    else {
-        //use the size of the spline to guess the handle radii
-        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
-        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-        for(unsigned int i = 0; i < splineData->points_.size(); i++) {
-            bbMin =  bbMin.minimize(splineData->points_[i].position);
-            bbMax =  bbMax.maximize(splineData->points_[i].position);
-        }
-        rad = (bbMax-bbMin).norm() / 25.0;
-    }
+    lineObject->setObjectDrawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    double rad = getRad(splineData->meshIndex_);
 
     GlutLineNode* lineN = new GlutLineNode(lineObject, "N_Line");
     lineN->show();
@@ -1595,10 +1575,11 @@ me_split( QMouseEvent* _event )
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
 
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
+
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
 
@@ -1667,11 +1648,10 @@ me_split( QMouseEvent* _event )
       ACG::Vec3d hit_point;
       // pick
       if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
-
         (*move_point_ref_) = (PolyLine::Point) hit_point;
 
         // update
-        //	emit updatedObject(cur_insert_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+        emit updatedObject(cur_move_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
         emit updateView();
       }
     }
@@ -1704,7 +1684,7 @@ me_merge( QMouseEvent* _event )
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
@@ -1712,8 +1692,9 @@ me_merge( QMouseEvent* _event )
         if (cur_pol) {
 
           // Check if we got a line segment or a vertex
-          if ( target_idx >= cur_pol->line()->n_vertices() )
+          if ( target_idx >= cur_pol->line()->n_vertices() ) {
             return;
+          }
 
           if (target_idx == cur_pol->line()->n_vertices() - 1 || target_idx == 0) {
             if (target_idx == 0) {
@@ -1740,12 +1721,11 @@ me_merge( QMouseEvent* _event )
       unsigned int node_idx, target_idx;
       ACG::Vec3d hit_point;
       // pick
-      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx,
-          &hit_point)) {
+      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
         (*move_point_ref_) = (PolyLine::Point) hit_point;
 
         // update
-        //	emit updatedObject(cur_merge_id_);
+        emit updatedObject(cur_merge_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
         emit updateView();
       }
     }
@@ -1774,9 +1754,15 @@ me_merge( QMouseEvent* _event )
     ACG::Vec3d hit_point;
 
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+    // restore first polyline
+    BaseObjectData *obj2 = 0;
+    PluginFunctions::getObject(cur_merge_id_, obj2);
+    PolyLineObject* first_pol = PluginFunctions::polyLineObject(obj2);
+    first_pol->enablePicking(false);
+    PluginFunctions::invalidatePickCaches();
 
-      bool merged = false;
+    bool merged = false;
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
 
       BaseObjectData* obj = 0;
 
@@ -1788,72 +1774,112 @@ me_merge( QMouseEvent* _event )
         if (second_pol) {
 
           // Check if we got a line segment or a vertex
-          if ( target_idx >= second_pol->line()->n_vertices() )
-            return;
+          if ( target_idx < second_pol->line()->n_vertices() ) {
+              // get idxs
+              unsigned int first_idx = first_pol->line()->n_vertices() - 1;
+              unsigned int second_idx = target_idx;
 
-          // restore first polyline
-          BaseObjectData *obj2 = 0;
-          PluginFunctions::getObject(cur_merge_id_, obj2);
-          PolyLineObject* first_pol = PluginFunctions::polyLineObject(obj2);
+              // both polylines open?
+              if (!first_pol->line()->is_closed() && !second_pol->line()->is_closed()) {
 
-          // get idxs
-          unsigned int first_idx = first_pol->line()->n_vertices() - 1;
-          unsigned int second_idx = target_idx;
+                  bool inv_first(false), inv_second(false);
 
-          // both polylines open?
-          if (first_pol->line()->is_closed() || second_pol->line()->is_closed())
-            return;
+                  // wrong ordering first Polyline?
+                  if (first_idx == 0) {
+                    inv_first = true;
+                    first_idx = first_pol->line()->n_vertices() - 1;
+                  }
 
-          bool inv_first(false), inv_second(false);
+                  // wrong ordering second Polyline?
+                  if (second_idx == second_pol->line()->n_vertices() - 1) {
+                    inv_second = true;
+                    second_idx = 0;
+                  }
 
-          // wrong ordering first Polyline?
-          if (first_idx == 0) {
-            inv_first = true;
-            first_idx = first_pol->line()->n_vertices() - 1;
-          }
+                  // two endpoints available?
+                  if (first_idx == first_pol->line()->n_vertices() - 1 && second_idx == 0) {
+                    // same polyline?
+                    if (first_pol->id() == second_pol->id()) {
+                      // simply close line
+                      first_pol->line()->set_closed(true);
+                    } else {
+                      // invert if necessary
+                      if (inv_first)
+                        first_pol->line()->invert();
+                      if (inv_second)
+                        second_pol->line()->invert();
 
-          // wrong ordering second Polyline?
-          if (second_idx == second_pol->line()->n_vertices() - 1) {
-            inv_second = true;
-            second_idx = 0;
-          }
+                      // append second polyline to first one
+                      first_pol->line()->append(*second_pol->line());
 
-          // two endpoints available?
-          if (first_idx == first_pol->line()->n_vertices() - 1 && second_idx == 0) {
-            // same polyline?
-            if (first_pol->id() == second_pol->id()) {
-              // simply close line
-              first_pol->line()->set_closed(true);
-            } else {
-              // invert if necessary
-              if (inv_first)
-                first_pol->line()->invert();
-              if (inv_second)
-                second_pol->line()->invert();
+                      // set flag
+                      merged = true;
 
-              // append second polyline to first one
-              first_pol->line()->append(*second_pol->line());
+                      // delete appended
+                      emit deleteObject(second_pol->id());
+                    }
 
-              // set flag
-              merged = true;
-
-              // delete appended
-              emit deleteObject(second_pol->id());
+                  }
             }
-
           }
         }
       }
+    }
 
-      if (!merged) {
-        // remove intermediate point
-        // restore orig polyline
-        BaseObjectData *obj = 0;
-        PluginFunctions::getObject(cur_merge_id_, obj);
-        PolyLineObject* opol = PluginFunctions::polyLineObject(obj);
+    first_pol->enablePicking(true);
+    PluginFunctions::invalidatePickCaches();
 
-        opol->line()->add_point(p_save);
-      }
+    //above can't try to close a line
+    if(!merged && PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+        BaseObjectData* obj = 0;
+        if (PluginFunctions::getPickedObject(node_idx, obj)) {
+
+            // is picked object polyline? -> get second polyline
+            PolyLineObject* second_pol = PluginFunctions::polyLineObject(obj);
+
+            if (second_pol) {
+
+                // Check if we got a line segment or a vertex
+                if ( target_idx < second_pol->line()->n_vertices() ) {
+                    // get idxs
+                    unsigned int first_idx = first_pol->line()->n_vertices() - 1;
+                    unsigned int second_idx = target_idx;
+
+                    // both polylines open?
+                    if (!first_pol->line()->is_closed() && !second_pol->line()->is_closed()) {
+                        bool inv_first(false), inv_second(false);
+
+                        // wrong ordering first Polyline?
+                        if (first_idx == 0) {
+                            inv_first = true;
+                            first_idx = first_pol->line()->n_vertices() - 1;
+                        }
+
+                        // wrong ordering second Polyline?
+                        if (second_idx == second_pol->line()->n_vertices() - 1) {
+                            inv_second = true;
+                            second_idx = 0;
+                        }
+
+                        if (first_pol->id() == second_pol->id() && first_idx == first_pol->line()->n_vertices() - 1 && second_idx == 0) {
+                            // simply close line
+                            first_pol->line()->set_closed(true);
+                            merged = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (!merged) {
+      // remove intermediate point
+      // restore orig polyline
+      BaseObjectData *obj = 0;
+      PluginFunctions::getObject(cur_merge_id_, obj);
+      PolyLineObject* opol = PluginFunctions::polyLineObject(obj);
+
+      opol->line()->add_point(p_save);
     }
 
     // update
