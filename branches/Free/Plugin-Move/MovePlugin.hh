@@ -481,6 +481,12 @@ public:
     /// Checked if transformation should be applied to all target objs
     QAction* toAllTargets_;
 
+    /// Additional Context Menu replicating the toolbar stuff
+    QMenu* contextMenuManipControl_;
+
+    /// Action holding the context menu for toolbar replication
+    QAction* contextMenuManipControlsAction_;
+
 /** @} */
 
 //===========================================================================
