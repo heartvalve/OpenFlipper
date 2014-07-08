@@ -117,6 +117,8 @@ selectionType_(VERTEX),
 contextAction_(0),
 contextActionHide_(0),
 toAllTargets_(0),
+contextMenuManipControl_(0),
+contextMenuManipControlsAction_(0),
 hide_(true),
 allTargets_(false),
 placeMode_(false),
@@ -179,31 +181,9 @@ void MovePlugin::pluginsInitialized() {
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
 
-  // CONTEXT MENU
-  toAllTargets_ = new QAction(tr("Apply to all targets"), this);
-  toAllTargets_->setCheckable(true);
-  toAllTargets_->setToolTip(tr("Apply transformation to all target objects"));
-  toAllTargets_->setStatusTip( toAllTargets_->toolTip() );
-
-  contextAction_ = new QAction(tr("Set properties"), this);
-  contextAction_->setToolTip(tr("Set properties"));
-  contextAction_->setStatusTip( contextAction_->toolTip() );
-  contextAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-properties.png") );
-  
-  contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
-  contextActionHide_->setToolTip(tr("Hide Manipulator"));
-  contextActionHide_->setStatusTip( contextActionHide_->toolTip() );
-  contextActionHide_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-hide.png") );
-
-  emit addContextMenuItem(toAllTargets_      , CONTEXTNODEMENU );
-  emit addContextMenuItem(contextAction_     , CONTEXTNODEMENU );
-  emit addContextMenuItem(contextActionHide_ , CONTEXTNODEMENU );
-
-  connect( toAllTargets_  ,     SIGNAL(toggled(bool) ), this, SLOT(setAllTargets(bool)));
-  connect( contextAction_ ,     SIGNAL( triggered() ),  this, SLOT(showProps()) );
-  connect( contextActionHide_ , SIGNAL( triggered() ),  this, SLOT(hideManipulator()) );
-
-  //TOOLBAR
+  // ==================================
+  // Toolbar
+  // ==================================
 
   WhatsThisGenerator whatsThis("Move");
   WhatsThisGenerator whatsThisUser("user");
@@ -230,6 +210,10 @@ void MovePlugin::pluginsInitialized() {
   connect(toolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotSetMoveMode(QAction*)) );
 
   emit addToolbar(toolbar_);
+
+  // ==================================
+  // Pick Toolbar
+  // ==================================
 
   pickToolbar_ = new QToolBar(tr("Transform and Move PickTool bar"));
   pickToolbar_->setObjectName("TransformAndMovePickToolBar");
@@ -302,6 +286,45 @@ void MovePlugin::pluginsInitialized() {
 
   emit setPickModeToolbar ("Move", pickToolbar_);
   emit setPickModeToolbar ("MoveSelection", pickToolbar_);
+
+  // ==================================
+  // CONTEXT MENU
+  // ==================================
+  toAllTargets_ = new QAction(tr("Apply to all targets"), this);
+  toAllTargets_->setCheckable(true);
+  toAllTargets_->setToolTip(tr("Apply transformation to all target objects"));
+  toAllTargets_->setStatusTip( toAllTargets_->toolTip() );
+
+  contextAction_ = new QAction(tr("Set properties"), this);
+  contextAction_->setToolTip(tr("Set properties"));
+  contextAction_->setStatusTip( contextAction_->toolTip() );
+  contextAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-properties.png") );
+
+  contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
+  contextActionHide_->setToolTip(tr("Hide Manipulator"));
+  contextActionHide_->setStatusTip( contextActionHide_->toolTip() );
+  contextActionHide_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-hide.png") );
+
+  // QMenu replicating the relevant pick toolbar actions
+  contextMenuManipControl_ = new QMenu(tr("Manipulator Controls"));
+  contextMenuManipControl_->addAction(rotateTranslateAction_);
+  contextMenuManipControl_->addAction(resizeAction_);
+  contextMenuManipControl_->addAction(rotateManipAction_);
+  contextMenuManipControl_->addAction(placeAndSnapAction_);
+  contextMenuManipControl_->addAction(smallerManipAction_);
+  contextMenuManipControl_->addAction(biggerManipAction_);
+
+
+  contextMenuManipControlsAction_ = contextMenuManipControl_->menuAction();
+
+  emit addContextMenuItem(toAllTargets_                   , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextAction_                  , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextActionHide_              , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextMenuManipControlsAction_ , CONTEXTNODEMENU );
+
+  connect( toAllTargets_  ,     SIGNAL(toggled(bool) ), this, SLOT(setAllTargets(bool)));
+  connect( contextAction_ ,     SIGNAL( triggered() ),  this, SLOT(showProps()) );
+  connect( contextActionHide_ , SIGNAL( triggered() ),  this, SLOT(hideManipulator()) );
 }
 
 
@@ -640,36 +663,40 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
   if (_mode != manMode_)
   {
     manMode_ = _mode;
-    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
-        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-              o_it != PluginFunctions::objectsEnd(); ++o_it)
-           if ( o_it->manipPlaced() )
-                o_it->manipulatorNode()->setMode (_mode);
-      if (!hide_)
-        switch (manMode_)
-        {
-          case QtTranslationManipulatorNode::Rotation:
-            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
-            placeMode_ = false;
-            break;
-          case QtTranslationManipulatorNode::Resize:
-            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
-            placeMode_ = false;
-            break;
-          case QtTranslationManipulatorNode::LocalRotation:
-            PluginFunctions::setViewObjectMarker (&objectMarker_);
-            placeMode_ = false;
-            break;
-          case QtTranslationManipulatorNode::Place:
-            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
-            placeMode_ = true;
-            break;
-          case QtTranslationManipulatorNode::TranslationRotation:
-            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
-            placeMode_ = false;
-            break;
-        }
+
+    // Iterate over all objects that have a placed manip and set their mode
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+      if ( o_it->manipPlaced() )
+        o_it->manipulatorNode()->setMode (_mode);
+
+
+    if (!hide_) {
+      switch (manMode_)
+      {
+        case QtTranslationManipulatorNode::Rotation:
+          PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+          placeMode_ = false;
+          break;
+        case QtTranslationManipulatorNode::Resize:
+          PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+          placeMode_ = false;
+          break;
+        case QtTranslationManipulatorNode::LocalRotation:
+          PluginFunctions::setViewObjectMarker (&objectMarker_);
+          placeMode_ = false;
+          break;
+        case QtTranslationManipulatorNode::Place:
+          PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+          placeMode_ = true;
+          break;
+        case QtTranslationManipulatorNode::TranslationRotation:
+          PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+          placeMode_ = false;
+          break;
+      }
     }
+
+    // Update the toolbar icons
     switch (manMode_)
     {
       case QtTranslationManipulatorNode::Resize:
