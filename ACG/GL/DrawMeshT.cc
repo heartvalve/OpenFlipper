@@ -1640,9 +1640,9 @@ bool ACG::DrawMeshT<Mesh>::supportsPickingVertices_opt()
 
   // load from cache
   if (pickVertexMethod_ == 0)
-    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl", false);
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl", 0, false);
   else
-    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", false);
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", 0, false);
 
   // check link status
   return pickVertexShader_ && pickVertexShader_->isLinked();
@@ -1913,7 +1913,7 @@ template <class Mesh>
 bool ACG::DrawMeshT<Mesh>::supportsPickingEdges_opt()
 {
   // fetch picking shader from cache (edge picking uses same shader as vertex picking)
-  pickEdgeShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", false);
+  pickEdgeShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl", 0, false);
 
   // check link status
   return pickEdgeShader_ && pickEdgeShader_->isLinked();
@@ -2045,7 +2045,7 @@ bool ACG::DrawMeshT<Mesh>::supportsPickingFaces_opt()
 #endif
 
   // fetch picking shader from cache
-  pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl", false);
+  pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl", 0, false);
 
   // check link status
   return pickFaceShader_ && pickFaceShader_->isLinked();

@@ -680,8 +680,10 @@ namespace GLSL {
   * executable's installation directory, if the path is a relativ
   * one. If it is determined that the path is absolute, the path is
   * taken as is.
+  * Macros are inserted directly after the #version directive.
+  * According to glsl spec, only comments and white space are allowed before #version.
   */
-  GLSL::StringList loadShader(const char *filename) {
+  GLSL::StringList loadShader(const char *filename, const GLSL::StringList *macros) {
     QString path_file;
     if (QDir(filename).isRelative()) {
       path_file = qApp->applicationDirPath() + QString("/../shader/")
@@ -696,6 +698,8 @@ namespace GLSL {
     }
 
     GLSL::StringList shaderSource;
+
+    bool foundVersionDirective = false;
 
     while (!iShader.eof()) {
       std::string strLine;
@@ -730,20 +734,49 @@ namespace GLSL {
 
         strLine = "";
       }
+      else
+      {
+        if (macros && !foundVersionDirective && qstrLine.trimmed().startsWith("#version"))
+        {
+          foundVersionDirective = true;
+
+          // add #version line to shader
+          strLine += "\n";
+          shaderSource.push_back(strLine);
+
+          // insert preprocessor macros in the next line
+          for (GLSL::StringList::const_iterator it = macros->begin(); it != macros->end(); ++it)
+            shaderSource.push_back(*it + "\n");
+
+          // prevent writing empty line
+          continue;
+        }
+      }
 
 
       strLine += "\n";
       shaderSource.push_back(strLine);
     }
     iShader.close();
+
+
+    if (macros && !foundVersionDirective)
+    {
+      // shader did not contain a #version directive
+      // add preprocessor macros to beginning of shader
+      for (GLSL::StringList::const_reverse_iterator it = macros->rbegin(); it != macros->rend(); ++it)
+        shaderSource.push_front(*it + "\n");
+    }
+
+
     return shaderSource;
   }
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrVertexShader loadVertexShader(const char *name, bool verbose) {
+  GLSL::PtrVertexShader loadVertexShader(const char *name, const GLSL::StringList *macros, bool verbose) {
     PtrVertexShader vertexShader = 0;
-    StringList sourceVertex = loadShader(name);
+    StringList sourceVertex = loadShader(name, macros);
 
     if (!sourceVertex.empty() ) {
       vertexShader = new GLSL::VertexShader();
@@ -755,9 +788,9 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrFragmentShader loadFragmentShader(const char *name, bool verbose) {
+  GLSL::PtrFragmentShader loadFragmentShader(const char *name, const GLSL::StringList *macros, bool verbose) {
     PtrFragmentShader fragmentShader = 0;
-    StringList sourceVertex = loadShader(name);
+    StringList sourceVertex = loadShader(name, macros);
 
     if ( !sourceVertex.empty() ) {
       fragmentShader = new GLSL::FragmentShader();
@@ -772,9 +805,9 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new vertex shader.
   */
-  GLSL::PtrGeometryShader loadGeometryShader(const char *name, bool verbose) {
+  GLSL::PtrGeometryShader loadGeometryShader(const char *name, const GLSL::StringList *macros, bool verbose) {
     PtrGeometryShader geometryShader = 0;
-    StringList sourceVertex = loadShader(name);
+    StringList sourceVertex = loadShader(name, macros);
 
     if (!sourceVertex.empty()) {
       geometryShader = new GLSL::GeometryShader();
@@ -790,10 +823,10 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new tessellation control shader.
   */
-  GLSL::PtrShader loadTessControlShader(const char *name, bool verbose) {
+  GLSL::PtrShader loadTessControlShader(const char *name, const GLSL::StringList *macros, bool verbose) {
     GLSL::PtrShader shader = 0;
 #ifdef GL_ARB_tessellation_shader
-    StringList src = loadShader(name);
+    StringList src = loadShader(name, macros);
 
     if (!src.empty()) {
       shader = new GLSL::TessControlShader();
@@ -809,10 +842,10 @@ namespace GLSL {
 
   /** \brief Loads, compiles and installs a new tessellation evaluation shader.
   */
-  GLSL::PtrShader loadTessEvaluationShader(const char *name, bool verbose) {
+  GLSL::PtrShader loadTessEvaluationShader(const char *name, const GLSL::StringList *macros, bool verbose) {
     GLSL::PtrShader shader = 0;
 #ifdef GL_ARB_tessellation_shader
-    StringList src = loadShader(name);
+    StringList src = loadShader(name, macros);
 
     if (!src.empty()) {
       shader = new GLSL::TessEvaluationShader();
@@ -833,6 +866,7 @@ namespace GLSL {
     const char *tessEvaluationShaderFile,
     const char *geometryShaderFile,
     const char *fragmentShaderFile, 
+    const GLSL::StringList *macros,
     bool verbose){
 
       GLSL::Program* result = 0;
@@ -845,15 +879,15 @@ namespace GLSL {
         QString shaderFile = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(ShaderFiles[i]);
 
         if (i == 0) // vertex shader
-          tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8(), verbose);
+          tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8(), macros, verbose);
         else if (i == 1 && tessControlShaderFile) // tesscontrol shader
-          tempShaders[i] = GLSL::loadTessControlShader(shaderFile.toUtf8(), verbose);
+          tempShaders[i] = GLSL::loadTessControlShader(shaderFile.toUtf8(), macros, verbose);
         else if (i == 2 && tessEvaluationShaderFile) // tesseval shader
-          tempShaders[i] = GLSL::loadTessEvaluationShader(shaderFile.toUtf8(), verbose);
+          tempShaders[i] = GLSL::loadTessEvaluationShader(shaderFile.toUtf8(), macros, verbose);
         else if (i == 3 && geometryShaderFile) // geometry shader
-          tempShaders[i] = GLSL::loadGeometryShader(shaderFile.toUtf8(), verbose);
+          tempShaders[i] = GLSL::loadGeometryShader(shaderFile.toUtf8(), macros, verbose);
         else if (i == 4) // fragment shader
-          tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8(), verbose);
+          tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8(), macros, verbose);
 
         if (!tempShaders[i] && ShaderFiles[i]) {
           if (verbose)
@@ -885,14 +919,14 @@ namespace GLSL {
       return result;
   }
 
-  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *geometryShaderFile, const char *fragmentShaderFile, bool verbose){
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *geometryShaderFile, const char *fragmentShaderFile, const GLSL::StringList *macros, bool verbose){
 
-    return loadProgram(vertexShaderFile, 0, 0, geometryShaderFile, fragmentShaderFile, verbose);
+    return loadProgram(vertexShaderFile, 0, 0, geometryShaderFile, fragmentShaderFile, macros, verbose);
   }
 
 
-  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile, bool verbose){
-    return loadProgram(vertexShaderFile, 0, fragmentShaderFile, verbose);
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile, const GLSL::StringList *macros, bool verbose){
+    return loadProgram(vertexShaderFile, 0, fragmentShaderFile, macros, verbose);
   }
 }
 

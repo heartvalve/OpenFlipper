@@ -98,10 +98,11 @@ public:
    *
    * @param _vertexShaderFile relative (from shader directory) or absolute filename of vertex shader
    * @param _fragmentShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _macros optional list of glsl preprocessor macros, which are added directly after the #version directive (example: "#define USE_METHOD 1", "#define METHOD_PARAM 0"...)
    * @param _verbose log or suppress error output
    * @return The program (Either from cache or newly compiled and linked)
    */
-  GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile, bool _verbose = true);
+  GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile, QStringList* _macros = 0, bool _verbose = true);
   
   /** \brief Delete all cached shaders
    */
@@ -134,6 +135,8 @@ protected:
     QDateTime tessEvaluationFileLastMod;
     QDateTime geometryFileLastMod;
     QDateTime fragmentFileLastMod;
+
+    QStringList macros;
   };
 
   /// \brief Returns true, if the shaders have the timestamp

@@ -255,8 +255,9 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
 
   if (oldCache != cache_.end())
   {
-    if (!prog->isLinked())
+    if (!prog || !prog->isLinked())
     {
+      delete prog;
       return oldCache->second;
     }
     else
@@ -270,7 +271,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   return prog;
 }
 
-GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile, bool _verbose )
+GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile, QStringList* _macros, bool _verbose )
 {
   CacheEntry newEntry;
   newEntry.usage = 0;
@@ -324,12 +325,24 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
     }
   }
 
-  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile, _verbose);
+
+  // convert QStringList to GLSL::StringList
+
+  GLSL::StringList glslMacros;
+
+  if (_macros)
+  {
+    for (QStringList::const_iterator it = _macros->constBegin(); it != _macros->constEnd(); ++it)
+      glslMacros.push_back(it->toStdString());
+  }
+
+
+  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile, &glslMacros, _verbose);
   glCheckErrors();
 
   if (oldCache != cacheStatic_.end())
   {
-    if (prog && !prog->isLinked())
+    if (!prog || !prog->isLinked())
     {
       delete prog;
       return oldCache->second;
@@ -402,6 +415,9 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
 
   if (a->numLights)
     return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
+
+  if (_a->macros != _b->macros)
+    return -1;
 
   return 0; // false
 }
