@@ -279,13 +279,13 @@ namespace GLSL {
 
   //--------------------------------------------------------------------------
 
-  GLSL::StringList ACGDLLEXPORT loadShader(const char *filename);
+  GLSL::StringList ACGDLLEXPORT loadShader(const char *filename, const GLSL::StringList *macros = 0);
 
-  GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name, bool verbose = true);
-  GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name, bool verbose = true);
-  GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name, bool verbose = true);
-  GLSL::PtrShader ACGDLLEXPORT loadTessControlShader(const char *name, bool verbose = true);
-  GLSL::PtrShader ACGDLLEXPORT loadTessEvaluationShader(const char *name, bool verbose = true);
+  GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
+  GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
+  GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
+  GLSL::PtrShader ACGDLLEXPORT loadTessControlShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
+  GLSL::PtrShader ACGDLLEXPORT loadTessEvaluationShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
 
   /** load shaders and create GLSL program if successful
    *
@@ -294,6 +294,7 @@ namespace GLSL {
   */
   GLSL::PtrProgram ACGDLLEXPORT loadProgram(const char *vertexShaderFile,
                                           const char *fragmentShaderFile,
+                                          const GLSL::StringList *macros = 0,
                                           bool verbose = true);
 
   /** load shaders and create GLSL program if successful
@@ -304,6 +305,7 @@ namespace GLSL {
   GLSL::PtrProgram ACGDLLEXPORT loadProgram(const char *vertexShaderFile,
                                           const char *geometryShaderFile,
                                           const char *fragmentShaderFile,
+                                          const GLSL::StringList *macros = 0,
                                           bool verbose = true);
 
   /** load shaders and create GLSL program if successful
@@ -316,6 +318,7 @@ namespace GLSL {
                                           const char *tessEvaluationShaderFile,
                                           const char *geometryShaderFile,
                                           const char *fragmentShaderFile,
+                                          const GLSL::StringList *macros = 0,
                                           bool verbose = true);
 
 }
