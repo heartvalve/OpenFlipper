@@ -678,15 +678,17 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         localMaterial.baseColor(selectionColor);
         ro.setMaterial(&localMaterial);
 
-        ro.glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
-
         // Point Size geometry shader
         ro.shaderDesc.geometryTemplateFile = geomTemplatePointSize;
         ro.shaderDesc.fragmentTemplateFile = fragTemplatePointSize;
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("pointSize", _mat->pointSize());
 
-        _renderer->addRenderObject(&ro);
+        if (!selectedVertexIndexBuffer_.empty())
+        {
+          ro.glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
+          _renderer->addRenderObject(&ro);
+        }
 
         // Render all vertices (ignore selection here!)
         ro.debugName = "polyline.Points";
@@ -709,14 +711,17 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.debugName = "polyline.Wireframe.selected";
         localMaterial.baseColor(selectionColor);
         ro.setMaterial(&localMaterial);
-        ro.glDrawElements(GL_LINES, selectedEdgeIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedEdgeIndexBuffer_[0]));
 
         // Line Width geometry shader
         ro.shaderDesc.geometryTemplateFile = geomTemplateLineWidth;
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("lineWidth", _state.line_width());
 
-        _renderer->addRenderObject(&ro);
+        if (!selectedEdgeIndexBuffer_.empty())
+        {
+          ro.glDrawElements(GL_LINES, selectedEdgeIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedEdgeIndexBuffer_[0]));
+          _renderer->addRenderObject(&ro);
+        }
 
         ro.debugName = "polyline.Wireframe";
         localMaterial.baseColor(defaultColor);
