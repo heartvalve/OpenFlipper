@@ -107,6 +107,8 @@ private:
 
 	inline typename MeshT::Scalar voronoi_area(const typename MeshT::HalfedgeHandle& _heh) const {
 
+		if(mesh_.is_boundary(_heh)) return 0.0;
+
 		const typename MeshT::Normal e = mesh_.point(mesh_.to_vertex_handle(_heh)) -
 				mesh_.point(mesh_.from_vertex_handle(_heh));
 
