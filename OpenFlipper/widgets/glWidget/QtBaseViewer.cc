@@ -917,6 +917,16 @@ void glViewer::viewAll()
   // update scene graph (get new bounding box and set projection right, including near and far plane)
   properties_.lockUpdate();
 
+  unsigned int maxPases = 1;
+  ACG::Vec3d bbmin,bbmax;
+  // update scene bounding boxes
+  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
+
+  // update scene properties (near, far plane, scene radius according to the computed bounding boxes)
+  sceneGraph ( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax,true);
+
+
+  // update camera
   // move center (in camera coords) to origin and translate in -z dir
   translate(-(glstate_->modelview().transform_point(properties_.sceneCenter()))
             - ACG::Vec3d(0.0, 0.0, 3.0 * properties_.sceneRadius()));
@@ -925,12 +935,6 @@ void glViewer::viewAll()
   double aspect = (double) glWidth() / (double) glHeight();
   if (aspect > 1.0)
     properties_.orthoWidth( aspect * properties_.orthoWidth() ) ;
-
-  unsigned int maxPases = 1;
-  ACG::Vec3d bbmin,bbmax;
-  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
-
-  sceneGraph ( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax,true);
 
   properties_.unLockUpdate();
   updateProjectionMatrix();
