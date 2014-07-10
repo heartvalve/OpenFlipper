@@ -132,7 +132,7 @@ private:
 	}
 
 	// Compute cotan weights
-	void compute_cotan_weights() {
+	void compute_cotan_weights() const {
 
 		for(typename MeshT::ConstEdgeIter e_it = mesh_.edges_begin(),
 				e_end = mesh_.edges_end(); e_it != e_end; ++e_it) {
