@@ -113,7 +113,7 @@ private:
 		return 1.0/8.0 * mesh_.property(cotan_weights_, mesh_.edge_handle(_heh)) * (e | e);
 	}
 
-	void tag_obtuse_triangles() {
+	void tag_obtuse_triangles() const {
 
 		for(typename MeshT::ConstFaceIter f_it = mesh_.faces_begin(),
 						f_end = mesh_.faces_end(); f_it != f_end; ++f_it) {
