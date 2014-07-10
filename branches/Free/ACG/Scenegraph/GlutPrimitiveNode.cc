@@ -172,8 +172,17 @@ void
 GlutPrimitiveNode::
 draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {  
-  for (int i = 0; i < (int)primitives_.size(); ++i)
+  float backupColorDiffuse[4];
+  float backupColorAmbient[4];
+  if ( setColor_ ) {
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glGetFloatv(GL_CURRENT_COLOR,backupColorDiffuse);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+    glGetFloatv(GL_CURRENT_COLOR,backupColorAmbient);
+  }
+  for (size_t i = 0; i < primitives_.size(); ++i)
   {
+
   
     glPushMatrix();
     glTranslatef(primitives_[i].position[0], primitives_[i].position[1], primitives_[i].position[2]);
@@ -265,6 +274,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     }
 
     glPopMatrix();
+    if ( setColor_ ) {
+      glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+      glColor4fv(backupColorDiffuse);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+      glColor4fv(backupColorAmbient);
+    }
   } // end of primitives iter
 }
 
