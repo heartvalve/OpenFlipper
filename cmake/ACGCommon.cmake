@@ -180,10 +180,22 @@ include (ACGCompiler)
 # define INCLUDE_TEMPLATES for everything we build
 add_definitions (-DINCLUDE_TEMPLATES)
 
+#unset cached qt variables which are set by all qt versions. version is the major number of the qt version (e.g. 4 or 5, not 4.8)
+macro (acg_unset_qt_shared_variables version)
+  if (ACG_INTERNAL_QT_LAST_VERSION)
+    if (NOT ${ACG_INTERNAL_QT_LAST_VERSION} EQUAL ${version})
+      unset(QT_BINARY_DIR)
+      unset(QT_PLUGINS_DIR)
+      unset(ACG_INTERNAL_QT_LAST_VERSION)
+    endif()
+  endif()
+  set (ACG_INTERNAL_QT_LAST_VERSION "${version}" CACHE INTERNAL "Qt Version, which was used on the last time")
+endmacro()
+
 # look for selected qt dependencies
 macro (acg_qt4)
   if (NOT QT4_FOUND)
-
+    acg_unset_qt_shared_variables(4)
     set (QT_MIN_VERSION ${ARGN}) 
 
     if(POLICY CMP0020)
@@ -221,69 +233,85 @@ macro (acg_qt5)
 
     #set (QT_MIN_VERSION ${ARGN})
 
-    #for custom installation of qt5, dont use any of these variables
-    set (QT5_INSTALL_PATH "" CACHE PATH "Path to Qt5 directory which contains lib and include folder")
- 
-    if (EXISTS ${QT5_INSTALL_PATH})
-#		if (NOT EXISTS "${QT5_INSTALL_PATH}/include")
-#			message( FATAL_ERROR "Could not find Qt5 include directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
-#		endif()
-#		if (NOT EXISTS "${QT5_INSTALL_PATH}/lib")
-#			message( FATAL_ERROR "Could not find Qt5 lib directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
-#		endif()
-    else()
- 	message( FATAL_ERROR "The Given QT5_INSTALL_PATH does not exists")
+  #try to find qt5 automatically
+  #for custom installation of qt5, dont use any of these variables
+  set (QT5_INSTALL_PATH "" CACHE PATH "Path to Qt5 directory which contains lib and include folder")
+  if (EXISTS "${QT5_INSTALL_PATH}")
+    set (CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${QT5_INSTALL_PATH}")
+    set (QT5_INSTALL_PATH_EXISTS TRUE)
+  endif()
+  
+  #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
+  #this block has to be executed, before Qt5Gui is searched, otherwise we will end up with the (not so useful) QT5 error message
+  if ( WIN32 )      
+    set(WINDOWS_SDK_LIBS "COULD_NOT_FOUND" CACHE PATH "Path to the latest windows sdk libs which includes glu32.lib. Used by Qt5")
+    if (EXISTS "${WINDOWS_SDK_LIBS}\\glu32.lib")
+      set (CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${WINDOWS_SDK_LIBS}")
+    elseif(QT5_INSTALL_PATH_EXISTS) #trying to install qt5. notify about missing sdk before the qt message comes
+      message(FATAL_ERROR "Could not find glu32.lib. This is necessary for QT5 OpenGL version for windows, spleace specify glu32.lib in WINDOWS_SDK_LIB")
     endif()
-
-    set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
-    set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	
-    set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
-    set (QT_BINARY_DIR "${QT5_INSTALL_PATH}/bin" CACHE PATH "Qt5 binary Directory")
-	
-    #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
-    if ( WIN32 )
-      
-      set(WINDOWS_SDK_LIBS "COULD_NOT_FOUND" CACHE PATH "Path to the latest windows sdk libs which includes glu32.lib")
-      if (EXISTS "${WINDOWS_SDK_LIBS}\\glu32.lib")
-          set (WINDOWS_SDK_LIBS ${WINDOWS_SDK_LIBS})
-          set (CMAKE_PREFIX_PATH "${QT5_INSTALL_PATH};${WINDOWS_SDK_LIBS}")
-      else()
-         message( FATAL_ERROR "Could not find glu32.lib in your Windows sdk libs.")
-      endif()
-      
-    endif()#WIN32
+  endif(WIN32)
     
-    find_package (Qt5Core REQUIRED)
-    find_package (Qt5Declarative REQUIRED)
-    find_package (Qt5Widgets REQUIRED)
-    find_package (Qt5Gui REQUIRED)
-    find_package (Qt5OpenGL REQUIRED)
-    find_package (Qt5Network REQUIRED)
-    find_package (Qt5Script REQUIRED)
-    find_package (Qt5ScriptTools REQUIRED)
-    find_package (Qt5Sql REQUIRED)
-    find_package (Qt5Xml REQUIRED)
-    find_package (Qt5XmlPatterns REQUIRED)
-    find_package (Qt5Help REQUIRED)
-    find_package (Qt5WebKit REQUIRED)
-    find_package (Qt5UiTools REQUIRED)
-    find_package (Qt5Concurrent REQUIRED)
-    find_package (Qt5PrintSupport REQUIRED)
+    find_package (Qt5Core QUIET)
+    find_package (Qt5Declarative QUIET)
+    find_package (Qt5Widgets QUIET)
+    find_package (Qt5Gui QUIET)
+    find_package (Qt5OpenGL QUIET)
+    find_package (Qt5Network QUIET)
+    find_package (Qt5Script QUIET)
+    find_package (Qt5ScriptTools QUIET)
+    find_package (Qt5Sql QUIET)
+    find_package (Qt5Xml QUIET)
+    find_package (Qt5XmlPatterns QUIET)
+    find_package (Qt5Help QUIET)
+    find_package (Qt5WebKit QUIET)
+    find_package (Qt5UiTools QUIET)
+    find_package (Qt5Concurrent QUIET)
+    find_package (Qt5PrintSupport QUIET)
+    find_package (Qt5Svg QUIET)
     
     if (NOT WIN32 AND NOT APPLE)
-    	find_package (Qt5X11Extras)
+    	find_package (Qt5X11Extras QUIET)
     endif ()
     
 
-    set (QT5_FOUND ${Qt5Core_FOUND} AND ${Qt5Declarative} AND ${Qt5Widgets_FOUND}
-      AND ${Qt5Gui_FOUND} AND ${Qt5OpenGL_FOUND} AND ${Qt5Network_FOUND}
-      AND ${Qt5Script_FOUND} AND ${Qt5ScriptTools_FOUND} AND ${Qt5Sql_FOUND}
-      AND ${Qt5Xml_FOUND} AND ${Qt5XmlPatterns_FOUND} AND ${Qt5Help_FOUND}
-      AND ${Qt5WebKit_FOUND} AND ${Qt5UiTools_FOUND} AND ${Qt5Concurrent_FOUND}
-      AND ${Qt5PrintSupport_FOUND})
-
-    if (QT5_FOUND)
+    if (Qt5Core_FOUND AND Qt5Declarative_FOUND AND Qt5Widgets_FOUND
+      AND Qt5Gui_FOUND AND Qt5OpenGL_FOUND AND Qt5Network_FOUND
+      AND Qt5Script_FOUND AND Qt5ScriptTools_FOUND AND Qt5Sql_FOUND
+      AND Qt5Xml_FOUND AND Qt5XmlPatterns_FOUND AND Qt5Help_FOUND
+      AND Qt5WebKit_FOUND AND Qt5UiTools_FOUND AND Qt5Concurrent_FOUND
+      AND Qt5PrintSupport_FOUND)
+      set (QT5_FOUND TRUE)
+    endif()
+    
+    if (QT5_FOUND)   
+      acg_unset_qt_shared_variables(5)
+    
+      #set plugin dir
+      list(GET Qt5Gui_PLUGINS 0 _plugin)
+      if (_plugin)
+        get_target_property(_plugin_full ${_plugin} LOCATION)
+        get_filename_component(_plugin_dir ${_plugin_full} PATH)
+      set (QT_PLUGINS_DIR "${_plugin_dir}/../" CACHE PATH "Path to the qt plugin directory")
+      elseif(QT5_INSTALL_PATH_EXISTS)
+        set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins/" CACHE PATH "Path to the qt plugin directory")
+      elseif()
+        set (QT_PLUGINS_DIR "QT_PLUGIN_DIR_NOT_FOUND" CACHE PATH "Path to the qt plugin directory")
+      endif(_plugin)
+      
+      #set binary dir for fixupbundle
+      if(QT5_INSTALL_PATH_EXISTS)
+        set(_QT_BINARY_DIR "${QT5_INSTALL_PATH}/bin")
+      else()
+        get_target_property(_QT_BINARY_DIR ${Qt5Widgets_UIC_EXECUTABLE} LOCATION)
+        get_filename_component(_QT_BINARY_DIR ${_QT_BINARY_DIR} PATH)
+      endif(QT5_INSTALL_PATH_EXISTS)
+      
+      set (QT_BINARY_DIR "${_QT_BINARY_DIR}" CACHE PATH "Qt5 binary Directory")
+      mark_as_advanced(QT_BINARY_DIR)
+      
+      set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  
       include_directories(${Qt5Core_INCLUDE_DIRS})
       include_directories(${Qt5Declarative_INCLUDE_DIRS})
       include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -329,7 +357,8 @@ macro (acg_qt5)
         ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5Script_LIBRARIES} ${Qt5ScriptTools_LIBRARIES} ${Qt5Sql_LIBRARIES}
         ${Qt5Xml_LIBRARIES} ${Qt5XmlPatterns_LIBRARIES} ${Qt5Help_LIBRARIES}
-        ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} ${Qt5PrintSupport_LIBRARIES})
+        ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} 
+        ${Qt5PrintSupport_LIBRARIES})
         
       if (Qt5X11Extras_FOUND)
 	      list (APPEND QT_LIBRARIES ${Qt5X11Extras_LIBRARIES})
@@ -558,7 +587,7 @@ macro (acg_qt4_autouic uic_SRCS)
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${QT_UIC_EXECUTABLE}
             ARGS -o ${_outfile} ${_abs_FILE}
-            DEPENDS ${_abs_FILE})
+            MAIN_DEPENDENCY ${_abs_FILE} VERBATIM)
 
         add_file_dependencies (${_source} ${_outfile})
         set (${uic_SRCS} ${${uic_SRCS}} ${_outfile})
@@ -590,7 +619,7 @@ macro (acg_qt5_autouic uic_SRCS)
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${Qt5Widgets_UIC_EXECUTABLE}
             ARGS -o ${_outfile} ${_abs_FILE}
-            DEPENDS ${_abs_FILE})
+            MAIN_DEPENDENCY ${_abs_FILE} VERBATIM)
 
         add_file_dependencies (${_source} ${_outfile})
         set (${uic_SRCS} ${${uic_SRCS}} ${_outfile})

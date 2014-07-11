@@ -20,10 +20,16 @@ else ()
 endif()
 
 
+if (QT5_FOUND)
+    SET(ACG_SEARCH_PATH "/ACG/acgdev/gcc-4.9-x86_64/qwt-6.1-qt5")
+else()
+    SET(ACG_SEARCH_PATH "/usr/local/qwt/")
+endif()
 
 
 find_path(QWT6_INCLUDE_DIR qwt.h
                PATHS ${QT_INCLUDE_DIR}
+               "${ACG_SEARCH_PATH}/include"
                /usr/local/qwt/include
                /usr/local/include
                /opt/local/include
@@ -39,8 +45,9 @@ find_path(QWT6_INCLUDE_DIR qwt.h
                c:\\libs\\qwt-6.1.0
                c:\\libs\\qwt-6.0.2
                c:\\libs\\qwt-6.0.1
-               PATH_SUFFIXES qwt qwt6 qwt-6.1.0 qwt-6.0.2 qwt-6.0.1 include qwt/include qwt6/include
-               ENV PATH)
+               #PATH_SUFFIXES qwt qwt6 qwt-6.1.0 qwt-6.0.2 qwt-6.0.1 include qwt/include qwt6/include #deactivated for acg dir
+               ENV PATH
+               )
 
 if (EXISTS "${QWT6_INCLUDE_DIR}/qwt_global.h")
   file( READ ${QWT6_INCLUDE_DIR}/qwt_global.h QWT_GLOBAL_H )
@@ -91,13 +98,22 @@ if (QWT6_VERSION_FOUND)
       )
 # MACOS and LINUX
   else()
-    find_library(QWT6_LIBRARY NAMES qwt
+    find_library(QWT6_LIBRARY NAMES qwt-qt5
       PATHS
-      /usr/local/qwt/lib
-      /opt/local/lib
-      /usr/local/lib
-      /usr/lib
+      "${ACG_SEARCH_PATH}/lib"
+      NO_CMAKE_PATH
+      NO_CMAKE_ENVIRONMENT_PATH
       )
+  
+    if (NOT QWT6_LIBRARY) # if not the specific acg qwt installation was found, try system wide
+      find_library(QWT6_LIBRARY NAMES qwt
+        PATHS
+        /usr/local/qwt/lib
+        /opt/local/lib
+        /usr/local/lib
+        /usr/lib
+        )
+    endif()
 
     #sets the library dir 
     get_filename_component(_QWT6_LIBRARY_DIR ${QWT6_LIBRARY} PATH)
