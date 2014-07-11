@@ -1847,17 +1847,14 @@ me_merge( QMouseEvent* _event )
 
                     // both polylines open?
                     if (!first_pol->line()->is_closed() && !second_pol->line()->is_closed()) {
-                        bool inv_first(false), inv_second(false);
 
                         // wrong ordering first Polyline?
                         if (first_idx == 0) {
-                            inv_first = true;
                             first_idx = first_pol->line()->n_vertices() - 1;
                         }
 
                         // wrong ordering second Polyline?
                         if (second_idx == second_pol->line()->n_vertices() - 1) {
-                            inv_second = true;
                             second_idx = 0;
                         }
 
