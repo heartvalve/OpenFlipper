@@ -135,12 +135,10 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
       // Map event to the plugins key and modifier.
       // Call it with the mapped event.
       // =================================================================================
-      QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
-                                             _e->text(), _e->isAutoRepeat(), _e->count() );
+      QKeyEvent mappedEvent(_e->type(),binding.key, binding.modifiers,
+                             _e->text(), _e->isAutoRepeat(), _e->count() );
 
-      keyPlugin->slotKeyEvent(mappedEvent);
-
-      delete mappedEvent ;
+      keyPlugin->slotKeyEvent(&mappedEvent);
     }
 
     //if its not a multiUse key we are ready
@@ -194,12 +192,10 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
       // Call the plugin with the mapped event.
       // =================================================================================
 
-      QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
-                                             _e->text(), _e->isAutoRepeat(), _e->count() );
+      QKeyEvent mappedEvent (_e->type(),binding.key, binding.modifiers,
+                             _e->text(), _e->isAutoRepeat(), _e->count() );
 
-      keyPlugin->slotKeyReleaseEvent(mappedEvent);
-
-      delete mappedEvent;
+      keyPlugin->slotKeyReleaseEvent(&mappedEvent);
     }
 
     //if its not a multiUse key we are ready
