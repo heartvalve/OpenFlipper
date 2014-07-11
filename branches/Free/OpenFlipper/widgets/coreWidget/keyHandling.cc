@@ -105,12 +105,10 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
       // Map event to the cores key and modifier.
       // Call the core key handler with the mapped event.
       // =================================================================================
-      QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
-                                             _e->text(), _e->isAutoRepeat(), _e->count() );
+      QKeyEvent mappedEvent (_e->type(),binding.key, binding.modifiers,
+                             _e->text(), _e->isAutoRepeat(), _e->count() );
 
-      coreKeyPressEvent(mappedEvent);
-
-      delete mappedEvent;
+      coreKeyPressEvent(&mappedEvent);
 
       //if the key is multiUse also check other assigned keys
       if (binding.multiUse)
@@ -175,11 +173,9 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
       // Map event to the cores key and modifier.
       // Call the core key handler with the mapped event.
       // =================================================================================
-      QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
-                                             _e->text(), _e->isAutoRepeat(), _e->count() );
-      coreKeyReleaseEvent(mappedEvent);
-
-      delete mappedEvent;
+      QKeyEvent mappedEvent (_e->type(),binding.key, binding.modifiers,
+                             _e->text(), _e->isAutoRepeat(), _e->count() );
+      coreKeyReleaseEvent(&mappedEvent);
 
       //if the key is multiUse also check other assigned keys
       if (binding.multiUse)
@@ -534,6 +530,10 @@ void CoreWidget::registerCoreKeys() {
   if ( OpenFlipper::Options::isLinux() ) {
     emit registerKey(Qt::Key_Meta , Qt::MetaModifier, "Use Navigation mode while key is pressed");
     emit registerKey(Qt::Key_Meta , Qt::NoModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Super_L , Qt::NoModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Super_L , Qt::MetaModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Super_R , Qt::NoModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Super_R , Qt::MetaModifier, "Use Navigation mode while key is pressed");
   } else {
     emit registerKey(Qt::Key_Alt  , Qt::AltModifier, "Use Navigation mode while key is pressed");
     emit registerKey(Qt::Key_Alt  , Qt::NoModifier, "Use Navigation mode while key is pressed");
@@ -552,35 +552,30 @@ void CoreWidget::registerCoreKeys() {
 
 /// if a keyPressEvent belongs to the core this functions is called
 void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
-
   //emit log(LOGERR,"Key Press");
+  if ( (( _e->key() == Qt::Key_Meta ) || (_e->key() == Qt::Key_Super_L) || (_e->key() == Qt::Key_Super_R))
+      && OpenFlipper::Options::isLinux() ) {
 
-  if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
-    if ( _e->type() == QEvent::KeyPress ) {
-
-      if ( lastActionMode() == actionMode()) {
-        if (actionMode() == Viewer::PickingMode)
-          setActionMode( Viewer::ExamineMode );
-        else
-          setActionMode( Viewer::PickingMode );
-      } else
-        setActionMode( lastActionMode() );
-
-
+    if ( lastActionMode() == actionMode()) {
+      if (actionMode() == Viewer::PickingMode)
+        setActionMode( Viewer::ExamineMode );
+      else
+        setActionMode( Viewer::PickingMode );
     }
+    else
+      setActionMode(lastActionMode());
   }
 
   if ( ( _e->key() == Qt::Key_Alt ) && ! OpenFlipper::Options::isLinux() ) {
-    if ( _e->type() == QEvent::KeyPress ) {
-      //emit log(LOGERR,"Switch to examine mode");
-      if ( lastActionMode() == actionMode()) {
-        if (actionMode() == Viewer::PickingMode)
-          setActionMode( Viewer::ExamineMode );
-        else
-          setActionMode( Viewer::PickingMode );
-      } else
-        setActionMode( lastActionMode() );
+    //emit log(LOGERR,"Switch to examine mode");
+    if ( lastActionMode() == actionMode()) {
+      if (actionMode() == Viewer::PickingMode)
+        setActionMode( Viewer::ExamineMode );
+      else
+        setActionMode( Viewer::PickingMode );
     }
+    else
+      setActionMode(lastActionMode());
   }
 
 
@@ -664,21 +659,15 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 /// if a keyReleaseEvent belongs to the core this functions is called
 void CoreWidget::coreKeyReleaseEvent(QKeyEvent* _e){
 
-
-  if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
-    if ( _e->type() == QEvent::KeyRelease ) {
+  if ( (( _e->key() == Qt::Key_Meta ) || (_e->key() == Qt::Key_Super_L) || (_e->key() == Qt::Key_Super_R))
+      && OpenFlipper::Options::isLinux() ) {
       setActionMode( lastActionMode() );
-    }
   }
 
   //emit log(LOGERR,"Key release");
 
   if ( ( _e->key() == Qt::Key_Alt ) && !OpenFlipper::Options::isLinux() ) {
-    //emit log(LOGERR,"Key alt release");
-    if ( _e->type() == QEvent::KeyRelease ) {
-      //emit log(LOGERR,"Key alt release toggle");
       setActionMode( lastActionMode() );
-    }
   }
 
 
