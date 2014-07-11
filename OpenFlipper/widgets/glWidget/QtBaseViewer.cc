@@ -490,7 +490,6 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
   }
 
   properties_.setPlanes(nearPlane,farPlane);
-  properties_.orthoWidth(_radius);
 
   updateProjectionMatrix();
   updateGL();
