@@ -112,7 +112,7 @@ private:
 		const typename MeshT::Normal e = mesh_.point(mesh_.to_vertex_handle(_heh)) -
 				mesh_.point(mesh_.from_vertex_handle(_heh));
 
-		return 1.0/8.0 * mesh_.property(cotan_weights_, mesh_.edge_handle(_heh)) * (e | e);
+		return (1.0/8.0) * mesh_.property(cotan_weights_, mesh_.edge_handle(_heh)) * (e | e);
 	}
 
 	void tag_obtuse_triangles() const {
@@ -139,8 +139,8 @@ private:
 		for(typename MeshT::ConstEdgeIter e_it = mesh_.edges_begin(),
 				e_end = mesh_.edges_end(); e_it != e_end; ++e_it) {
 
-			const typename MeshT::Scalar w = 0.5 * (cotan_weight(mesh_.halfedge_handle(*e_it, 0)) +
-					cotan_weight(mesh_.halfedge_handle(*e_it, 1)));
+			const typename MeshT::Scalar w = cotan_weight(mesh_.halfedge_handle(*e_it, 0)) +
+					cotan_weight(mesh_.halfedge_handle(*e_it, 1));
 
 			const_cast<MeshT&>(mesh_).property(cotan_weights_, *e_it) = w;
 		}
