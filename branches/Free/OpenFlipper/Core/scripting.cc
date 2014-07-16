@@ -96,7 +96,7 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
     }
 
     uiFile.open(QIODevice::ReadOnly);
-    QWidget *ui = loader.load(&uiFile);
+    QWidget *ui = loader.load(&uiFile, coreWidget_);
     uiFile.close();
 
     if ( ui == 0 ) {
