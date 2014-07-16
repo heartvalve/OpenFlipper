@@ -241,20 +241,30 @@ macro (acg_qt5)
     set (QT5_INSTALL_PATH_EXISTS TRUE)
   endif()
   
-  #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
-  #this block has to be executed, before Qt5Gui is searched, otherwise we will end up with the (not so useful) QT5 error message
-  if ( WIN32 )      
-    set(WINDOWS_SDK_LIBS "COULD_NOT_FOUND" CACHE PATH "Path to the latest windows sdk libs which includes glu32.lib. Used by Qt5")
-    if (EXISTS "${WINDOWS_SDK_LIBS}\\glu32.lib")
-      set (CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${WINDOWS_SDK_LIBS}")
-    elseif(QT5_INSTALL_PATH_EXISTS) #trying to install qt5. notify about missing sdk before the qt message comes
-      message(FATAL_ERROR "Could not find glu32.lib. This is necessary for QT5 OpenGL version for windows, spleace specify glu32.lib in WINDOWS_SDK_LIB")
-    endif()
-  endif(WIN32)
+  
     
     find_package (Qt5Core QUIET)
+     
+    #find WINDOWS_SDK to avoid qt error. This must be done BEFORE Qt5Widgets is searched
+    if (Qt5Core_FOUND AND WIN32)    
+      string(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+.*" "\\1" QT_VERSION_MAJOR "${Qt5Core_VERSION_STRING}")
+      string(REGEX REPLACE "^[0-9]+\\.([0-9])+\\.[0-9]+.*" "\\1" QT_VERSION_MINOR "${Qt5Core_VERSION_STRING}")
+      string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" QT_VERSION_PATCH "${Qt5Core_VERSION_STRING}")
+    
+      if ( (QT_VERSION_MAJOR EQUAL 5) AND (QT_VERSION_MINOR LESS 3 OR ( QT_VERSION_MINOR EQUAL 3 AND QT_VERSION_PATCH EQUAL 0 )) ) # for all Qt version > 5.0.0 and < 5.3.1
+        #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
+        #this block has to be executed, before Qt5Gui is searched, otherwise we will end up with the (not so useful) QT5 error message 
+        set(WINDOWS_SDK_LIBS "COULD_NOT_FOUND" CACHE PATH "Path to the latest windows sdk libs which includes glu32.lib. Used by Qt5.")
+        if (EXISTS "${WINDOWS_SDK_LIBS}\\glu32.lib")
+          set (CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${WINDOWS_SDK_LIBS}")
+        elseif(QT5_INSTALL_PATH_EXISTS) #trying to install qt5. notify about missing sdk before the qt message comes
+          message(FATAL_ERROR "Could not find glu32.lib. This is necessary for QT5 OpenGL version for windows, spleace specify glu32.lib in WINDOWS_SDK_LIB or install Qt version >= 5.3.1")
+        endif()
+      endif()    
+    endif(Qt5Core_FOUND AND WIN32)
+    
     find_package (Qt5Declarative QUIET)
-    find_package (Qt5Widgets QUIET)
+    find_package (Qt5Widgets QUIET)    
     find_package (Qt5Gui QUIET)
     find_package (Qt5OpenGL QUIET)
     find_package (Qt5Network QUIET)
