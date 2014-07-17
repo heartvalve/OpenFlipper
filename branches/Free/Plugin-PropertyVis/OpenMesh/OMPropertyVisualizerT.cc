@@ -327,8 +327,6 @@ void OMPropertyVisualizer<MeshT>::clear()
         clearHalfedgeProp();
     else if (propertyInfo.isVertexProp())
         clearVertexProp();
-
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 }
 
 
