@@ -55,7 +55,7 @@ namespace ACG {
 //========================================================================
 
 GLPrimitive::GLPrimitive() :
-        vboDataInvalid_(false),
+        vboDataInvalid_(true),
         normalOrientation_(OUTSIDE),
         numTris_(0),
         vboData_(0),
