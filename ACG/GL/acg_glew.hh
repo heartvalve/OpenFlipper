@@ -58,6 +58,8 @@
 
 #if defined(ARCH_DARWIN)
 
+  #include <gl/glew.h>
+
 #elif defined(WIN32)
 
   #include <gl/glew.h>
