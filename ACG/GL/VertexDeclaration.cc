@@ -40,7 +40,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GLState.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>

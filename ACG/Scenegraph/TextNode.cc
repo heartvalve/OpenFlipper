@@ -53,7 +53,7 @@
 
 //== INCLUDES =================================================================
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 
 #include "TextNode.hh"
 #include "../GL/gl.hh"

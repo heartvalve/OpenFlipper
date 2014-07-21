@@ -51,7 +51,7 @@
 
 //== INCLUDES =================================================================
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 
 #include "QtBaseViewer.hh"
 #include "QtGLGraphicsScene.hh"

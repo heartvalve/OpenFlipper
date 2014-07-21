@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 #include "DrawMesh.hh"
 
 namespace ACG {

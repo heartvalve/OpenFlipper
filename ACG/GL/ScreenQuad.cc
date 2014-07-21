@@ -51,7 +51,7 @@
 
 //== INCLUDES =================================================================
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 #include "ScreenQuad.hh"
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/GLError.hh>
