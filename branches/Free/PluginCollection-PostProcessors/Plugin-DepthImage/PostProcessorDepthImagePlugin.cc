@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <GL/glew.h>
+#include <ACG/GL/acg_glew.hh>
 
 #include "PostProcessorDepthImagePlugin.hh"
 
@@ -51,7 +51,6 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-#include <GL/glew.h>
 
 PostProcessorDepthImagePlugin::PostProcessorDepthImagePlugin()
 : shader_(0)
