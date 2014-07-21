@@ -52,7 +52,7 @@ endforeach ()
 SET( BU_CHMOD_BUNDLE_ITEMS TRUE)
 
 # fix all dependencies
-fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.app "${_plugins};${_qtplugins}" "/usr/lib;${_qtdirs}")
+fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.app "${_plugins};${_qtplugins}" "/usr/lib;${_qtdirs};@QWT6_LIBRARY_DIR@")
 
 # create qt plugin configuration file
 file(WRITE "@CMAKE_BINARY_DIR@/Build/OpenFlipper.app/Contents/Resources/qt.conf" "[Paths]\nPlugins = Resources/QtPlugins")
