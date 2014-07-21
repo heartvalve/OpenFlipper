@@ -107,9 +107,7 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
   {
     // we use GLEW to manage extensions
     // initialize it first
-    #ifndef __APPLE__
     glewInit();
-    #endif
     for (unsigned int i = 0; i < views_->size (); i++)
     {
       views_->at(i)->initializeGL ();
