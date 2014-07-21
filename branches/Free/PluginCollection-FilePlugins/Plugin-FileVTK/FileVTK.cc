@@ -1470,7 +1470,7 @@ FileVTKPlugin::BestMeshType FileVTKPlugin::findBestObjectType(QString _filename)
           }
 
 
-          if ( ! in.status() == QTextStream::Ok ) {
+          if ( in.status() != QTextStream::Ok ) {
             emit log(LOGERR,tr("Read corrupted cell type data!"));
             return BMT_None;
           }
@@ -2398,7 +2398,7 @@ bool FileVTKPlugin::loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh, 
     // Remember it
     _cells[read].type = type;
 
-    if ( ! _in.status() == QTextStream::Ok ) {
+    if ( _in.status() != QTextStream::Ok ) {
       emit log(LOGERR,tr("Read corrupted cell type data!"));
       return false;
     }
