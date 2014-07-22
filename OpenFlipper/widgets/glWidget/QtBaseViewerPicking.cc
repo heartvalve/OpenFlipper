@@ -419,96 +419,9 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
                        unsigned int&               _targetIdx,
                        ACG::Vec3d*                 _hitPointPtr )
 {
-  GLint         w = glWidth(),
-                h = glHeight(),
-                l = scenePos().x(),
-                b = scene()->height () - scenePos().y() - h,
-                x = _mousePos.x(),
-                y = scene()->height () - _mousePos.y();
-  GLint         viewport[4] = {l,b,w,h};
-  GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
-                nameBuffer[ NAME_STACK_SIZE ];
+  ///@TODO: Remove that function alltogether.
 
-  // Initialize name buffer (This value is never used afterwards)
-  nameBuffer[0] = 0;
-  nameBuffer[1] = 0;
-
-  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
-  const ACG::GLMatrixd&  projection = properties_.glState().projection();
-
-  // prepare GL state
-  makeCurrent();
-
-  glSelectBuffer( SELECTION_BUFFER_SIZE, selectionBuffer );
-  glRenderMode(GL_SELECT);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPickMatrix((GLdouble) x, (GLdouble) y, 3, 3, viewport);
-  glMultMatrixd(projection.get_raw_data());
-  glMatrixMode(GL_MODELVIEW);
-  glLoadMatrixd(modelview.get_raw_data());
-  ACG::GLState::disable(GL_LIGHTING);
-  ACG::GLState::disable(GL_BLEND);
-  glClear(GL_DEPTH_BUFFER_BIT);
-  properties_.glState().pick_init (false);
-
-  // do the picking
-  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
-  ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, properties_.glState());
-  int hits = glRenderMode(GL_RENDER);
-
-  // restore GL state
-  glMatrixMode( GL_PROJECTION );
-  glLoadMatrixd(projection.get_raw_data());
-  glMatrixMode( GL_MODELVIEW );
-  glLoadMatrixd(modelview.get_raw_data());
-  ACG::GLState::enable(GL_LIGHTING);
-  ACG::GLState::enable(GL_BLEND);
-
-  // process hit record
-  if ( hits > 0 )
-  {
-    GLuint *ptr = selectionBuffer,
-    num_names,
-    z,
-    min_z=~(0u),
-    max_z=0;
-
-    for (int i=0; i<hits; ++i)
-    {
-      num_names = *ptr++;
-      if ( num_names != NAME_STACK_SIZE )
-      {
-        std::cerr << "glViewer::pick() : namestack error\n\n";
-        return false;
-      }
-
-      if ( (z = *ptr++) < min_z )
-      {
-        min_z = z;
-        max_z = *ptr++;
-        for (unsigned int j=0; j<num_names; ++j)
-          nameBuffer[j] = *ptr++;
-      }
-      else ptr += 1+num_names;
-    }
-
-    _nodeIdx   = nameBuffer[0];
-    _targetIdx = nameBuffer[1];
-
-    if (_hitPointPtr)
-    {
-      GLuint zscale=~(0u);
-      GLdouble min_zz = ((GLdouble)min_z) / ((GLdouble)zscale);
-      GLdouble max_zz = ((GLdouble)max_z) / ((GLdouble)zscale);
-      GLdouble zz     = 0.5F * (min_zz + max_zz);
-      *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,zz));
-    }
-
-    return true;
-  }
-  else if (hits < 0)
-    std::cerr << "glViewer::pick() : selection buffer overflow\n\n";
+  std::cerr << "Error! OpenGL Picking via OpenGL Name stack is not supported anymore." << std::endl;
 
   return false;
 }

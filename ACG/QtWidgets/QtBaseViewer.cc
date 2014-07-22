@@ -896,8 +896,6 @@ void QtBaseViewer::drawScene_mono()
 
       ACG::GLState::disable(GL_LIGHTING);
       glClear(GL_DEPTH_BUFFER_BIT);
-      glInitNames();
-      glPushName((GLuint) 0);
 
       // do the picking
       SceneGraph::PickAction action(*glstate_, pickRendererMode_, curDrawMode_);

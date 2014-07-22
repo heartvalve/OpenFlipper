@@ -215,8 +215,8 @@ public:
   virtual void enterPick(GLState& _state , PickTarget _target, const DrawModes::DrawMode& _drawMode );
   
   /** Draw the node using the GL picking name stack. The node's ID
-      will already be on the name stack, so only names identifing e.g. faces
-      should be used ( by glLoadName() ).
+      will already be on the name stack, so only names identifying e.g. faces
+      should be used ( by pick_set_name() ).
   */
   virtual void pick(GLState& /* _state */, PickTarget /* _target */ ) {}
 
