@@ -918,7 +918,8 @@ me_insert( QMouseEvent* _event )
           cur_polyline_obj_->materialNode()->set_random_color();
 
           cur_polyline_obj_->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
-          cur_polyline_obj_->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME|ACG::SceneGraph::DrawModes::POINTS);
+
+          cur_polyline_obj_->lineNode()->drawMode(ACG::SceneGraph::DrawModes::DrawMode::getFromDescription("Points (as Spheres)") | ACG::SceneGraph::DrawModes::WIREFRAME);
 
           cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
 
