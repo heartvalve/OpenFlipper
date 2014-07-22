@@ -1055,8 +1055,6 @@ void GLState::pick_init (bool _color)
 {
   colorPicking_ = _color;
   colorStack_.initialize ();
-  glInitNames();
-  glPushName((GLuint) 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1074,7 +1072,6 @@ bool GLState::pick_set_maximum (unsigned int _idx)
 void GLState::pick_set_name (unsigned int _idx)
 {
   colorStack_.setIndex (_idx);
-  glLoadName (_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -1091,8 +1088,6 @@ Vec4uc GLState::pick_get_name_color (unsigned int _idx)
 void GLState::pick_push_name (unsigned int _idx)
 {
   colorStack_.pushIndex (_idx);
-  glLoadName (_idx);
-  glPushName (0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1100,7 +1095,6 @@ void GLState::pick_push_name (unsigned int _idx)
 void GLState::pick_pop_name ()
 {
   colorStack_.popIndex ();
-  glPopName ();
 }
 
 //-----------------------------------------------------------------------------

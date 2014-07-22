@@ -157,8 +157,6 @@ void RenderPickingPlugin::render(ACG::GLState* _glState, Viewer::ViewerPropertie
   ACG::GLState::disable(GL_LIGHTING);
   ACG::GLState::disable(GL_BLEND);
   glClear(GL_DEPTH_BUFFER_BIT);
-  glInitNames();
-  glPushName((GLuint) 0);
 
   // do the picking
   _glState->pick_init (true);

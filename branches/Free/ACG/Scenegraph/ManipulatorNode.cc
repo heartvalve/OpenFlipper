@@ -549,7 +549,6 @@ void ManipulatorNode::pick(GLState& _state, PickTarget _target) {
 			// cylinder
 			_state.push_modelview_matrix();
 			setup_cylinder_system(_state);
-			//glLoadName(1);
 			_state.pick_set_name(0);
 			cylinder_->setBottomRadius(cylinder_radius_);
 		  cylinder_->setTopRadius(cylinder_radius_);
@@ -559,7 +558,6 @@ void ManipulatorNode::pick(GLState& _state, PickTarget _target) {
 			// sphere
 			_state.push_modelview_matrix();
 			setup_sphere_system(_state);
-			//glLoadName(2);
 			_state.pick_set_name(1);
 			glutSolidSphere(2* cylinder_radius_ , 20, 20);
 			_state.pop_modelview_matrix();
