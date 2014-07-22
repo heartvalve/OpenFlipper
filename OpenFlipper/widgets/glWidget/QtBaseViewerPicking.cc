@@ -66,11 +66,6 @@
 
 //== IMPLEMENTATION ==========================================================
 
-static const unsigned int  SELECTION_BUFFER_SIZE = 10000;
-static const unsigned int  NAME_STACK_SIZE       = 2;
-
-//== IMPLEMENTATION ==========================================================
-
 
 bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
                      const QPoint&               _mousePos,
