@@ -86,7 +86,7 @@ class PolyLinePlugin: public QObject,
 #endif
 
 signals:
-  
+
   // BaseInterface
   void updateView();
   void updatedObject(int _identifier, const UpdateType& _type);
@@ -105,15 +105,15 @@ signals:
   // ToolbarInterface
   void addToolbar(QToolBar* _toolbar);
   void getToolBar( QString _name, QToolBar*& _toolbar);
-  
+
   // ScriptInterface
   void scriptInfo( QString _functionName );
-  
+
   // ToolboxInterface
   void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
-  
+
   void deleteObject( int _id );
-  void addEmptyObject( DataType _type, int& _id);    
+  void addEmptyObject( DataType _type, int& _id);
 
   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
   void showStatusMessage(QString _message, int _timeout = 0);
@@ -169,16 +169,18 @@ public :
   /// Description of the Plugin
   QString description() { return (QString("Handling of PolyLines (Insertion/Deletion/Modeling/...")); };
 
+public slots:
+
+#ifdef EXTENDED_POLY_LINE
+    void slot_resample_on_edges();
+#endif
+
 private slots:
 
   void slot_subdivide();
   void slot_subdivide_percent(bool _checked);
   void slot_decimate();
   void slot_decimate_percent(bool _checked);
-
-#ifdef EXTENDED_POLY_LINE
-  void slot_resample_on_edges();
-#endif
 
   void slot_smooth();
   void slot_smooth( PolyLineObject*& _pol);
@@ -215,41 +217,41 @@ private :
   /** @name ToolBox
   * @{ */
   //===========================================================================
-  
+
   private :
-    
+
     /// Widget for Toolbox
     PolyLineToolbarWidget* tool_;
-  
-  /** @} */  
-  
+
+  /** @} */
+
   //===========================================================================
   /** @name ToolBar
   * @{ */
   //===========================================================================
-  
+
   private :
     QAction*      polyLineAction_;
     QActionGroup* toolBarActions_;
-    
+
     QToolBar*     toolbar_;
-    
+
   private slots:
-    
+
     /// Called by Toolbar to enable pick mode
     void slotSetPolyLineMode(QAction* _action);
-    
-  /** @} */  
-  
+
+  /** @} */
+
   //===========================================================================
   /** @name PickToolBar
   * @{ */
   //===========================================================================
-  
+
   private :
     QToolBar*     pickToolbar_;
     QActionGroup* pickToolBarActions_;
-    
+
     QAction*      insertAction_;
     QAction*	  insertCircleAction_;
     QAction*	  insertSplineAction_;
@@ -259,59 +261,59 @@ private :
     QAction*      mergeAction_;
     QAction*      splitAction_;
     QAction*      cutAction_;
-    
+
   private slots:
-    
+
     /// Called by pick Toolbar
     void slotPickToolbarAction(QAction* _action);
-    
+
   /** @} */
-  
+
   //===========================================================================
   /** @name Template Functions
   * @{ */
   //===========================================================================
-  
+
   private:
-  
+
   /// get the points from the intersection between mesh and plane
   template< class MeshT > std::vector< ACG::Vec3d >
   getIntersectionPoints ( MeshT* _mesh, uint _fh, ACG::Vec3d _planeNormal ,
                           ACG::Vec3d _planePoint, bool& _closed );
-                                                    
+
   /// get an edge of the mesh that is cut by the plane
   template< class MeshT >
   typename MeshT::EdgeHandle
   getCuttedEdge(MeshT& _mesh, ACG::Vec3d& _planeNormal, ACG::Vec3d& _planePoint);
 
   /** @} */
-  
+
 public slots:
-  
+
   QString version() { return QString("1.02"); };
-  
+
   //============================================
-  
+
   /// Generates a polyLine of a plane intersection
   int generatePolyLineFromCut( int _objectId, Vector _planePoint, Vector _planeNormal, int _polyLineId = -1 );
-  
+
 private slots:
-  
+
   /// Scissor Button was hit
   void slotScissorButton();
-  
+
   /// Generate PolyLine after the cutPlane has been drawn
   void slotTriggerCutPlaneSelect();
-  
+
 private:
     int               cur_insert_id_;
     PolyLineObject   *cur_polyline_obj_;
-    
+
     int               cur_move_id_;
     PolyLine::Point*  move_point_ref_;
     PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
-    
+
     /// The object which is being modified(created, dragged)
     int				    createCircle_CurrSelIndex_;
     /// Use this one to mark the last index to update the number of points
