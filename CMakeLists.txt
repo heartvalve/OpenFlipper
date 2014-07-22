@@ -308,7 +308,7 @@ if ( APPLE )
   endif()
 
   # let bundle generation depend on all targets
-  add_dependencies (fixbundle ${OPENFLIPPER_PRODUCT_STRING} PluginLib ${OPENFLIPPER_PLUGINS})
+  add_dependencies (fixbundle ${OPENFLIPPER_PRODUCT_STRING} OpenFlipperPluginLib ${OPENFLIPPER_PLUGINS})
 
   # install bundle
   install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .
