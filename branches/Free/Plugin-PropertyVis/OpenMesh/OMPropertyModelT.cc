@@ -393,7 +393,7 @@ void OMPropertyModel<MeshT>::mouseEvent(QMouseEvent* _event)
 
             if (object->id() == objectID_)
             {
-                OMPropertyVisualizer<MeshT>* viz = (OMPropertyVisualizer<MeshT>*) propertyVisualizers[currentlySelectedIndices.first().row()];
+                OMPropertyVisualizer<MeshT>* viz = dynamic_cast<OMPropertyVisualizer<MeshT>*>(propertyVisualizers[currentlySelectedIndices.first().row()] );
                 unsigned int primitiveId = viz->getClosestPrimitiveId(face_idx, hit_point);
                 mPickWidget.pickedHandle->setText(tr("%1").arg(primitiveId));
                 mPickWidget.pickedValue->setText(viz->getPropertyText(primitiveId));
