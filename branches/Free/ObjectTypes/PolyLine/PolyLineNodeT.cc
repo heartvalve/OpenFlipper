@@ -528,26 +528,21 @@ updateVBO() {
   if ( polyline_.vertex_normals_available() )
     vertexDecl_.addElement(GL_FLOAT, 3 , ACG::VERTEX_USAGE_NORMAL);
 
+  // Add custom vertex elements to declaration
+  for (size_t i = 0; i < customBuffers_.size(); ++i) {
+    const ACG::VertexElement* ve = &customBuffers_[i].first;
+    vertexDecl_.addElement(ve->type_, ve->numElements_, ACG::VERTEX_USAGE_SHADER_INPUT, 0u, ve->shaderInputName_);
+  }
+
   // create vbo if it does not exist
   if (!vbo_)
     GLState::genBuffersARB(1, &vbo_);
 
-  // Temporary float array we need to convert doubles to this type
-  float*       vboData_ = NULL;
+  // size in bytes of vbo,  create additional vertex for closed loop indexing
+  unsigned int bufferSize = vertexDecl_.getVertexStride() * (polyline_.n_vertices() + 1);
 
-  // Number of points in buffer (Initialized without normals)
-  unsigned int bufferPoints =  polyline_.n_vertices() + 1;
-
-  // We need twice as much space, as we need to store the normals along with the points
-  if ( polyline_.vertex_normals_available()  )
-    bufferPoints *= 2;
-
-  // Create the required array ( 3 coordinates of 4 floats per vertex )
-  // First vertex is replicated for closed loop polylines
-  vboData_ = new float[3 * (bufferPoints) * 4];
-
-  // Pointer to it for easier copy operation
-  float* pBuffer = &vboData_[0];
+  // Create the required array
+  char* vboData_ = new char[bufferSize];
 
   // Index buffer for selected vertices
   selectedVertexIndexBuffer_.clear();
@@ -557,14 +552,7 @@ updateVBO() {
 
   for (unsigned int  i = 0 ; i < polyline_.n_vertices(); ++i) {
 
-    // Copy from internal storage to VBO in CPU memory
-    for ( unsigned int j = 0 ; j < 3 ; ++j)
-      *(pBuffer++) = polyline_.point(i)[j];
-
-    // Also write normal into buffer if available
-    if ( polyline_.vertex_normals_available()  )
-      for ( unsigned int j = 0 ; j < 3 ; ++j)
-        *(pBuffer++) = polyline_.vertex_normal(i)[j];
+    writeVertex(i, vboData_ + i * vertexDecl_.getVertexStride());
 
     // Create an ibo in system memory for vertex selection
     if ( polyline_.vertex_selections_available() && polyline_.vertex_selected(i) )
@@ -579,23 +567,62 @@ updateVBO() {
   }
 
   // First point is added to the end for a closed loop
-  for ( unsigned int j = 0 ; j < 3 ; ++j)
-    *(pBuffer++) = polyline_.point(0)[j];
-
-  // First normal is added to the end for a closed loop
-  if ( polyline_.vertex_normals_available()  )
-    for ( unsigned int j = 0 ; j < 3 ; ++j)
-      *(pBuffer++) = polyline_.vertex_normal(0)[j];
+  writeVertex(0, vboData_ + polyline_.n_vertices() * vertexDecl_.getVertexStride());
 
   // Move data to the buffer in gpu memory
   GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-  GLState::bufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * bufferPoints * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+  GLState::bufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize , vboData_ , GL_STATIC_DRAW_ARB);
 
   // Remove the local storage
   delete[] vboData_;
 
   // Update done.
   updateVBO_ = false;
+}
+
+//----------------------------------------------------------------------------
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+writeVertex(unsigned int _vertex, void* _dst) {
+
+  // position and normal in float
+  float* fdata = (float*)_dst;
+
+  // Copy from internal storage to VBO in CPU memory
+  for ( unsigned int j = 0 ; j < 3 ; ++j)
+    *(fdata++) = polyline_.point(_vertex)[j];
+
+  // Also write normal into buffer if available
+  if ( polyline_.vertex_normals_available()  )
+    for ( unsigned int j = 0 ; j < 3 ; ++j)
+      *(fdata++) = polyline_.vertex_normal(_vertex)[j];
+
+  // id offset of custom elements in the vertex declaration
+  unsigned int customElementOffset = 1;
+  if ( polyline_.vertex_normals_available()  )
+    customElementOffset++;
+
+  // copy custom data byte-wise
+  for (unsigned int i = 0; i < customBuffers_.size(); ++i) {
+
+    // element in custom input buffer
+    const ACG::VertexElement* veInput = &customBuffers_[i].first;
+    unsigned int elementInputStride = veInput->getByteOffset();
+    unsigned int elementSize = ACG::VertexDeclaration::getElementSize(veInput);
+
+    if (!elementInputStride)
+      elementInputStride = elementSize;
+
+    // element in vertex buffer
+    const ACG::VertexElement* ve = vertexDecl_.getElement(i + customElementOffset);
+
+    const char* src = (const char*)customBuffers_[i].second;
+
+    memcpy((char*)_dst + ve->getByteOffset(), src + elementInputStride * _vertex, elementSize);
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -620,6 +647,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   // draw after scene-meshes
   ro.priority = 1;
+
 
   // Update the vbo only if required.
   if ( updateVBO_ )
@@ -735,6 +763,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
         // Line Width geometry shader
         ro.shaderDesc.geometryTemplateFile = geomTemplateLineWidth;
+
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("lineWidth", _state.line_width());
 
@@ -749,6 +778,36 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
 }
 
+//----------------------------------------------------------------------------
+
+template <class PolyLine>
+int
+PolyLineNodeT<PolyLine>::
+addCustomBuffer( const ACG::VertexElement& _desc, const void* _buffer) {
+
+  if (_buffer) {
+    customBuffers_.push_back( std::pair<ACG::VertexElement, const void*>(_desc, _buffer) );
+    update();
+
+    return int(customBuffers_.size()-1);
+  }
+  else
+  {
+    std::cerr << "PolyLineNodeT::addCustomBuffer - null pointer buffer" << std::endl;
+    return -1;
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+setCustomBuffer( int _id, const void* _buffer) {
+
+  customBuffers_[_id].second = _buffer;
+  update();
+}
 
 //=============================================================================
 } // namespace SceneGraph

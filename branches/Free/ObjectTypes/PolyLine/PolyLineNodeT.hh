@@ -126,6 +126,49 @@ public:
   /// Trigger an update of the vbo
   void update() { updateVBO_ = true; };
 
+
+  /** Add custom data to the vertex buffer for rendering with shaders
+   *
+   * The element description declares the type of data and the name in the shader.
+   * The provided buffer has to store data for each vertex: num elements in buffer = polyline().n_vertices()
+   * If the stride offset in  _desc.pointer_ is 0, it is assumed that the buffer stores the data without memory alignment.
+   * This function does not create a local copy of the buffer, so the provided memory address
+   * has to be valid whenever an internal vbo update is triggered.
+   * Custom attributes are then available in the vertex shader by accessing the input with name tangentElement.shaderInputName_.
+   *
+   * Example:
+   *
+   * in plugin:
+   *  have allocated buffer: tangentData_ of type Vec3f*  (member of a class)
+   *  
+   *  ACG::VertexElement tangentDesc;
+   *  tangentDesc.type_ = GL_FLOAT;
+   *  tangentDesc.numElements_ = 3;
+   *  tangentDesc.usage_ = ACG::VERTEX_USAGE_USER_DEFINED;
+   *  tangentDesc.shaderInputName_ = "myTangent";
+   *  tangentDesc.pointer_ = 0;
+   *
+   *  polylineNode->addCustomBuffer(tangentDesc, tangentData_);
+   *
+   * in vertex shader:
+   *  in vec3 myTangent;
+   *  ..
+   *  
+   *
+   * @param _desc  type description of an element in the buffer
+   * @param _buffer pointer to data buffer, has to be a valid address for the remaining time
+   * @return id of custom buffer
+   */
+  int addCustomBuffer(const ACG::VertexElement& _desc, const void* _buffer);
+
+
+  /** Update pointer to custom data
+   *
+   * @param _id  id of the custom buffer; return value of addCustomBuffer
+   * @param _buffer pointer to data buffer, has to be a valid address for the remaining time
+   */
+  void setCustomBuffer(int _id, const void* _buffer);
+
 private:
 
   void pick_vertices       ( GLState& _state );
@@ -142,12 +185,22 @@ private:
   /// Buffer organization
   ACG::VertexDeclaration vertexDecl_;
 
+  /// Custom vertex data for shader based rendering
+  std::vector< std::pair<ACG::VertexElement, const void*> > customBuffers_;
+
   /** \brief Trigger an update of the vbo
    *
    * If the polyLine is changed, you have to call this function to update the buffers.
    *
    */
   void updateVBO();
+
+  /** \brief Write vertex data for rendering to a buffer
+   *
+   * @param _vertex index of polyline vertex
+   * @param _dst address of vertex in buffer
+   */
+  void writeVertex(unsigned int _vertex, void* _dst);
 
 private:
 
