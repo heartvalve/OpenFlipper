@@ -73,13 +73,17 @@ enum VERTEX_USAGE
 /** \brief Description of one vertex element
  *
  */
-struct VertexElement
+struct ACGDLLEXPORT VertexElement
 {
   unsigned int type_;           //!< GL_FLOAT, GL_UNSIGNED_BYTE, GL_INT, ...
   unsigned int numElements_;    //!< how many elements of type_
   VERTEX_USAGE usage_;          //!< position, normal, shader input ..
   const char* shaderInputName_; //!< set shader input name, if usage_ = VERTEX_USAGE_USER_DEFINED otherwise this is set automatically, if usage_ != VERTEX_USAGE_USER_DEFINED
   const void* pointer_;         //!< Offset in bytes to the first instance of this element in vertex buffer; Or address to vertex data in system memory
+
+  /*! interpret pointer_ as byte offset
+  */
+  void setByteOffset(unsigned int _offset);
 
   /*! interpret pointer_ as byte offset
   */

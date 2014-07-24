@@ -56,6 +56,20 @@ namespace ACG
 {
 
 
+void VertexElement::setByteOffset(unsigned int _offset)
+{
+  // union cast instead of reinterpret_cast for cross-platform compatibility
+  union ptr2uint
+  {
+    unsigned long u;
+    const void* p;
+  } offset;
+
+  offset.u = static_cast<unsigned long>(_offset);
+
+  pointer_ = offset.p;
+}
+
 unsigned int VertexElement::getByteOffset() const
 {
   // union cast instead of reinterpret_cast for cross-platform compatibility
