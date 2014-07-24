@@ -530,8 +530,10 @@ updateVBO() {
 
   // Add custom vertex elements to declaration
   for (size_t i = 0; i < customBuffers_.size(); ++i) {
-    const ACG::VertexElement* ve = &customBuffers_[i].first;
-    vertexDecl_.addElement(ve->type_, ve->numElements_, ACG::VERTEX_USAGE_SHADER_INPUT, 0u, ve->shaderInputName_);
+    ACG::VertexElement tmp = customBuffers_[i].first;
+    tmp.pointer_ = 0;
+    tmp.usage_ = ACG::VERTEX_USAGE_SHADER_INPUT;
+    vertexDecl_.addElement(&tmp);
   }
 
   // create vbo if it does not exist
