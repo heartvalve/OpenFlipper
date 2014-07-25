@@ -218,7 +218,7 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     if(hasTexture)
         mat.set_map_Kd(filename.toStdString(), texIndex);
 
-    materials_.insert(std::pair<std::string, Material>("Material" + mat.material_number(), mat));
+    materials_.insert(std::make_pair(QString("Material%1").arg(mat.material_number()).toStdString(), mat));
     MaterialList::iterator it = materials_.end();
     --it;
     return (*it).second;
