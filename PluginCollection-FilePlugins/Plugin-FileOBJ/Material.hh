@@ -46,6 +46,8 @@
 #ifndef DOXY_IGNORE_THIS
 
 #include <iomanip>
+#include <map>
+#include <string>
 
 /** \brief Material
  *
