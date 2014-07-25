@@ -70,6 +70,8 @@
 #include "OBJImporter.hh"
 #include "Material.hh"
 
+#include <map>
+
 enum ReaderMode
 {
   NONE    = 0,
