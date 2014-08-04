@@ -518,6 +518,36 @@ void
 PolyLineNodeT<PolyLine>::
 updateVBO() {
 
+  // register custom properties defined in polyline
+
+  for (unsigned int i = 0; i < polyline_.get_num_custom_properties(); ++i) {
+
+    typename PolyLine::CustomPropertyHandle proph = polyline_.enumerate_custom_property_handles(i);
+
+    const void* propDataBuf = polyline_.get_custom_property_buffer(proph);
+
+    typename std::map< typename PolyLine::CustomPropertyHandle, int >::iterator mapEntry = polylinePropMap_.find(proph);
+
+    // insert newly defined properties
+    if (mapEntry == polylinePropMap_.end()) {
+
+      // setup element description
+      ACG::VertexElement desc;
+
+      unsigned int propSize;
+      polyline_.get_custom_property_shader_binding(proph, &propSize, &desc.shaderInputName_, &desc.type_);
+
+      // assume aligned memory without byte padding
+      desc.numElements_ = propSize / VertexDeclaration::getGLTypeSize(desc.type_);
+      desc.pointer_ = 0;
+
+      polylinePropMap_[proph] = addCustomBuffer(desc, propDataBuf);
+    }
+    else // otherwise update pointer of property data buffer
+      setCustomBuffer(mapEntry->second, propDataBuf);
+  }
+
+
   // Update the vertex declaration based on the input data:
   vertexDecl_.clear();
 
@@ -650,7 +680,6 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   // draw after scene-meshes
   ro.priority = 1;
 
-
   // Update the vbo only if required.
   if ( updateVBO_ )
     updateVBO();
@@ -696,7 +725,6 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
     // use shaders to simulate line width
     QString geomTemplateLineWidth = ShaderProgGenerator::getShaderDir();
     geomTemplateLineWidth += "Wireframe/geom_line2quad.tpl";
-
 
 
     switch (props->primitive()) {

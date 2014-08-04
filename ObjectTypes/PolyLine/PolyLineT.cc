@@ -149,6 +149,24 @@ PolyLineT<PointT>::
   ref_count_escalars_    = _line.ref_count_escalars_;
   ref_count_eselections_ = _line.ref_count_eselections_;
   ref_count_epreimage_direction_ = _line.ref_count_epreimage_direction_;
+
+
+  // copy custom properties
+  for (typename CustomPropertyMap::const_iterator it = _line.custom_properties.begin(); it != _line.custom_properties.end(); ++it) {
+
+    const CustomProperty* src = it->second;
+    CustomProperty* dst = new CustomProperty;
+
+    dst->name = src->name;
+    dst->ref_count = src->ref_count;
+    dst->prop_size = src->prop_size;
+    dst->prop_data = src->prop_data;
+
+    dst->datatype = src->datatype;
+    dst->shader_binding = src->shader_binding;
+
+    custom_properties[it->first] = dst;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -176,6 +194,10 @@ clear()
   escalars_.clear();
   eselections_.clear();
   epreimage_direction_.clear();
+
+  for (typename CustomPropertyMap::iterator it = custom_properties.begin(); it != custom_properties.end(); ++it)
+    delete it->second;
+  custom_properties.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -230,6 +252,15 @@ resize( unsigned int _n)
       escalars_.resize( _n);
     if( edge_preimage_directions_available())
       epreimage_direction_.resize( _n);
+
+
+    for (typename CustomPropertyMap::iterator it = custom_properties.begin(); it != custom_properties.end(); ++it) {
+      
+      CustomProperty* p = it->second;
+      
+      p->prop_data.resize(p->prop_size * _n);
+    }
+
   }
   else
   {
@@ -290,6 +321,18 @@ add_point(const Point& _p)
   if( edge_preimage_directions_available())
     epreimage_direction_.push_back(Point(0,0,0));
 
+
+  for (typename CustomPropertyMap::iterator it = custom_properties.begin(); it != custom_properties.end(); ++it) {
+
+    CustomProperty* p = it->second;
+
+    size_t cur_size = p->prop_data.size();
+
+    p->prop_data.resize(cur_size + p->prop_size);
+
+    if (p->buffer())
+      memset(p->buffer() + cur_size, 0, p->prop_size);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -343,6 +386,16 @@ insert_point(int _idx, const Point& _p)
 
   if( edge_preimage_directions_available())
     epreimage_direction_.insert(epreimage_direction_.begin()+_idx, Point(0,0,0));
+
+  // custom properties: insert byte-wise
+  for (typename CustomPropertyMap::iterator it = custom_properties.begin(); it != custom_properties.end(); ++it) {
+
+    CustomProperty* p = it->second;
+    unsigned int offset = p->prop_size * _idx;
+
+    for (unsigned int i = 0; i < p->prop_size; ++i)
+      p->prop_data.insert(p->prop_data.begin() + offset, 0);
+  }
 }
 
 
@@ -399,6 +452,17 @@ delete_point(int _idx)
 
   if( edge_preimage_directions_available())
     epreimage_direction_.erase(epreimage_direction_.begin()+_idx);
+
+
+  // custom properties: delete byte-wise
+  for (typename CustomPropertyMap::iterator it = custom_properties.begin(); it != custom_properties.end(); ++it) {
+
+    CustomProperty* p = it->second;
+    unsigned int offset = p->prop_size * _idx;
+
+    for (unsigned int i = 0; i < p->prop_size; ++i)
+      p->prop_data.erase(p->prop_data.begin() + offset);
+  }
 }
 
 
@@ -2046,6 +2110,301 @@ split_into_one_per_component(MeshT &_mesh,
       out_polylines.clear();
       out_polylines.push_back(*this);
     }
+}
+
+template <class PointT>
+typename PolyLineT<PointT>::CustomPropertyHandle PolyLineT<PointT>::CustomProperty::handle() const {
+  return (CustomPropertyHandle)(this);
+}
+
+template <class PointT>
+typename PolyLineT<PointT>::CustomProperty* PolyLineT<PointT>::custom_prop(CustomPropertyHandle _handle) {
+  return reinterpret_cast<CustomProperty*>(_handle);
+}
+
+template <class PointT>
+const typename PolyLineT<PointT>::CustomProperty* PolyLineT<PointT>::custom_prop(CustomPropertyHandle _handle) const {
+  return reinterpret_cast<const CustomProperty*>(_handle);
+}
+
+template <class PointT>
+typename PolyLineT<PointT>::CustomPropertyHandle PolyLineT<PointT>::
+  request_custom_property(const std::string& _name,
+  unsigned int _prop_size) {
+
+  typename CustomPropertyMap::iterator entry = custom_properties.find(_name);
+  CustomProperty* pcontainer = 0;
+
+  if (entry == custom_properties.end()) {
+
+    // create new property container
+    pcontainer = new CustomProperty;
+
+    pcontainer->name = _name;
+    pcontainer->ref_count = 1;
+    pcontainer->prop_size = _prop_size;
+
+    pcontainer->datatype = 0;
+
+    pcontainer->prop_data.resize(n_vertices() * _prop_size, 0);
+
+    custom_properties[_name] = pcontainer;
+
+    cprop_enum.push_back(pcontainer);
+  } else {
+
+    pcontainer = entry->second;
+
+    if (++pcontainer->ref_count < 1)
+      pcontainer->ref_count = 1;
+  }
+
+  return pcontainer->handle();
+}
+
+template <class PointT>
+void PolyLineT<PointT>::
+  release_custom_property(CustomPropertyHandle _prop_handle) {
+
+  if (_prop_handle) {
+
+    CustomProperty* p = custom_prop(_prop_handle);
+
+    if (--p->ref_count <= 0)
+      p->prop_data.clear();
+  } 
+}
+
+template <class PointT>
+void PolyLineT<PointT>::
+  release_custom_property(const std::string& _name) {
+
+  typename CustomPropertyMap::iterator entry = custom_properties.find(_name);
+
+  if (entry != custom_properties.end()) {
+
+    CustomProperty* p = entry->second;
+
+    release_custom_property(p->handle());
+  } 
+}
+
+template <class PointT>
+typename PolyLineT<PointT>::CustomPropertyHandle PolyLineT<PointT>::
+  get_custom_property_handle(const std::string& _name) const {
+
+  typename CustomPropertyMap::const_iterator it = custom_properties.find(_name);
+
+  if (it == custom_properties.end())
+    return 0;
+
+  return it->second->handle();
+}
+
+template <class PointT>
+const std::string& PolyLineT<PointT>::
+  get_custom_property_name(CustomPropertyHandle _property_handle) const {
+
+  CustomProperty* p = custom_prop(_property_handle);
+
+  if (p)
+    return p->name;
+
+  std::cerr << "PolyLineT::get_custom_property_name - invalid handle" << std::endl;
+  return 0;
+}
+
+
+template <class PointT>
+void PolyLineT<PointT>::
+  set_custom_property(CustomPropertyHandle _property_handle,
+  unsigned int _i,
+  const void* _data) {
+
+  if (!_data) {
+    std::cerr << "PolyLineT::set_custom_property - invalid data" << std::endl;
+    return;
+  }
+
+  if (_property_handle) {
+
+    CustomProperty* p = custom_prop(_property_handle);
+
+    unsigned int offset = p->prop_size * _i;
+
+    // check out of range
+    if (offset + p->prop_size > p->prop_data.size()) {
+      std::cerr << "PolyLineT::set_custom_property - out of range access" << std::endl;
+      return;
+    }
+
+
+    // copy data byte-wise
+    memcpy(p->buffer() + offset, _data, p->prop_size);
+  }
+  else
+    std::cerr << "PolyLineT::set_custom_property - invalid handle" << std::endl;
+}
+
+template <class PointT>
+void PolyLineT<PointT>::
+  set_custom_property(const std::string& _name,
+  unsigned int _i,
+  const void* _data) {
+
+  typename CustomPropertyMap::iterator entry = custom_properties.find(_name);
+
+  if (entry != custom_properties.end()) {
+
+    CustomProperty* p = entry->second;
+    set_custom_property(p->handle(), _i, _data);
+  } 
+}
+
+template <class PointT>
+void PolyLineT<PointT>::
+  get_custom_property(CustomPropertyHandle _property_handle,
+  unsigned int _i,
+  void* _dst) const {
+
+  if (!_dst) {
+    std::cerr << "PolyLineT::get_custom_property - invalid destination address" << std::endl;
+    return;
+  }
+
+  if (_property_handle) {
+
+    CustomProperty* p = custom_prop(_property_handle);
+
+    unsigned int offset = p->prop_size * _i;
+
+    // check out of range
+    if (offset + p->prop_size >= p->prop_data.size()) {
+      std::cerr << "PolyLineT::get_custom_property - out of range access" << std::endl;
+      return;
+    }
+
+    // copy data byte-wise
+    memcpy(_dst, p->buffer() + offset, p->prop_size);
+  }
+  else
+    std::cerr << "PolyLineT::get_custom_property - invalid handle" << std::endl;
+}
+
+template <class PointT>
+void PolyLineT<PointT>::
+  get_custom_property(const std::string& _name,
+  unsigned int _i,
+  void* _data) const {
+
+  typename CustomPropertyMap::const_iterator entry = custom_properties.find(_name);
+
+  if (entry != custom_properties.end()) {
+
+    const CustomProperty* p = entry->second;
+    get_custom_property(p->handle(), _i, _data);
+  } 
+}
+
+
+template <class PointT>
+bool PolyLineT<PointT>::
+  custom_property_available(CustomPropertyHandle _property_handle) const {
+
+  const CustomProperty* p = custom_prop(_property_handle);
+
+  if (p)
+    return p->ref_count > 0;
+  
+  return false;
+}
+
+
+template <class PointT>
+bool PolyLineT<PointT>::
+  custom_property_available(const std::string& _name) const {
+
+  typename CustomPropertyMap::const_iterator entry = custom_properties.find(_name);
+
+  if (entry != custom_properties.end()) {
+
+    const CustomProperty* p = entry->second;
+    return custom_property_available(p->handle());
+  }
+
+  return false;
+}
+
+
+template <class PointT>
+void PolyLineT<PointT>::
+  bind_custom_property_to_shader(CustomPropertyHandle _property_handle, const std::string& _shader_input_name, unsigned int _datatype) {
+
+  CustomProperty* p = custom_prop(_property_handle);
+
+  if (p) {
+    
+    p->datatype = _datatype;
+    p->shader_binding = _shader_input_name;
+
+  } else
+    std::cerr << "PolyLineT::bind_custom_property_to_shader - invalid handle" << std::endl;
+}
+
+
+template <class PointT>
+bool PolyLineT<PointT>::
+  get_custom_property_shader_binding(CustomPropertyHandle _property_handle, unsigned int* _propsize, const char** _input_name, unsigned int* _datatype) const {
+
+  const CustomProperty* p = custom_prop(_property_handle);
+
+  if (p) {
+    
+    if (_propsize)
+      *_propsize = p->prop_size;
+
+    if (_input_name)
+      *_input_name = p->shader_binding.c_str();
+
+    if (_datatype)
+      *_datatype = p->datatype;
+
+    return !p->shader_binding.empty() && p->datatype;
+  } 
+  else
+    std::cerr << "PolyLineT::get_custom_property_shader_binding - invalid handle" << std::endl;
+
+  return false;
+}
+
+template <class PointT>
+const void* PolyLineT<PointT>::
+  get_custom_property_buffer(CustomPropertyHandle _property_handle) const {
+
+  const CustomProperty* p = custom_prop(_property_handle);
+
+  if (p)
+    return p->buffer();
+  else
+    std::cerr << "PolyLineT::get_custom_property_buffer - invalid handle" << std::endl;
+
+  return 0;
+}
+
+template <class PointT>
+unsigned int PolyLineT<PointT>::
+  get_num_custom_properties() const {
+  return custom_properties.size();
+}
+
+template <class PointT>
+typename PolyLineT<PointT>::CustomPropertyHandle PolyLineT<PointT>::
+  enumerate_custom_property_handles(unsigned int _i) const {
+
+  if (_i < get_num_custom_properties())
+    return cprop_enum[_i]->handle();
+  else
+    return 0;
 }
 
 //=============================================================================

@@ -95,7 +95,7 @@ public:
   PolyLineT(const PolyLineT& _line);
 
   /// Destructor
-  ~PolyLineT() {}
+  ~PolyLineT() {clear();}
 
   /** \brief Check if the polyline is marked as closed
    *
@@ -440,6 +440,112 @@ public:
         Point & preimage_direction(unsigned int _i)       { return epreimage_direction_[_i];}
   const Point & preimage_direction(unsigned int _i) const { return epreimage_direction_[_i];}
 
+
+  //  ############################### Custom Property Handling #############################
+
+  /* 
+  A custom property is identified by its name and requires the size in bytes of one property element (example: float3 prop has size 12).
+  PolyLine allocates an internal buffer for properties, so no buffer management is required.
+  On resize/add_point, custom properties of the newly inserted vertices are filled with 0.
+  Optionally, it is possible to use properties in vertex shaders by defining a shader binding.
+  If rendered via PolyLineNode, these properties are then automatically available in vertex shaders (no additional management required).
+  However, it is still necessary to trigger a vbo update function whenever data of properties is changed.
+
+
+  Example: add float3 data to each vertex and use these in a vertex shader
+  
+  // request new property with name "myCustomData", that stores 3 * sizeof(float) = 12 bytes
+  PolyLine::CustomPropertyHandle myPropHandle = line->request_custom_property("myCustomData", 12);
+
+  // bind property to a vertex shader as input id "a2v_UserData" with coordinates of type GL_FLOAT
+  line->bind_custom_property_to_shader(myPropHandle, "a2v_UserData", GL_FLOAT);
+
+  // set property data
+  for each vertex i:
+    Vec3f x = computeCustomData(i);
+
+    line->set_custom_property(myPropHandle, x.data());
+
+  // trigger vbo update in rendering node of the polyline (ie. PolyLineNode)
+  lineNode->update();
+
+
+
+  these vertex properties are then available in any vertex shader used to render the polyline:
+
+  in vec3 a2v_UserData;
+
+  void main()
+  {
+    ...
+  }
+  */
+
+  typedef void* CustomPropertyHandle;
+
+  // request properties,  returns handle of custom property
+  CustomPropertyHandle request_custom_property(const std::string& _name, unsigned int _prop_size);
+
+  // release properties
+  void release_custom_property(const std::string& _name);
+  void release_custom_property(CustomPropertyHandle _prop_handle);
+
+  // property availability
+  bool custom_property_available(CustomPropertyHandle _property_handle) const;
+  bool custom_property_available(const std::string& _name) const;
+
+  // property access by handle  (byte-wise)
+  void set_custom_property(CustomPropertyHandle _property_handle, unsigned int _vertex, const void* _data);
+  void get_custom_property(CustomPropertyHandle _property_handle, unsigned int _vertex, void* _dst) const;
+
+  // property access by name (byte-wise),  (slower than by handle)
+  void set_custom_property(const std::string& _name, unsigned int _vertex, const void* _data);
+  void get_custom_property(const std::string& _name, unsigned int _vertex, void* _dst) const;
+
+
+  /** \brief Binding to vertex shader (optional)
+   *
+   * Bind custom vertex properties to input names in vertex shaders.
+   * The number of coordinates of a property is assumed to be _prop_size / bytesize(_datatype),
+   * so the property size provided via request_custom_property has to be a multiple of bytesize(_datatype).
+   *
+   * @param _property_handle handle of property
+   * @param _shader_input_name name id of input data in the vertex shader
+   * @param _datatype type of one property data coordinate, ie GL_FLOAT, GL_UNSIGNED_BYTE ...
+   */
+  void bind_custom_property_to_shader(CustomPropertyHandle _property_handle, const std::string& _shader_input_name, unsigned int _datatype);
+
+  /** \brief Get shader binding information
+   *
+   * The property has to be bound via bind_custom_property_to_shader before.
+   *
+   * @param _property_handle handle of property
+   * @param _propsize [out] receives size in bytes of one property element
+   * @param _input_name [out] receives pointer to name id of input data in the vertex shader
+   * @param _datatype [out] receives type of property coordinates
+   * @return true if property shader binding has been specified, false otherwise
+   */
+  bool get_custom_property_shader_binding(CustomPropertyHandle _property_handle, unsigned int* _propsize, const char** _input_name, unsigned int* _datatype) const;
+
+  // helper functions:
+
+  // get property handle by name, returns 0 if unavailable
+  CustomPropertyHandle get_custom_property_handle(const std::string& _name) const;
+
+  // get name of property by handle
+  const std::string& get_custom_property_name(CustomPropertyHandle _property_handle) const;
+
+  // get number of custom properties
+  unsigned int get_num_custom_properties() const;
+
+  // get pointer to buffer that stores property data for all vertices
+  const void* get_custom_property_buffer(CustomPropertyHandle _property_handle) const;
+
+
+  // enumerate custom property handles via indices in range [0, get_num_custom_properties() - 1]
+  CustomPropertyHandle enumerate_custom_property_handles(unsigned int _i) const;
+
+
   // ############################### SelectionWrappers  ############################
   
   bool vertex_selected(unsigned int _i) { return (_i < vselections_.size() ? vertex_selection(_i) == 1 : false); }
@@ -582,6 +688,43 @@ private:
   unsigned int ref_count_escalars_;
   unsigned int ref_count_eselections_;
   unsigned int ref_count_epreimage_direction_;
+
+
+  // ############################### Custom Property Handling #############################
+
+  struct  CustomProperty
+  {
+    std::string name;
+    int ref_count;
+
+    // size in bytes of one property element
+    unsigned int prop_size;
+
+    // property data in byte array
+    std::vector<char> prop_data;
+
+    // data type (GL_FLOAT, GL_DOUBLE, GL_UNSIGNED_BYTE...)
+    unsigned int datatype;
+
+    // input name in vertex shader
+    std::string shader_binding;
+
+    char* buffer() {return prop_data.empty() ? 0 : &prop_data[0];}
+    const char* buffer() const {return prop_data.empty() ? 0 : &prop_data[0];}
+
+    CustomPropertyHandle handle() const;
+  };
+  
+  typedef std::map< std::string, CustomProperty* > CustomPropertyMap;
+
+  CustomProperty* custom_prop(CustomPropertyHandle _handle);
+  const CustomProperty* custom_prop(CustomPropertyHandle _handle) const;
+
+  // map from property name to property data
+  CustomPropertyMap custom_properties;
+
+  // vector of all properties for easier enumeration
+  std::vector<CustomProperty*> cprop_enum;
 };
 
 

@@ -188,6 +188,9 @@ private:
   /// Custom vertex data for shader based rendering
   std::vector< std::pair<ACG::VertexElement, const void*> > customBuffers_;
 
+  /// Map from custom properties in PolyLine to id in customBuffers_
+  std::map< typename PolyLine::CustomPropertyHandle, int> polylinePropMap_;
+
   /** \brief Trigger an update of the vbo
    *
    * If the polyLine is changed, you have to call this function to update the buffers.
