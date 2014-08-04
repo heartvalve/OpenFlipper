@@ -1678,7 +1678,7 @@ void ACG::DrawMeshT<Mesh>::drawPickingVertices_opt( const GLMatrixf& _mvp, int _
 
   ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, getVBO());
   
-  if (pickVertexMethod_ == 1)
+  if (pickVertexMethod_ == 1 && invVertexMap_)
     bindPickVertexIbo();
 
   // setup picking shader
@@ -1702,7 +1702,7 @@ void ACG::DrawMeshT<Mesh>::drawPickingVertices_opt( const GLMatrixf& _mvp, int _
     glDrawArrays(GL_POINTS, 0, getNumVerts());
   else
   {
-    if (pickVertexIBO_opt())
+    if (pickVertexIBO_opt() && invVertexMap_)
       glDrawElements(GL_POINTS, mesh_.n_vertices(), GL_UNSIGNED_INT, 0);
     else
       glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
