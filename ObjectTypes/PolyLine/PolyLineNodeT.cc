@@ -534,7 +534,7 @@ updateVBO() {
       // setup element description
       ACG::VertexElement desc;
 
-      unsigned int propSize;
+      unsigned int propSize = 0;
       polyline_.get_custom_property_shader_binding(proph, &propSize, &desc.shaderInputName_, &desc.type_);
 
       // assume aligned memory without byte padding
