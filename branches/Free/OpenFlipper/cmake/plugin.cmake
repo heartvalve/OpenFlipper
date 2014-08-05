@@ -51,6 +51,11 @@
 # dependencies of the respective plugins are missing.
 #
 
+if(OPENFLIPPER_PLUGIN_INCLUDED)
+  return()
+endif(OPENFLIPPER_PLUGIN_INCLUDED)
+set(OPENFLIPPER_PLUGIN_INCLUDED TRUE PARENT_SCOPE)
+
 include (ACGCommon)
 
 # get plugin name from directory name
@@ -115,7 +120,12 @@ macro (_check_plugin_deps _prefix _optional )
        string (TOUPPER ${_val} _VAL)
 
        # First we try to find the dependencies directly
-       find_package(${_val})
+       if (NOT ${_VAL}_FOUND)
+       #  MESSAGE(STATUS "Looking for _val \"${_val}\"")
+         find_package(${_val})
+       #else()
+       #  MESSAGE(STATUS "Skipping _val \"${_val}\"")
+       endif ()
 
        # This will contain the list of all dependencies of the current base dependency ( including recursive dependencies for one level )
        set (CURRENT_DEPENDENCY_LIST "")
@@ -130,7 +140,12 @@ macro (_check_plugin_deps _prefix _optional )
 
             string (TOUPPER ${_rec_dep} _REC_DEP)
 
-            find_package(${_rec_dep})
+            if (NOT ${_REC_DEP}_FOUND)
+            #  MESSAGE(STATUS "Looking for _rec_dep \"${_rec_dep}\"")
+              find_package(${_rec_dep})
+            #else()
+            #  MESSAGE(STATUS "Skipping _rec_dep \"${_rec_dep}\"")
+            endif ()
 
             if ( ${_REC_DEP}_FOUND )
               list (APPEND CURRENT_DEPENDENCY_LIST ${_rec_dep} )
@@ -151,7 +166,12 @@ macro (_check_plugin_deps _prefix _optional )
 
             string (TOUPPER ${_rec_dep} _REC_DEP)
 
-            find_package(${_rec_dep})
+            if (NOT ${_REC_DEP}_FOUND)
+            #  MESSAGE(STATUS "Looking for _rec_dep \"${_rec_dep}\"")
+              find_package(${_rec_dep})
+            #else()
+            #  MESSAGE(STATUS "Skipping _rec_dep \"${_rec_dep}\"")
+            endif ()
 
             # Optional so add if we found the dependency or we skip it.
             # Defines will be added due to the optional status
@@ -211,7 +231,12 @@ macro (_check_plugin_deps _prefix _optional )
     foreach (_val ${FULL_DEPENDENCY_LIST})
         string (TOUPPER ${_val} _VAL)
 
-        find_package(${_val})
+        if (NOT ${_VAL}_FOUND)
+        #  MESSAGE(STATUS "Looking for _val \"${_val}\"")
+          find_package(${_val})
+        #else()
+        #  MESSAGE(STATUS "Skipping _val \"${_val}\"")
+        endif ()
 
         #======================================================================================
         # Global dependency tracking
@@ -440,7 +465,9 @@ function (_build_openflipper_plugin plugin)
       set(plugin_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML/Plugin-${plugin}")
       set(plugin_qt_help_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
 
-      find_package(Doxygen)
+      if (NOT DOXYGEN_FOUND)
+        find_package(Doxygen)
+      endif ()
 
       if ( DOXYGEN_FOUND )
 
@@ -689,4 +716,4 @@ macro (openflipper_plugin)
 endmacro ()
 
 # No stupid abundance of "Boost version" messages, please.
-SET (Boost_FIND_QUIETLY TRUE)
+SET (Boost_FIND_QUIETLY TRUE PARENT_SCOPE)

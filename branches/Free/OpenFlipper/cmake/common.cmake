@@ -41,7 +41,7 @@ function (of_add_plugins)
         "${CMAKE_SOURCE_DIR}/Plugin-*/CMakeLists.txt"
         "${CMAKE_SOURCE_DIR}/PluginCollection-*/Plugin-*/CMakeLists.txt"
     )
-
+    
     foreach (_plugin ${_plugins_in})
         get_filename_component (_plugin_dir ${_plugin} PATH)
         add_subdirectory (${CMAKE_SOURCE_DIR}/${_plugin_dir})
