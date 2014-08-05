@@ -687,3 +687,6 @@ macro (openflipper_plugin)
     _build_openflipper_plugin (${_plugin} ${ARGN})
   endif ()
 endmacro ()
+
+# No stupid abundance of "Boost version" messages, please.
+SET (Boost_FIND_QUIETLY TRUE)
