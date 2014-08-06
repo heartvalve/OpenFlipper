@@ -1,3 +1,6 @@
+REM Add the cmake path
+set PATH=%PATH%;C:\Program Files (x86)\CMake\bin\
+
 REM Run tests from toplevel build dir
 cd ..
 
