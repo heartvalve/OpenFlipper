@@ -44,9 +44,55 @@ function (of_add_plugins)
     
     foreach (_plugin ${_plugins_in})
         get_filename_component (_plugin_dir ${_plugin} PATH)
+        
+        # In INSTALLDATA_DIRS the resource directories will be handed down.
+        set(INSTALLDATA_DIRS)
         add_subdirectory (${CMAKE_SOURCE_DIR}/${_plugin_dir})
+        
+        # Add targets for data dirs
+        if (INSTALLDATA_DIRS)
+            # Extract plugin name
+	        string (REGEX MATCH "Plugin-.+[/\\]?$" _dir ${_plugin_dir})
+			string (REPLACE "Plugin-" "" _plugin ${_dir})
+			
+			# Crawl for resoruce files
+	        set(DATA_FILES)
+	        foreach (_dir ${INSTALLDATA_DIRS})
+	            set(dst "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/${_dir}")
+	            set(src "${CMAKE_SOURCE_DIR}/${_plugin_dir}/${_dir}")
+				acg_unset (_files)
+				acg_get_files_in_dir (_files ${src})
+				foreach (_file ${_files})
+				    add_custom_command(OUTPUT "${dst}/${_file}"
+				    	DEPENDS "${src}/${_file}"
+					    COMMAND ${CMAKE_COMMAND} -E copy "${src}/${_file}" "${dst}/${_file}"
+			    	)
+			    	# Collect command targets
+			    	list(APPEND DATA_FILES "${dst}/${_file}")
+			    endforeach ()
+	        endforeach ()
+	        # Add custom target that will copy the files and make it a
+	        # dependency of the plugin target.
+	        add_custom_target(RSRC-${_plugin} DEPENDS ${DATA_FILES})
+	        add_dependencies(Plugin-${_plugin} RSRC-${_plugin})
+	    endif()
     endforeach ()
+    
+    # Hand down loaded packages to caller.
     set(LOADED_PACKAGES ${LOADED_PACKAGES} PARENT_SCOPE)
+
+#          #acg_copy_after_build (Plugin-${plugin} "${CMAKE_CURRENT_SOURCE_DIR}/${_dir}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/${_dir}")
+#    
+#      set(OUTPUT_FILES "")
+#    add_custom_command(OUTPUT "${dst}/${_file}"
+#    	DEPENDS "${src}/${_file}"
+#	    COMMAND ${CMAKE_COMMAND} -E copy "${src}/${_file}" "${dst}/${_file}"
+#    )
+#    list(APPEND OUTPUT_FILES "${dst}/${_file}")
+#  get_filename_component(BASENAME "${dst}" NAME)
+#  add_custom_target("${target}_CPY_${BASENAME}" DEPENDS ${OUTPUT_FILES})
+#  add_dependencies(${target} "${target}_CPY_${BASENAME}")
+    
 endfunction ()
 
 macro(_get_plugin_name _path _name)

@@ -624,12 +624,14 @@ function (_build_openflipper_plugin plugin)
       )
     endif ()
 
+    set(INSTALLDATA_DIRS)
     foreach (_dir ${${_PLUGIN}_INSTALLDATA})
-      acg_copy_after_build (Plugin-${plugin} "${CMAKE_CURRENT_SOURCE_DIR}/${_dir}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/${_dir}")
+      list(APPEND INSTALLDATA_DIRS "${_dir}")
       if (NOT APPLE)
         acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/${_dir}" "${ACG_PROJECT_DATADIR}/${_dir}")
       endif ()
     endforeach ()
+    set(INSTALLDATA_DIRS ${INSTALLDATA_DIRS} PARENT_SCOPE)
 
     #============================================================================================
     # CUDA Integration
@@ -719,8 +721,9 @@ macro (openflipper_plugin)
 
   if (NOT DISABLE_PLUGIN_${_PLUGIN})
     _build_openflipper_plugin (${_plugin} ${ARGN})
+    set(LOADED_PACKAGES ${LOADED_PACKAGES} PARENT_SCOPE)
+    set(INSTALLDATA_DIRS ${INSTALLDATA_DIRS} PARENT_SCOPE)
   endif ()
-  set(LOADED_PACKAGES ${LOADED_PACKAGES} PARENT_SCOPE)
 endmacro ()
 
 # No stupid abundance of "Boost version" messages, please.

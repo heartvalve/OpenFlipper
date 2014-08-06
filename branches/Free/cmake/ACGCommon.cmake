@@ -706,20 +706,11 @@ endmacro ()
 function (acg_copy_after_build target src dst)
   acg_unset (_files)
   acg_get_files_in_dir (_files ${src})
-  set(OUTPUT_FILES "")
   foreach (_file ${_files})
-    #add_custom_command(TARGET ${target} POST_BUILD
-    #  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${src}/${_file}" "${dst}/${_file}"
-    #)
-    add_custom_command(OUTPUT "${dst}/${_file}"
-    	DEPENDS "${src}/${_file}"
-	    COMMAND ${CMAKE_COMMAND} -E copy "${src}/${_file}" "${dst}/${_file}"
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${src}/${_file}" "${dst}/${_file}"
     )
-    list(APPEND OUTPUT_FILES "${dst}/${_file}")
   endforeach ()
-  get_filename_component(BASENAME "${dst}" NAME)
-  add_custom_target("${target}_CPY_${BASENAME}" DEPENDS ${OUTPUT_FILES})
-  add_dependencies(${target} "${target}_CPY_${BASENAME}")
 endfunction ()
 
 # install the whole directory without svn files
