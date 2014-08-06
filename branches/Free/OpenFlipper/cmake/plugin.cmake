@@ -120,9 +120,10 @@ macro (_check_plugin_deps _prefix _optional )
        string (TOUPPER ${_val} _VAL)
 
        # First we try to find the dependencies directly
-       if (NOT ${_VAL}_FOUND)
+       if (NOT ${_VAL}_FOUND AND NOT ${_val}_FOUND)
        #  MESSAGE(STATUS "Looking for _val \"${_val}\"")
          find_package(${_val})
+         list(APPEND LOADED_PACKAGES_ "${_val}")
        #else()
        #  MESSAGE(STATUS "Skipping _val \"${_val}\"")
        endif ()
@@ -140,9 +141,10 @@ macro (_check_plugin_deps _prefix _optional )
 
             string (TOUPPER ${_rec_dep} _REC_DEP)
 
-            if (NOT ${_REC_DEP}_FOUND)
+            if (NOT ${_REC_DEP}_FOUND AND NOT ${_rec_dep}_FOUND)
             #  MESSAGE(STATUS "Looking for _rec_dep \"${_rec_dep}\"")
               find_package(${_rec_dep})
+              list(APPEND LOADED_PACKAGES_ "${_rec_dep}")
             #else()
             #  MESSAGE(STATUS "Skipping _rec_dep \"${_rec_dep}\"")
             endif ()
@@ -166,9 +168,10 @@ macro (_check_plugin_deps _prefix _optional )
 
             string (TOUPPER ${_rec_dep} _REC_DEP)
 
-            if (NOT ${_REC_DEP}_FOUND)
+            if (NOT ${_REC_DEP}_FOUND AND NOT ${_rec_dep}_FOUND)
             #  MESSAGE(STATUS "Looking for _rec_dep \"${_rec_dep}\"")
               find_package(${_rec_dep})
+              list(APPEND LOADED_PACKAGES_ "${_rec_dep}")
             #else()
             #  MESSAGE(STATUS "Skipping _rec_dep \"${_rec_dep}\"")
             endif ()
@@ -231,9 +234,10 @@ macro (_check_plugin_deps _prefix _optional )
     foreach (_val ${FULL_DEPENDENCY_LIST})
         string (TOUPPER ${_val} _VAL)
 
-        if (NOT ${_VAL}_FOUND)
+        if (NOT ${_VAL}_FOUND AND NOT ${_val}_FOUND)
         #  MESSAGE(STATUS "Looking for _val \"${_val}\"")
           find_package(${_val})
+          list(APPEND LOADED_PACKAGES_ "${_val}")
         #else()
         #  MESSAGE(STATUS "Skipping _val \"${_val}\"")
         endif ()
@@ -304,6 +308,9 @@ macro (_check_plugin_deps _prefix _optional )
             acg_set (_${_prefix}_MISSING_DEPS "${_${_prefix}_MISSING_DEPS} ${_val}")
         endif ()
     endforeach ()
+
+    set(LOADED_PACKAGES ${LOADED_PACKAGES} ${LOADED_PACKAGES_})
+    set(LOADED_PACKAGES ${LOADED_PACKAGES} PARENT_SCOPE)
 endmacro ()
 
 macro (_plugin_licensemanagement)
@@ -700,7 +707,7 @@ endfunction ()
 
 macro (openflipper_plugin)
   _get_plugin_name (_plugin)
-
+  
   string (TOUPPER ${_plugin} _PLUGIN)
 
   # add option to disable plugin build
@@ -713,6 +720,7 @@ macro (openflipper_plugin)
   if (NOT DISABLE_PLUGIN_${_PLUGIN})
     _build_openflipper_plugin (${_plugin} ${ARGN})
   endif ()
+  set(LOADED_PACKAGES ${LOADED_PACKAGES} PARENT_SCOPE)
 endmacro ()
 
 # No stupid abundance of "Boost version" messages, please.

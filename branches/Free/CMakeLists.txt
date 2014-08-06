@@ -235,8 +235,16 @@ endif()
 # start with an empty plugin list
 acg_set (OPENFLIPPER_PLUGINS "")
 
+foreach (package ${PREFOUND_PACKAGES})
+find_package(${package})
+endforeach ()
+
+SET (LOADED_PACKAGES ${PREFOUND_PACKAGES})
+LIST (APPEND LOADED_PACKAGES "Doxygen")
 # add plugins
 of_add_plugins ()
+list (REMOVE_DUPLICATES LOADED_PACKAGES)
+set (PREFOUND_PACKAGES "${LOADED_PACKAGES}" CACHE INTERNAL "List of packages that will get found at global scope so they don't get found over and over inside the individual packages.")
 
 # ========================================================================
 # Build core as we now know all dependencies
