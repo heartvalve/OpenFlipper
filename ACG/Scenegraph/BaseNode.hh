@@ -70,6 +70,7 @@
 #include <algorithm>
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/RenderObject.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -82,6 +83,7 @@ namespace SceneGraph {
 
 // prototype declaration to avoid include-loop
 class Material;
+
 
 //== CLASS DEFINITION =========================================================
 
@@ -533,6 +535,91 @@ public:
   */  
   bool multipassNodeActive(const unsigned int _i) const;  
 
+
+  //===========================================================================
+  /** @name RenderObject controls
+  *  The render pass controls are only used during shader-based rendering with render-objects. 
+  *  It is possible to provide shader and state settings that are copied to render-objects.
+  *  These functions do not affect the fixed-function pipeline implementation of the scenegraph (enter() draw() leave()).\n
+  *
+  * @{ */
+  //===========================================================================
+
+public:
+
+  /** \brief Set custom shaders
+    *
+    * Assigns a set of shaders to a primitive type of a node.
+    * For instance, it is possible to render faces with a different shaders than lines.
+    * Default shaders are used instead if no other shaders are provided.
+    * Note: the derived node has to actually make use of shaders provided here
+    *
+    * Example: set shaders in OpenFlipper/Shaders/MyWireShaders for rendering the line parts of a node:
+    *  node->setShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
+    *
+    *
+    * @param _vertexShaderFile    filename of vertex shader template compatible with ACG::ShaderGenerator
+    * @param _geometryShaderFile  filename of geometry shader template compatible with ACG::ShaderGenerator
+    * @param _fragmentShaderFile  filename of fragment shader template compatible with ACG::ShaderGenerator
+    * @param _relativePaths       filenames are relative or absolute
+    * @param _primitiveType       assign shaders to rendering this type of primitive of the polyline
+    *
+    */
+  void setShaders(const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_WIREFRAME);
+
+  /** \brief Set uniforms for shader based rendering
+    *
+    * Uniforms are copied from a pool when rendering with shader-based render-objects.
+    * The specified pool has to be a valid memory address whenever the polyline gets rendered.
+    * It does not make a copy of the pool.
+    *
+    * @param _pool  pointer to address of a uniform pool
+    *
+    */
+  void setUniformPool(const GLSL::UniformPool* _pool) {uniformPool_ = _pool;}
+
+  /** \brief Get uniforms for shader based rendering
+    *
+    */
+  const GLSL::UniformPool* getUniformPool() {return uniformPool_;}
+
+  /** \brief Set textures for shader based rendering
+    *
+    * Assign textures to sampler slots, which are available in render-objects created by the polyline.
+    * Note: Fixed-function drawing ignores these textures.
+    *
+    * @param _samplerSlot  sampler slot to bind the texture to,  zero-based index
+    * @param _texId        gl texture id
+    * @param _texType      gl texture type ie. GL_TEXTURE_1D, ..
+    *
+    */
+  void setShaderTexture(int _samplerSlot, GLuint _texId, GLenum _texType = GL_TEXTURE_2D);
+
+
+  /** \brief Set modifier for render objects
+    *
+    * All render-objects created by the polyline are modifiable.
+    * The currently active modifier is applied directly before adding an object to the renderer.
+    *
+    * @param _modifier  pointer to address of modifier,  address must be valid whenever the polyline is rendered
+    *
+    */
+  void setRenderModifier(RenderObjectModifier* _modifier) {renderModifier_ = _modifier;}
+
+  RenderObjectModifier* getRenderModifier() {return  renderModifier_;}
+
+
+
+  /** \brief Set shaders, textures and uniforms as provided by user to a render-object.
+    *
+    * A derived node can use this convenience function to copy shader, uniform and texture settings to a render-object.
+    *
+    * @param _primitive the primitive type of the render-object
+    * @param _obj       the render-object [in/out]
+    *
+    */
+  void applyRenderObjectSettings(DrawModes::DrawModePrimitive _primitive, RenderObject* _obj) const;
+
 private:
 
   /** multi pass bit mask (1-indexed)
@@ -589,6 +676,45 @@ private:
 
   /// traverse mode
   unsigned int traverseMode_;
+
+
+  // settings for shader-based rendering with render-objects
+private:
+
+  struct ShaderSet 
+  {
+    // shader filenames
+
+    /// vertex shader
+    std::string vs_;
+
+    /// tess-control
+    std::string tcs_;
+
+    /// tess-eval
+    std::string tes_;
+
+    /// geometry
+    std::string gs_;
+
+    /// fragment
+    std::string fs_;
+    
+    /// rel or abs path
+    bool relativePaths_;
+  };
+  
+  /// shader settings for primitive modes
+  std::map<DrawModes::DrawModePrimitive, ShaderSet> shaderSettings_;
+
+  /// texture settings for shader based rendering
+  std::map<int, RenderObject::Texture> textureSettings_;
+
+  /// user provided uniform pool for shader constants
+  const GLSL::UniformPool* uniformPool_;
+
+  /// render-object modifier
+  RenderObjectModifier* renderModifier_;
 };
 
 
