@@ -271,6 +271,21 @@ void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::stri
 
 //----------------------------------------------------------------------------
 
+void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
+
+  ShaderSet s;
+  s.vs_ = _vertexShaderFile;
+  s.gs_ = _geometryShaderFile;
+  s.fs_ = _fragmentShaderFile;
+  s.tcs_ = _tessControlShaderFile;
+  s.tes_ = _tessEvalShaderFile;
+  s.relativePaths_ = _relativePaths;
+
+  shaderSettings_[_primitiveType] = s;
+}
+
+//----------------------------------------------------------------------------
+
 void BaseNode::setShaderTexture( int _samplerSlot, GLuint _texId, GLenum _texType ) {
   
   ACG::RenderObject::Texture t;
@@ -302,12 +317,16 @@ std::map<DrawModes::DrawModePrimitive, ShaderSet>::const_iterator shaderSet = sh
 
     // prepend openflipper shader dir
     if (shaderSet->second.relativePaths_) {
-      _obj->shaderDesc.vertexTemplateFile = 
+      _obj->shaderDesc.tessControlTemplateFile = 
+        _obj->shaderDesc.tessEvaluationTemplateFile = 
+        _obj->shaderDesc.vertexTemplateFile = 
         _obj->shaderDesc.geometryTemplateFile =         
         _obj->shaderDesc.fragmentTemplateFile = ShaderProgGenerator::getShaderDir();
     }
 
     _obj->shaderDesc.vertexTemplateFile += shaderSet->second.vs_.c_str();
+    _obj->shaderDesc.tessControlTemplateFile += shaderSet->second.tcs_.c_str();
+    _obj->shaderDesc.tessEvaluationTemplateFile += shaderSet->second.tes_.c_str();
     _obj->shaderDesc.geometryTemplateFile += shaderSet->second.gs_.c_str();
     _obj->shaderDesc.fragmentTemplateFile += shaderSet->second.fs_.c_str();
   }
