@@ -74,6 +74,7 @@
       meshNode_(0),
       textureNode_(0),
       shaderNode_(0),
+      statusView_(0),
       triangle_bsp_(0)
   {
     init(_object.mesh_);
@@ -103,6 +104,7 @@
     meshNode_(0),
     textureNode_(0),
     shaderNode_(0),
+    statusView_(0),
     triangle_bsp_(0)
   {
     setDataType(_typeId);
@@ -141,6 +143,7 @@
     meshNode_    = 0;
     textureNode_ = 0;
     shaderNode_  = 0;
+    statusView_  = 0;
   }
 
   /** Cleanup Function for Mesh Objects. Deletes the contents of the whole object and
@@ -169,6 +172,7 @@
     textureNode_ = 0;
     shaderNode_  = 0;
     meshNode_    = 0;
+    statusView_  = 0;
 
     init();
 
@@ -223,20 +227,20 @@
 
 
     // Node showing selection
-    statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
+    statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_, 0, "NEW StatusNode for mesh " );
     statusNode_->set_point_size(4.0);
     statusNode_->set_color(ACG::Vec4f(1.0f,0.0f,0.0f,1.0f));
     statusNode_->set_base_color(ACG::Vec4f(1.0f,0.0f,0.0f,1.0f));
 
     // Node showing modeling region
-    areaNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, AreaNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW AreaNode for mesh ");
+    areaNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, AreaNodeMod<MeshT> >(*mesh_, 0, "NEW AreaNode for mesh ");
     areaNode_->set_round_points(true);
     areaNode_->enable_alpha_test(0.5);
     areaNode_->set_point_size(7.0);
     areaNode_->set_color(ACG::Vec4f(0.4f, 0.4f, 1.0f, 1.0f));
 
     // Node showing handle region
-    handleNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, HandleNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW HandleNode for mesh ");
+    handleNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, HandleNodeMod<MeshT> >(*mesh_, 0, "NEW HandleNode for mesh ");
     handleNode_->set_round_points(true);
     handleNode_->enable_alpha_test(0.5);
     handleNode_->set_line_width(2.0);
@@ -244,7 +248,7 @@
     handleNode_->set_color(ACG::Vec4f(0.2f, 1.0f, 0.2f, 1.0f));
 
     // Node showing feature selection
-    featureNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, FeatureNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW FeatureNode for mesh ");
+    featureNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, FeatureNodeMod<MeshT> >(*mesh_, 0, "NEW FeatureNode for mesh ");
     featureNode_->set_round_points(true);
     featureNode_->enable_alpha_test(0.5);
     featureNode_->set_line_width(2.0);
@@ -260,7 +264,18 @@
       handleNode_->setDrawMesh(meshNode_->getDrawMesh());
     }
 
+    // Node rendering selections in correct order
+    statusView_ = new ACG::SceneGraph::StatusViewNodeT<MeshT>(manipulatorNode(), "NEW StatusViewNode for mesh ",
+      statusNode_,
+      areaNode_,
+      handleNode_,
+      featureNode_);
 
+    // make StatusViewNode parent of status nodes
+    statusNode_->set_parent(statusView_);
+    areaNode_->set_parent(statusView_);
+    handleNode_->set_parent(statusView_);
+    featureNode_->set_parent(statusView_);
 
     // Update all nodes
     update();
@@ -301,6 +316,9 @@
 
     nodename = std::string("MeshNode for mesh "     + _name.toUtf8() );
     meshNode_->name( nodename );
+
+    nodename = std::string("StatusViewNode for mesh "     + _name.toUtf8() );
+    statusView_->name( nodename );
   }
 
   // ===============================================================================
