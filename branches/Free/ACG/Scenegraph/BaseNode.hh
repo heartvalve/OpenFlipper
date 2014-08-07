@@ -565,7 +565,30 @@ public:
     * @param _primitiveType       assign shaders to rendering this type of primitive of the polyline
     *
     */
-  void setShaders(const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_WIREFRAME);
+  void setShaders(const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
+
+  /** \brief Set custom shaders
+    *
+    * Assigns a set of shaders to a primitive type of a node.
+    * For instance, it is possible to render faces with a different shaders than lines.
+    * Default shaders are used instead if no other shaders are provided.
+    * Note: the derived node has to actually make use of shaders provided here
+    *
+    * Example: set shaders in OpenFlipper/Shaders/MyWireShaders for rendering the line parts of a node:
+    *  node->setShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
+    *
+    *
+    * @param _vertexShaderFile    filename of vertex shader template compatible with ACG::ShaderGenerator
+    * @param _tessControlShaderFile    filename of tessellation-control shader template compatible with ACG::ShaderGenerator
+    * @param _tessEvalShaderFile    filename of tessellation-eval shader template compatible with ACG::ShaderGenerator
+    * @param _geometryShaderFile  filename of geometry shader template compatible with ACG::ShaderGenerator
+    * @param _fragmentShaderFile  filename of fragment shader template compatible with ACG::ShaderGenerator
+    * @param _relativePaths       filenames are relative or absolute
+    * @param _primitiveType       assign shaders to rendering this type of primitive of the polyline
+    *
+    */
+  void setShaders(const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
+
 
   /** \brief Set uniforms for shader based rendering
     *
