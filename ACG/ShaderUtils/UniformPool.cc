@@ -133,6 +133,7 @@ namespace GLSL {
       // determine type
       const UniformVecf* pVecf = dynamic_cast<const UniformVecf*>(*it);
       const UniformVeci* pVeci = dynamic_cast<const UniformVeci*>(*it);
+      const UniformVecui* pVecui = dynamic_cast<const UniformVecui*>(*it);
       const UniformMat* pMat = dynamic_cast<const UniformMat*>(*it);
       const UniformBuf* pBuf = dynamic_cast<const UniformBuf*>(*it);
 
@@ -142,6 +143,9 @@ namespace GLSL {
 
       if (pVeci)
         addVeci(*pVeci);
+
+      if (pVecui)
+        addVecui(*pVecui);
 
       else if (pMat)
         addMatrix(*pMat);
@@ -208,6 +212,37 @@ namespace GLSL {
 
         default:
           std::cerr << "UniformPool::UniformVeci : invalid size "  << size << std::endl;
+          break;
+    }
+
+    checkGLError2(id.c_str());
+  }
+
+  /** \brief Bind uniform  uint vector to shader
+  *
+  * @param _progID  GL Program ID
+  */
+  void UniformPool::UniformVecui::bind( GLuint _progID ) const {
+    checkGLError2("prev opengl error");
+    GLint location = glGetUniformLocation(_progID, id.c_str());
+    checkGLError2(id.c_str());
+
+    switch (size){
+        case 1:
+          glUniform1uiv(location, 1, (GLuint*)val.data());
+          break;
+        case 2:
+          glUniform2uiv(location, 1, (GLuint*)val.data());
+          break;
+        case 3:
+          glUniform3uiv(location, 1, (GLuint*)val.data());
+          break;
+        case 4:
+          glUniform4uiv(location, 1, (GLuint*)val.data());
+          break;
+
+        default:
+          std::cerr << "UniformPool::UniformVecui : invalid size "  << size << std::endl;
           break;
     }
 
@@ -350,6 +385,39 @@ namespace GLSL {
 
   }
 
+  /** \brief Add or update a vector type uniform in pool
+  *
+  * @param _vec uniform specifier
+  */
+  void UniformPool::addVecui( const UniformVecui& _vec ) {
+    // look for existing uniform in pool
+    UniformListIt it = findEntry(_vec.id);
+
+    // storage address of uniform
+    UniformVecui* dst = 0;
+
+    if ( it == pool_.end() ){
+      // create new entry
+      dst = new UniformVecui;
+      pool_.push_back(dst);
+    }
+    else{
+      // use existing entry
+      dst = dynamic_cast<UniformVecui*>( *it );
+
+      if (!dst)
+        std::cerr << "UniformPool::addVecui type of " << _vec.id << " incorrect." << std::endl;
+    }
+
+    if (dst) {
+      // update data
+      dst->id = _vec.id;
+      dst->size = _vec.size;
+      dst->val = _vec.val;
+    }
+
+  }
+
   /** \brief Add or update a matrix type uniform in pool
   *
   * @param _mat uniform specifier
@@ -444,6 +512,125 @@ namespace GLSL {
     // add/update in pool
     addVeci(tmp);
   }
+
+  /** \brief Set ivec2 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec2i &_value ) {
+    // create uniform descriptor
+    UniformVeci tmp;
+    tmp.id = _name;
+    tmp.size = 2;
+    tmp.val[0] = _value[0];
+    tmp.val[1] = _value[1];
+
+    // add/update in pool
+    addVeci(tmp);
+  }
+
+  /** \brief Set ivec3 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec3i &_value ) {
+    // create uniform descriptor
+    UniformVeci tmp;
+    tmp.id = _name;
+    tmp.size = 3;
+    tmp.val[0] = _value[0];
+    tmp.val[1] = _value[1];
+    tmp.val[2] = _value[2];
+
+    // add/update in pool
+    addVeci(tmp);
+  }
+
+  /** \brief Set ivec4 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec4i &_value ) {
+    // create uniform descriptor
+    UniformVeci tmp;
+    tmp.id = _name;
+    tmp.size = 4;
+    tmp.val = _value;
+
+    // add/update in pool
+    addVeci(tmp);
+  }
+
+  /** \brief Set uint uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, GLuint _value ) {
+    // create uniform descriptor
+    UniformVecui tmp;
+    tmp.id = _name;
+    tmp.size = 1;
+    tmp.val[0] = _value;
+
+    // add/update in pool
+    addVecui(tmp);
+  }
+
+  /** \brief Set uvec2 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec2ui &_value ) {
+    // create uniform descriptor
+    UniformVecui tmp;
+    tmp.id = _name;
+    tmp.size = 2;
+    tmp.val[0] = _value[0];
+    tmp.val[1] = _value[1];
+
+    // add/update in pool
+    addVecui(tmp);
+  }
+  
+  /** \brief Set uvec3 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec3ui &_value ) {
+    // create uniform descriptor
+    UniformVecui tmp;
+    tmp.id = _name;
+    tmp.size = 3;
+    tmp.val[0] = _value[0];
+    tmp.val[1] = _value[1];
+    tmp.val[2] = _value[2];
+
+    // add/update in pool
+    addVecui(tmp);
+  }  
+  
+  /** \brief Set uvec4 uniform to specified value
+  *
+  * @param _name  Name of the uniform
+  * @param _value New value of the uniform
+  */
+  void UniformPool::setUniform( const char *_name, const ACG::Vec4ui &_value ) {
+    // create uniform descriptor
+    UniformVecui tmp;
+    tmp.id = _name;
+    tmp.size = 4;
+    tmp.val = _value;
+
+    // add/update in pool
+    addVecui(tmp);
+  }
+
 
   /** \brief Set float uniform to specified value
   *
