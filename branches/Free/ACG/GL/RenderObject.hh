@@ -48,9 +48,6 @@
 #include <ACG/GL/ShaderGenerator.hh>
 #include <ACG/ShaderUtils/UniformPool.hh>
 
-#include <ACG/Scenegraph/SceneGraph.hh>
-#include <ACG/Scenegraph/MaterialNode.hh>
-
 #include <map>
 
 
@@ -436,9 +433,42 @@ public:
   void setUniform(const char *_name, GLint *_values, int _count);
   void setUniform(const char *_name, GLfloat *_values, int _count);
 
+
+  /** \brief add all uniforms from a pool
+   *
+   * @param _pool input pool
+   *
+   */
+  void addUniformPool(const GLSL::UniformPool& _pool);
+
 private:
   GLSL::UniformPool uniformPool_;
 };
+
+
+/** \brief Interface for modifying render objects
+ *
+ * This class has to be implemented by a user, 
+ * and could be set to nodes that allow modification of render-objects.
+ * The modifier is then applied directly before adding an object to a renderer.
+ * It allows low-level access to all settings in a render-objects.
+*/
+class ACGDLLEXPORT RenderObjectModifier
+{
+public:
+  RenderObjectModifier() {}
+  virtual ~RenderObjectModifier() {}
+
+  /** \brief apply the modifier
+   *
+   * @param _obj       modifiable render-object
+   *
+   */
+  virtual void apply(RenderObject* _obj) = 0;
+
+};
+
+
 
 //=============================================================================
 } // namespace ACG

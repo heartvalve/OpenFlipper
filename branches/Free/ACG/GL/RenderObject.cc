@@ -369,6 +369,11 @@ void RenderObject::setUniform( const char *_name, GLfloat *_values, int _count )
   uniformPool_.setUniform(_name, _values, _count);
 }
 
+void RenderObject::addUniformPool( const GLSL::UniformPool& _pool )
+{
+  uniformPool_.addPool(_pool);
+}
+
 
 } // namespace ACG end
 

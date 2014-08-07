@@ -81,7 +81,9 @@ BaseNode(BaseNode* _parent, std::string _name)
     drawMode_(DrawModes::DEFAULT),
     pickingEnabled_(true),
     dirty_ (false),
-    traverseMode_ (BaseNode::NodeFirst)
+    traverseMode_ (BaseNode::NodeFirst),
+    uniformPool_(0),
+    renderModifier_(0)
 {
   id_ = ++last_id_used__;
   if (_parent!=0) _parent->push_back(this);
@@ -252,6 +254,66 @@ bool BaseNode::multipassNodeActive(const unsigned int _i) const {
   else  
     return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassNode_) != 0;
   
+}
+
+//----------------------------------------------------------------------------
+
+void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
+
+  ShaderSet s;
+  s.vs_ = _vertexShaderFile;
+  s.gs_ = _geometryShaderFile;
+  s.fs_ = _fragmentShaderFile;
+  s.relativePaths_ = _relativePaths;
+
+  shaderSettings_[_primitiveType] = s;
+}
+
+//----------------------------------------------------------------------------
+
+void BaseNode::setShaderTexture( int _samplerSlot, GLuint _texId, GLenum _texType ) {
+  
+  ACG::RenderObject::Texture t;
+  t.id = _texId;
+  t.type = _texType;
+  t.shadow = false;
+
+  textureSettings_[_samplerSlot] = t;
+}
+
+//----------------------------------------------------------------------------
+
+void BaseNode::applyRenderObjectSettings( DrawModes::DrawModePrimitive _primitive, RenderObject* _obj ) const {
+
+  // Copy texture settings
+  for (std::map<int, RenderObject::Texture>::const_iterator it = textureSettings_.begin(); it != textureSettings_.end(); ++it)
+    _obj->addTexture(it->second, size_t(it->first), false);
+
+  // Copy uniforms from provided pool
+  if (uniformPool_)
+    _obj->addUniformPool(*uniformPool_);
+
+
+std::map<DrawModes::DrawModePrimitive, ShaderSet>::const_iterator shaderSet = shaderSettings_.find(_primitive);
+
+  bool defaultShaders = shaderSet == shaderSettings_.end();
+
+  if (!defaultShaders) {
+
+    // prepend openflipper shader dir
+    if (shaderSet->second.relativePaths_) {
+      _obj->shaderDesc.vertexTemplateFile = 
+        _obj->shaderDesc.geometryTemplateFile =         
+        _obj->shaderDesc.fragmentTemplateFile = ShaderProgGenerator::getShaderDir();
+    }
+
+    _obj->shaderDesc.vertexTemplateFile += shaderSet->second.vs_.c_str();
+    _obj->shaderDesc.geometryTemplateFile += shaderSet->second.gs_.c_str();
+    _obj->shaderDesc.fragmentTemplateFile += shaderSet->second.fs_.c_str();
+  }
+
+  if (renderModifier_)
+    renderModifier_->apply(_obj);
 }
 
 //=============================================================================
