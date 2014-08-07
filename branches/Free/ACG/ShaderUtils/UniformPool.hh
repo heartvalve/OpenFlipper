@@ -78,6 +78,15 @@ namespace GLSL {
     void bind(GLuint _prog) const;
 
     void setUniform(const char *_name, GLint _value);
+    void setUniform(const char *_name, const ACG::Vec2i &_value);
+    void setUniform(const char *_name, const ACG::Vec3i &_value);
+    void setUniform(const char *_name, const ACG::Vec4i &_value);
+
+    void setUniform(const char *_name, GLuint _value);
+    void setUniform(const char *_name, const ACG::Vec2ui &_value);
+    void setUniform(const char *_name, const ACG::Vec3ui &_value);
+    void setUniform(const char *_name, const ACG::Vec4ui &_value);
+
     void setUniform(const char *_name, GLfloat _value);
     void setUniform(const char *_name, const ACG::Vec2f &_value);
     void setUniform(const char *_name, const ACG::Vec3f &_value);
@@ -131,6 +140,13 @@ namespace GLSL {
       void bind(GLuint _progID) const;
     };
 
+    struct UniformVecui : public UniformBase {
+      ACG::Vec4ui val;
+      int size;
+
+      void bind(GLuint _progID) const;
+    };
+
 
     struct UniformMat : UniformBase {
       ACG::Matrix4x4f val;
@@ -166,6 +182,7 @@ namespace GLSL {
 
     void addVecf(const UniformVecf& _vec);
     void addVeci(const UniformVeci& _vec);
+    void addVecui(const UniformVecui& _vec);
     void addMatrix(const UniformMat& _mat);
     void addBuf(const char *_name, void *_values, int _count, bool _integer);
   };
