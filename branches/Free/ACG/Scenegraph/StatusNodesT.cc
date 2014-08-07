@@ -364,37 +364,35 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   // Call updater function before doing anything
   update_cache();
 
-  bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
-			       DrawModes::SOLID_SMOOTH_SHADED |
-			       DrawModes::SOLID_PHONG_SHADED |
-			       DrawModes::SOLID_TEXTURED_SHADED |
-			       DrawModes::POINTS_SHADED ));
+  // using static bitflags for drawmodes is no longer recommended
+  //  read from properties instead:
 
-  bool wires  = (_drawMode & ( DrawModes::WIREFRAME |
-			       DrawModes::HIDDENLINE ));
+  bool shaded = false,
+    smooth = false,
+    wires = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_WIREFRAME) >= 0, 
+    points = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POINT) >= 0,
+    edges = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_EDGE) >= 0, 
+    halfedges = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_HALFEDGE) >= 0, 
+    faces = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON) >= 0;
 
-  bool smooth = (_drawMode & ( DrawModes::SOLID_SMOOTH_SHADED |
-			       DrawModes::SOLID_PHONG_SHADED |
-			       DrawModes::SOLID_TEXTURED_SHADED ));
+  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
+  {
+    const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
 
-  bool points = ((this->drawMode() == DrawModes::DEFAULT) |
-		 (_drawMode & DrawModes::POINTS));
+    if (props->lighting())
+      shaded = true;
 
-  bool edges = ((this->drawMode() == DrawModes::DEFAULT) |
-		 (_drawMode & DrawModes::WIREFRAME));
-
-  bool halfedges = ((this->drawMode() == DrawModes::DEFAULT) |
-		    (_drawMode & DrawModes::WIREFRAME));
-
-  bool faces = ((this->drawMode() == DrawModes::DEFAULT) |
-		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
-
+    if (props->normalSource() == DrawModes::NORMAL_PER_VERTEX ||
+      props->normalSource() == DrawModes::NORMAL_PER_HALFEDGE)
+      smooth = true;
+  }
 
   // force shaded selections
   shaded = true;
 
+
   GLenum prev_depth = _state.depthFunc();
-  
+
   ACG::GLState::depthFunc(GL_LEQUAL);
 
   if (shaded)  ACG::GLState::enable(GL_LIGHTING);
@@ -402,7 +400,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   if (smooth)  ACG::GLState::shadeModel(GL_SMOOTH);
   else         ACG::GLState::shadeModel(GL_FLAT);
-
 
   if (drawMesh_)
   {
@@ -427,7 +424,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
     ACG::GLState::vertexPointer(mesh_.points());
   }
-  
+
 
   // points
   if (points)
@@ -450,7 +447,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
       draw_faces(smooth);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     } else {
-      
+
       glPushAttrib( GL_ENABLE_BIT );
 
       ACG::GLState::enable(GL_POLYGON_OFFSET_FILL);
@@ -473,9 +470,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
-  
-  ACG::GLState::depthFunc(prev_depth);
 
+  ACG::GLState::depthFunc(prev_depth);
 }
 
 
@@ -670,7 +666,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.depthFunc = GL_LEQUAL;
 
   // Use the material from the underlying materialnode
-  ro.setMaterial(_mat);
+  ro.setMaterial(&MaterialNode::material());
 
   pointVertexDecl_.clear();
   pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, mesh_.points());
@@ -711,7 +707,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
     ro.shaderDesc.fragmentTemplateFile = fragTemplate;
 
     ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-    ro.setUniform("pointSize", _mat->pointSize());
+    ro.setUniform("pointSize", MaterialNode::point_size());
 
     ro.glDrawElements(GL_POINTS, static_cast<GLsizei>(v_cache_.size()), GL_UNSIGNED_INT, &v_cache_[0]);
     _renderer->addRenderObject(&ro);
@@ -730,7 +726,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
     ro.shaderDesc.geometryTemplateFile = geomTemplate;
 
     ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-    ro.setUniform("lineWidth", _state.line_width());
+    ro.setUniform("lineWidth", MaterialNode::line_width());
 
     ro.glDrawElements(GL_LINES, static_cast<GLsizei>(e_cache_.size()), GL_UNSIGNED_INT, &e_cache_[0]);
     _renderer->addRenderObject(&ro);

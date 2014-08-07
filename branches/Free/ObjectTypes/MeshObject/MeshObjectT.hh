@@ -71,6 +71,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <ObjectTypes/MeshObject/StatusNodeMods.hh>
+#include <ObjectTypes/MeshObject/StatusViewNodeT.hh>
 #include <OpenFlipper/common/BaseObjectData.hh>
 
 // -------------------- BSP
@@ -241,6 +242,9 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
 
     /// Scenegraph ShaderNode
     ACG::SceneGraph::ShaderNode*     shaderNode_;
+
+    /// Scenegraph StatusNodeView
+    ACG::SceneGraph::StatusViewNodeT<MeshT>* statusView_;
 
   /** @} */
 
