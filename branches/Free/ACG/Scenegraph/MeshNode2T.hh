@@ -79,14 +79,14 @@ class ACGDLLEXPORT MeshNodeBase : public BaseNode {
     protected:
         MeshNodeBase(BaseNode* _parent, std::string _name);
 
-        void supplyDrawMesh(DrawMeshBase *drawMesh);
+        void supplyDrawMesh(DrawMeshBase *drawMeshBase);
 
     public:
         void updatePolyEdgeBuf();
 
     protected:
 
-      DrawMeshBase *drawMesh_;
+      DrawMeshBase *drawMeshBase_;
 
       // poly edge buffer used for wireframe/hiddenline rendering with barycentric interpolation in geometry shader
       GLuint polyEdgeBuf_;

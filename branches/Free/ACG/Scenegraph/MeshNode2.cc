@@ -50,35 +50,35 @@ namespace SceneGraph {
 
 MeshNodeBase::MeshNodeBase(BaseNode* _parent, std::string _name) :
     BaseNode(_parent, _name),
-    drawMesh_(0),
+    drawMeshBase_(0),
     polyEdgeBuf_(0),
     polyEdgeBufSize_(0),
     polyEdgeBufTex_(0) {
 }
 
-void MeshNodeBase::supplyDrawMesh(DrawMeshBase *drawMesh) {
+void MeshNodeBase::supplyDrawMesh(DrawMeshBase *drawMeshBase) {
     /*
      * We take the luxury of checking these conditions even in release
-     * mode as it this method is rarely called.
+     * mode as this method is rarely called.
      */
-    if (drawMesh_)
+    if (drawMeshBase_)
         throw std::runtime_error("MeshNodeBase::supplyDrawMesh called "
                 "more than once.");
-    if (!drawMesh)
+    if (!drawMeshBase)
         throw std::runtime_error("MeshNodeBase::supplyDrawMesh called "
                 "with NULL parameter.");
 
-    drawMesh_ = drawMesh;
+    drawMeshBase_ = drawMeshBase;
 }
 
 void MeshNodeBase::updatePolyEdgeBuf()
 {
 
 #ifdef GL_ARB_texture_buffer_object
-  // drawMesh_ must have been supplied.
-  assert(drawMesh_);
+  // drawMeshBase_ must have been supplied.
+  assert(drawMeshBase_);
 
-  MeshCompiler * const mc = drawMesh_->getMeshCompiler();
+  MeshCompiler * const mc = drawMeshBase_->getMeshCompiler();
   if (mc && !mc->isTriangleMesh())
   {
     // create/update the poly-edge buffer

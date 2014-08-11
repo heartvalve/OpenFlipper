@@ -69,9 +69,9 @@ namespace SceneGraph {
 
 template<class Mesh>
 MeshNodeT<Mesh>::
-MeshNodeT(Mesh&        _mesh,
-              BaseNode*    _parent,
-              std::string  _name ): 
+MeshNodeT(Mesh& _mesh,
+          BaseNode* _parent,
+          std::string _name ):
   MeshNodeBase(_parent, _name),
   mesh_(_mesh),
   drawMesh_(0),
