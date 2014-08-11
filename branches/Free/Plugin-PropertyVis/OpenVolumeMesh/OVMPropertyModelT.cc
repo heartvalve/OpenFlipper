@@ -91,6 +91,9 @@ OVMPropertyModel<MeshT>::OVMPropertyModel(MeshT* mesh, int objectID, QObject *pa
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     mPickWidget.pickButton->setIcon( QIcon(iconPath + "color-picker.png") );
 
+    lastPickMode   = PluginFunctions::pickMode();
+    lastActionMode = PluginFunctions::actionMode();
+
     initializeSupportedPropertyTypes();
 }
 
@@ -123,7 +126,9 @@ void OVMPropertyModel<MeshT>::updateWidget(const QModelIndexList& selectedIndice
     else
     {
         mPickWidget.hide();
-        resetPicking();
+        //reset Picking, just if picking was enabled
+        if (mPickWidget.pickButton->isChecked())
+          resetPicking();
     }
 
 }

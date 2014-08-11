@@ -135,7 +135,9 @@ void OMPropertyModel<MeshT>::updateWidget(const QModelIndexList& selectedIndices
     else
     {
         mPickWidget.hide();
-        resetPicking();
+        //reset Picking, just if picking was enabled
+        if (mPickWidget.pickButton->isChecked())
+          resetPicking();
     }
 }
 
