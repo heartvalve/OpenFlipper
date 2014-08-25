@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <cstdlib>
+
 #include "PrimitivesGenerator.hh"
 
 #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
@@ -48,6 +50,10 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Geometry/Algorithms.hh>
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+#include <ObjectTypes/BSplineSurface/BSplineSurface.hh>
+#endif
 
 PrimitivesGeneratorPlugin::PrimitivesGeneratorPlugin() :
         triMesh_(0),
@@ -115,6 +121,13 @@ void PrimitivesGeneratorPlugin::initializePlugin()
                           QString("Position,Axis,Radius,Height,Top,Bottom").split(","),
                           QString("Bottom center vertex position,Center axis,radius,height,add top vertex,add bottom vertex").split(","));
 
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  emit setSlotDescription("addRandomBSplineSurface(Vector,int)",
+                          tr("Generates a random B-spline surface (ObjectId is returned)"),
+                          QString("Position,Count").split(","),
+                          QString("Center position,Number of control points").split(","));
+#endif
+
 #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
   emit setSlotDescription("addTetrahedralCube(Vector,double)",
                           tr("Generates a tetrahedral mesh of a cube (ObjectId is returned)"),
@@ -173,6 +186,12 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action = primitivesMenu_->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedron."),"Tetrahedron");
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    action = primitivesMenu_->addAction("Random B-spline surface",this,SLOT(addRandomBSplineSurface()));
+    // action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"bspline_surface.png"));
+    whatsThisGen.setWhatsThis(action,tr("Create a random B-spline surface."),"B-spline surface");
+#endif
 
 #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
     action = primitivesMenu_->addAction("Cube (Tetrahedral Mesh)"    ,this,SLOT(addTetrahedralCube()));
@@ -1002,6 +1021,40 @@ int PrimitivesGeneratorPlugin::addDodecahedron(const Vector& _position,const dou
   return -1;
 }
 
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+int PrimitivesGeneratorPlugin::addRandomBSplineSurface(const Vector& _position, int nDiv)
+{
+    int id = -1;
+    emit addEmptyObject(DATA_BSPLINE_SURFACE, id);
+    if (id == -1) {
+        return -1;
+	}
+
+    BSplineSurfaceObject *object = NULL;
+    if (!PluginFunctions::getObject(id, object)) {
+        return -1;
+	}
+
+    BSplineSurface *surf = object->splineSurface();
+    typedef BSplineSurface::Point Point;
+    std::vector<Point> cp(nDiv);
+
+    for (int i = 0; i < nDiv; ++i) {
+        double x = _position[0] + i - nDiv / 2.0;
+        for (int j = 0; j < nDiv; ++j) {
+            double y = _position[1] + j - nDiv / 2.0;
+            cp[j] = Point(x, y, _position[2] + (2.0 * std::rand()) / RAND_MAX - 1);
+        }
+        surf->add_vector_m(cp);
+    }
+    surf->createKnots();
+
+    emit updatedObject(id, UPDATE_ALL);
+    PluginFunctions::viewAll();
+
+    return id;
+}
+#endif
 
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( primitivesgeneratorplugin , PrimitivesGeneratorPlugin );
