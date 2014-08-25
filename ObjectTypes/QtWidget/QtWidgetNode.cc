@@ -219,6 +219,8 @@ void QtWidgetNode::uploadPlane()
 
   // Upload to buffer
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, buffersize * sizeof(float), &vboData_[0], GL_STATIC_DRAW_ARB);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 //----------------------------------------------------------------
 
