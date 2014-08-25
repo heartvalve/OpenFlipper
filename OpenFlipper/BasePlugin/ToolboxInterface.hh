@@ -43,7 +43,7 @@
 #ifndef TOOLBOXINTERFACE_HH
 #define TOOLBOXINTERFACE_HH
 
-
+#include <OpenFlipper/common/Types.hh>
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
@@ -52,7 +52,7 @@
 
 #include <QMenuBar>
 #include <QStringList>
-#include <OpenFlipper/common/Types.hh>
+
 
 /** \file ToolboxInterface.hh
 *

@@ -44,7 +44,8 @@
 #ifndef INIINTERFACE_HH
 #define INIINTERFACE_HH
 
- 
+ #include <OpenFlipper/common/Types.hh>
+
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
@@ -52,7 +53,7 @@
 #endif
 
  #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
+
 
  #include <OpenFlipper/INIFile/INIFile.hh>
 
