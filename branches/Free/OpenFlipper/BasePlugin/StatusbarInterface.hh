@@ -43,6 +43,7 @@
 #ifndef STATUSBARINTERFACE_HH
 #define STATUSBARINTERFACE_HH
 
+#include <OpenFlipper/common/Types.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -50,7 +51,6 @@
   #include <QtGui>
 #endif
 
-#include <OpenFlipper/common/Types.hh>
 #include <QStatusBar>
 
 

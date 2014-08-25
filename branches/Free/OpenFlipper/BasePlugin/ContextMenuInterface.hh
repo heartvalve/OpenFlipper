@@ -44,7 +44,7 @@
 #ifndef CONTEXTMENUINTERFACE_HH
 #define CONTEXTMENUINTERFACE_HH
 
-
+#include <OpenFlipper/common/Types.hh>
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
@@ -52,7 +52,6 @@
 #endif
 
 #include <QMenuBar>
-#include <OpenFlipper/common/Types.hh>
 
 
 /** \file ContextMenuInterface.hh

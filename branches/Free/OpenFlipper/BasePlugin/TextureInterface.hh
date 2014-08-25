@@ -44,6 +44,7 @@
 #ifndef TEXTUREINTERFACE_HH
 #define TEXTUREINTERFACE_HH
 
+ #include <OpenFlipper/common/Types.hh>
  
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -52,7 +53,7 @@
 #endif
 
  #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
+
 
  /**
   * \brief Provide texture support for a plugin.

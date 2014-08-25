@@ -43,7 +43,7 @@
 #ifndef MENUBARINTERFACE_HH
 #define MENUBARINTERFACE_HH
 
-
+#include <OpenFlipper/common/Types.hh>
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
@@ -51,7 +51,7 @@
 #endif
 
 #include <QMenuBar>
-#include <OpenFlipper/common/Types.hh>
+
 
 /// The Menu will be added inside the File Menu
 #define FILEMENU tr("File")

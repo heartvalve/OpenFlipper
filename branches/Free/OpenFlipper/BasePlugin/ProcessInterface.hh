@@ -43,6 +43,7 @@
 #ifndef PROCESSINTERFACE_HH
 #define PROCESSINTERFACE_HH
 
+#include <OpenFlipper/threads/OpenFlipperThread.hh>
 
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
@@ -50,7 +51,6 @@
   #include <QtGui>
 #endif
 
-#include <OpenFlipper/threads/OpenFlipperThread.hh>
 
 /** \file ProcessInterface.hh
 *

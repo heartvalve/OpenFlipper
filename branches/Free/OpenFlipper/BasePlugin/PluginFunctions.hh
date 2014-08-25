@@ -58,10 +58,10 @@
 #ifndef PLUGINFUNCTIONS_HH
 #define PLUGINFUNCTIONS_HH
 
+#include <OpenFlipper/common/Types.hh>
+
 #include <QPair>
 #include <QFileDialog>
-
-#include <OpenFlipper/common/Types.hh>
 
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
