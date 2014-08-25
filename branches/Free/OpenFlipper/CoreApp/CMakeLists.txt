@@ -157,7 +157,7 @@ if (NOT FORCE_QT4 AND QT5_FOUND)
   if (QWT6_FOUND)
     add_definitions(-DWITH_QWT)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${QWT6_INCLUDE_DIRS} )
-    set(ADDITIONAL_LINK_LIBRARIES ${COREAPP_ADDITIONAL_LINK_LIBRARIES} ${QWT6_LIBRARIES})
+    set(COREAPP_ADDITIONAL_LINK_LIBRARIES ${COREAPP_ADDITIONAL_LINK_LIBRARIES} ${QWT6_LIBRARIES})
   endif()
 else()
   find_package(Qwt5)
@@ -165,7 +165,7 @@ else()
   if(Qwt5_Qt4_FOUND)
     add_definitions(-DWITH_QWT)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
-    set(ADDITIONAL_LINK_LIBRARIES ${COREAPP_ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
+    set(COREAPP_ADDITIONAL_LINK_LIBRARIES ${COREAPP_ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
   endif()
 endif()
 
@@ -174,9 +174,7 @@ endif()
 # Linker Dependencies for Core app
 # ====================================================================================
 
-
 target_link_libraries (${OPENFLIPPER_PRODUCT_STRING}
-  ${OPENMESH_CORE_LIBRARIES}
   ACG
   OpenFlipperPluginLib
   ${QT_LIBRARIES}
