@@ -189,7 +189,7 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
     action = primitivesMenu_->addAction("Random B-spline surface",this,SLOT(addRandomBSplineSurface()));
-    // action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"bspline_surface.png"));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"bspline_surface.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a random B-spline surface."),"B-spline surface");
 #endif
 
