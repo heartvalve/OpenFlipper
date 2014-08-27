@@ -94,8 +94,8 @@ if (WIN32)
   endif ()
 else ()
   set (ACG_PROJECT_DATADIR "share/${CMAKE_PROJECT_NAME}")
-  set (ACG_PROJECT_LIBDIR "lib/${CMAKE_PROJECT_NAME}")
-  set (ACG_PROJECT_PLUGINDIR "lib/${CMAKE_PROJECT_NAME}/plugins")
+  set (ACG_PROJECT_LIBDIR "lib${LIB_SUFFIX}")
+  set (ACG_PROJECT_PLUGINDIR "lib${LIB_SUFFIX}/plugins")
   set (ACG_PROJECT_BINDIR "bin")
 endif ()
 
@@ -129,7 +129,7 @@ macro (acg_set_target_props target)
   elseif (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE)
     set_target_properties (
       ${target} PROPERTIES
-      INSTALL_NAME_DIR "@executable_path/../lib/${CMAKE_PROJECT_NAME}"
+      INSTALL_NAME_DIR "@executable_path/../${ACG_PROJECT_LIBDIR}"
       BUILD_WITH_INSTALL_RPATH 1
       SKIP_BUILD_RPATH 0
     )
@@ -137,7 +137,7 @@ macro (acg_set_target_props target)
 
     set_target_properties (
       ${target} PROPERTIES
-      INSTALL_RPATH "$ORIGIN/../lib/${CMAKE_PROJECT_NAME}"
+      INSTALL_RPATH "$ORIGIN/../${ACG_PROJECT_LIBDIR}"
       BUILD_WITH_INSTALL_RPATH 1
       SKIP_BUILD_RPATH 0
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}"
