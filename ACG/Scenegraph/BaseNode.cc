@@ -258,7 +258,7 @@ bool BaseNode::multipassNodeActive(const unsigned int _i) const {
 
 //----------------------------------------------------------------------------
 
-void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
+void BaseNode::setRenderObjectShaders( const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
 
   ShaderSet s;
   s.vs_ = _vertexShaderFile;
@@ -271,7 +271,7 @@ void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::stri
 
 //----------------------------------------------------------------------------
 
-void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
+void BaseNode::setRenderObjectShaders( const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths, ACG::SceneGraph::DrawModes::DrawModePrimitive _primitiveType ) {
 
   ShaderSet s;
   s.vs_ = _vertexShaderFile;
@@ -286,7 +286,7 @@ void BaseNode::setShaders( const std::string& _vertexShaderFile, const std::stri
 
 //----------------------------------------------------------------------------
 
-void BaseNode::setShaderTexture( int _samplerSlot, GLuint _texId, GLenum _texType ) {
+void BaseNode::setRenderObjectTexture( int _samplerSlot, GLuint _texId, GLenum _texType ) {
   
   ACG::RenderObject::Texture t;
   t.id = _texId;
