@@ -555,7 +555,7 @@ public:
     * Note: the derived node has to actually make use of shaders provided here
     *
     * Example: set shaders in OpenFlipper/Shaders/MyWireShaders for rendering the line parts of a node:
-    *  node->setShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
+    *  node->setRenderobjectShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
     *
     *
     * @param _vertexShaderFile    filename of vertex shader template compatible with ACG::ShaderGenerator
@@ -565,7 +565,7 @@ public:
     * @param _primitiveType       assign shaders to rendering this type of primitive of the polyline
     *
     */
-  void setShaders(const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
+  void setRenderObjectShaders(const std::string& _vertexShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
 
   /** \brief Set custom shaders
     *
@@ -575,7 +575,7 @@ public:
     * Note: the derived node has to actually make use of shaders provided here
     *
     * Example: set shaders in OpenFlipper/Shaders/MyWireShaders for rendering the line parts of a node:
-    *  node->setShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
+    *  node->setRenderObjectShaders("MyWireShaders/v.glsl", "MyWireShaders/g.glsl",  "MyWireShaders/f.glsl", true, ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME);
     *
     *
     * @param _vertexShaderFile    filename of vertex shader template compatible with ACG::ShaderGenerator
@@ -587,49 +587,53 @@ public:
     * @param _primitiveType       assign shaders to rendering this type of primitive of the polyline
     *
     */
-  void setShaders(const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
+  void setRenderObjectShaders(const std::string& _vertexShaderFile, const std::string& _tessControlShaderFile, const std::string& _tessEvalShaderFile, const std::string& _geometryShaderFile, const std::string& _fragmentShaderFile, bool _relativePaths = true, DrawModes::DrawModePrimitive _primitiveType = DrawModes::PRIMITIVE_POLYGON);
 
 
   /** \brief Set uniforms for shader based rendering
     *
     * Uniforms are copied from a pool when rendering with shader-based render-objects.
-    * The specified pool has to be a valid memory address whenever the polyline gets rendered.
+    * The specified pool has to be a valid memory address whenever the objects are rendered.
     * It does not make a copy of the pool.
     *
     * @param _pool  pointer to address of a uniform pool
     *
     */
-  void setUniformPool(const GLSL::UniformPool* _pool) {uniformPool_ = _pool;}
+  void setRenderObjectUniformPool(const GLSL::UniformPool* _pool) {uniformPool_ = _pool;}
 
   /** \brief Get uniforms for shader based rendering
     *
     */
-  const GLSL::UniformPool* getUniformPool() {return uniformPool_;}
+  const GLSL::UniformPool* getRenderObjectUniformPool() {return uniformPool_;}
 
   /** \brief Set textures for shader based rendering
     *
-    * Assign textures to sampler slots, which are available in render-objects created by the polyline.
+    * Assign textures to sampler slots.
     * Note: Fixed-function drawing ignores these textures.
+    *       Also, it is still necessary to set the according sampler index in a UniformPool to access this texture in a shader.
     *
     * @param _samplerSlot  sampler slot to bind the texture to,  zero-based index
     * @param _texId        gl texture id
     * @param _texType      gl texture type ie. GL_TEXTURE_1D, ..
     *
     */
-  void setShaderTexture(int _samplerSlot, GLuint _texId, GLenum _texType = GL_TEXTURE_2D);
+  void setRenderObjectTexture(int _samplerSlot, GLuint _texId, GLenum _texType = GL_TEXTURE_2D);
 
 
   /** \brief Set modifier for render objects
     *
-    * All render-objects created by the polyline are modifiable.
-    * The currently active modifier is applied directly before adding an object to the renderer.
+    * Render-objects can be modified, if the implementation of a node supports this.
+    * The currently active modifier should be applied directly before adding an object to the renderer.
     *
-    * @param _modifier  pointer to address of modifier,  address must be valid whenever the polyline is rendered
+    * @param _modifier  pointer to address of modifier,  address must be valid whenever the node creates render-objects
     *
     */
-  void setRenderModifier(RenderObjectModifier* _modifier) {renderModifier_ = _modifier;}
+  void setRenderObjectModifier(RenderObjectModifier* _modifier) {renderModifier_ = _modifier;}
 
-  RenderObjectModifier* getRenderModifier() {return  renderModifier_;}
+  /** \brief Get render-object modifier
+    *
+    */
+  RenderObjectModifier* getRenderObjectModifier() {return  renderModifier_;}
 
 
 
