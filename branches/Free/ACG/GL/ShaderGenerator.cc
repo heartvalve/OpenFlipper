@@ -56,12 +56,38 @@ namespace ACG
 
 #define LIGHTING_CODE_FILE "ShaderGen/SG_LIGHTING.GLSL"
 
+
+
+// space naming
+// OS : object space
+// VS : view space
+// CS : clip space
+
 // attribute request keywords
 #define SG_REQUEST_POSVS "#define SG_REQUEST_POSVS"
 #define SG_REQUEST_POSOS "#define SG_REQUEST_POSOS"
 #define SG_REQUEST_TEXCOORD "#define SG_REQUEST_TEXCOORD"
 #define SG_REQUEST_VERTEXCOLOR "#define SG_REQUEST_VERTEXCOLOR"
-#define SG_REQUEST_NORMAL "#define SG_REQUEST_NORMAL"
+#define SG_REQUEST_NORMALVS "#define SG_REQUEST_NORMALVS"
+#define SG_REQUEST_NORMALOS "#define SG_REQUEST_NORMALOS"
+
+// generic default attribute input keywords
+//  these are extended by the correct input name by the generator for each stage
+#define SG_INPUT_POSVS "SG_INPUT_POSVS"
+#define SG_INPUT_POSOS "SG_INPUT_POSOS"
+#define SG_INPUT_POSCS "SG_INPUT_POSCS"
+#define SG_INPUT_NORMALVS "SG_INPUT_NORMALVS"
+#define SG_INPUT_NORMALOS "SG_INPUT_NORMALOS"
+#define SG_INPUT_TEXCOORD "SG_INPUT_TEXCOORD"
+#define SG_INPUT_VERTEXCOLOR "SG_INPUT_VERTEXCOLOR"
+
+#define SG_OUTPUT_POSVS "SG_OUTPUT_POSVS"
+#define SG_OUTPUT_POSOS "SG_OUTPUT_POSOS"
+#define SG_OUTPUT_POSCS "SG_OUTPUT_POSCS"
+#define SG_OUTPUT_NORMALVS "SG_OUTPUT_NORMALVS"
+#define SG_OUTPUT_NORMALOS "SG_OUTPUT_NORMALOS"
+#define SG_OUTPUT_TEXCOORD "SG_OUTPUT_TEXCOORD"
+#define SG_OUTPUT_VERTEXCOLOR "SG_OUTPUT_VERTEXCOLOR"
 
 
 int ShaderProgGenerator::numModifiers_ = 0;
@@ -80,12 +106,7 @@ ShaderGenerator::~ShaderGenerator()
 }
 
 
-void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc, 
-  bool _requestPosVS,
-  bool _requestPosOS,
-  bool _requestNormal,
-  bool _requestTexCoord,
-  bool _requestColor)
+void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc, const DefaultIODesc* _iodesc)
 {
   // set type of IO
   inputArrays_ = false;
@@ -97,7 +118,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc,
   addOutput("vec4 outVertexPosCS");
 
 
-  if (_desc->shadeMode != SG_SHADE_UNLIT)
+  if (_iodesc->inputNormal_)
     addInput("vec3 inNormal");
 
   if (_desc->textured())
@@ -113,19 +134,19 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc,
       addInput("vec2 inTexCoord");
       addOutput("vec2 outVertexTexCoord");
     }
-
   }
 
 
-  if (_desc->vertexColors || _requestColor)
+  if (_iodesc->inputColor_)
     addInput("vec4 inColor");
 
 
-  if (_desc->shadeMode == SG_SHADE_PHONG)
-  {
+  if (_iodesc->passNormalVS_)
     addOutput("vec3 outVertexNormal");
-    addOutput("vec4 outVertexPosVS");
-  }
+
+  if (_iodesc->passNormalOS_)
+    addOutput("vec3 outVertexNormalOS");
+
 
 
   std::string strColorOut = "";
@@ -139,7 +160,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc,
       addStringToList("vec4 outVertexColor", &outputs_, "flat out ", ";");
     }
   else {
-    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors || _requestColor)
+    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors || _iodesc->inputColor_)
       strColorOut = "vec4 outVertexColor";
   }
 
@@ -149,27 +170,67 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc,
 
   // handle other requests: normals, positions, texcoords
 
-  if (_requestPosVS)
+  if (_iodesc->passPosVS_)
     addOutput("vec4 outVertexPosVS");
 
-  if (_requestPosOS)
+  if (_iodesc->passPosOS_)
     addOutput("vec4 outVertexPosOS");
 
-  if (_requestTexCoord && !_desc->textured())
+  if (_iodesc->passTexCoord_ && !_desc->textured())
   {
     // assume 2d texcoords
     addInput("vec2 inTexCoord");
     addOutput("vec2 outVertexTexCoord");
   }
 
-  if (_requestNormal)
+
+
+
+  // generic io input names
+
+  addDefine(SG_INPUT_POSOS " inPosition");
+  addDefine(SG_INPUT_POSVS " sg_vPosVS");
+  addDefine(SG_INPUT_POSCS " sg_vPosPS");
+
+
+  if (_iodesc->inputTexCoord_)
+    addDefine(SG_INPUT_TEXCOORD " inTexCoord");
+
+  if (_iodesc->inputNormal_)
   {
-    addInput("vec3 inNormal");
-    addOutput("vec3 outVertexNormal");
+    addDefine(SG_INPUT_NORMALOS " inNormal");
+    addDefine(SG_INPUT_NORMALVS " sg_vNormalVS");
   }
+
+  if (_iodesc->inputColor_)
+    addDefine(SG_INPUT_VERTEXCOLOR "inColor");
+
+
+
+  // generic io output names
+
+  addDefine(SG_OUTPUT_POSCS " outVertexPosCS");
+
+  if (_iodesc->passPosVS_)
+    addDefine(SG_OUTPUT_POSVS " outVertexPosVS");
+
+  if (_iodesc->passPosOS_)
+    addDefine(SG_OUTPUT_POSOS " outVertexPosOS");
+  
+  if (_iodesc->passTexCoord_)
+    addDefine(SG_OUTPUT_TEXCOORD " outVertexTexCoord");
+
+  if (_iodesc->passNormalVS_)
+    addDefine(SG_OUTPUT_NORMALVS " outVertexNormal");
+
+  if (_iodesc->passNormalOS_)
+    addDefine(SG_OUTPUT_NORMALOS " outVertexNormalOS");
+
+  if (_iodesc->passColor_)
+    addDefine(SG_OUTPUT_VERTEXCOLOR " outVertexColor");
 }
 
-void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
 {
   // set type of IO
   inputArrays_ = true;
@@ -180,7 +241,7 @@ void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, Shader
   matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
 }
 
-void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
 {
   // set type of IO
   inputArrays_ = true;
@@ -191,7 +252,7 @@ void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGen
   matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
 }
 
-void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage) 
+void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
 {
   // set type of IO
   inputArrays_ = true;
@@ -253,7 +314,7 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGen
 
 
 
-void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage)
+void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc)
 {
   // set type of IO
   inputArrays_ = false;
@@ -652,14 +713,27 @@ QString ShaderGenerator::getIOMapName(int _inId) const
   return outputName;
 }
 
+
+ShaderGenerator::DefaultIODesc::DefaultIODesc()
+  : inputTexCoord_(false),
+  inputColor_(false),
+  inputNormal_(false),
+  passPosVS_(false), passPosOS_(false), 
+  passTexCoord_(false), 
+  passColor_(false),
+  passNormalVS_(false), passNormalOS_(false)
+{
+}
+
+
+
+
 QString ShaderProgGenerator::shaderDir_;
 QStringList ShaderProgGenerator::lightingCode_;
 
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
                                          unsigned int _usage)
-: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage),
-  inputTexCoord_(false), inputColor_(false), inputNormal_(false),
-  passPosVS_(false), passPosOS_(false), passTexCoord_(false), passColor_(false), passNormal_(false)
+: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage)
 {
   if (shaderDir_.isEmpty())
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
@@ -769,13 +843,13 @@ void ShaderProgGenerator::initGenDefines(ShaderGenerator* _gen)
     _gen->addDefine("SG_VERTEX_COLOR 1");
 
 //  if (desc_.shadeMode != SG_SHADE_UNLIT)
-  if (passNormal_)
+  if (ioDesc_.passNormalVS_)
     _gen->addDefine("SG_NORMALS 1");
 
-  if (passPosVS_)
+  if (ioDesc_.passPosVS_)
     _gen->addDefine("SG_POSVS 1");
 
-  if (passPosOS_)
+  if (ioDesc_.passPosOS_)
     _gen->addDefine("SG_POSOS 1");
 
   // # lights define
@@ -811,8 +885,7 @@ void ShaderProgGenerator::buildVertexShader()
   vertex_  = new ShaderGenerator();
   vertex_->setGLSLVersion(desc_.version);
 
-//  vertex_->initDefaultVertexShaderIO();
-  vertex_->initVertexShaderIO(&desc_, passPosVS_, passPosOS_, passNormal_, passTexCoord_, passColor_);
+  vertex_->initVertexShaderIO(&desc_, &ioDesc_);
 
   vertex_->initDefaultUniforms();
 
@@ -896,26 +969,28 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_vPosPS = g_mWVP * inPosition;");
   _code->push_back("vec4 sg_vPosVS = g_mWV * inPosition;");
   _code->push_back("vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);");
+  _code->push_back("vec3 sg_vNormalOS = vec3(0.0, 1.0, 0.0);");
 
-  /// TODO Setup for multiple texture coordinates as input
-  if (desc_.textured())
+  /// note: multi-texturing is not supported, as this requires custom texture compositing
+  //       this can be done via shader modifiers or templates
+  if (ioDesc_.inputTexCoord_)
   {
     if (desc_.textureTypes().begin()->second.type == GL_TEXTURE_3D) {
-      _code->push_back("vec3 sg_vTexCoord = vec3(0.0, 0.0, 0.0);");
+      _code->push_back("vec3 sg_vTexCoord = inTexCoord;");
     } else {
-      _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
+      _code->push_back("vec2 sg_vTexCoord = inTexCoord;");
     }
   }
 
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, SG_ALPHA);");
 
-  if (desc_.shadeMode != SG_SHADE_UNLIT)
+  if (ioDesc_.inputNormal_)
+  {
     _code->push_back("sg_vNormalVS = normalize(g_mWVIT * inNormal);");
+    _code->push_back("sg_vNormalOS = normalize(inNormal);");
+  }
 
-  if (desc_.textured())
-    _code->push_back("sg_vTexCoord = inTexCoord;");
-
-  if (desc_.vertexColors)
+  if (ioDesc_.inputColor_)
     _code->push_back("sg_cColor = inColor;");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
@@ -926,11 +1001,7 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
     addLightingCode(_code);
   }
 
-  if (passPosOS_)
-    _code->push_back("outVertexPosOS = inPosition;");
 
-  if (passPosVS_)
-    _code->push_back("outVertexPosVS = sg_vPosVS;");
 
   // apply modifiers
   for (int i = 0; i < numModifiers_; ++i)
@@ -946,19 +1017,23 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
   _code->push_back("gl_Position = sg_vPosPS;");
   _code->push_back("outVertexPosCS = sg_vPosPS;");
 
-  if (desc_.textured())
+  if (ioDesc_.passTexCoord_)
     _code->push_back("outVertexTexCoord = sg_vTexCoord;");
 
-  if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-    desc_.shadeMode == SG_SHADE_FLAT ||
-    desc_.vertexColors)
+  if (ioDesc_.passColor_)
     _code->push_back("outVertexColor = sg_cColor;");
 
-  if (desc_.shadeMode == SG_SHADE_PHONG)
-  {
+  if (ioDesc_.passNormalVS_)
     _code->push_back("outVertexNormal = sg_vNormalVS;");
-    _code->push_back("outVertexPosVS  = sg_vPosVS;");
-  }
+
+  if (ioDesc_.passNormalOS_)
+    _code->push_back("outVertexNormalOS = sg_vNormalOS;");
+
+  if (ioDesc_.passPosVS_)
+    _code->push_back("outVertexPosVS = sg_vPosVS;");
+
+  if (ioDesc_.passPosOS_)
+    _code->push_back("outVertexPosOS = inPosition;");
 
 
 
@@ -1037,7 +1112,7 @@ void ShaderProgGenerator::buildTessControlShader()
   // find previous shader stage
   ShaderGenerator* prevStage = vertex_;
 
-  tessControl_->initTessControlShaderIO(&desc_, prevStage);
+  tessControl_->initTessControlShaderIO(&desc_, prevStage, &ioDesc_);
 
   tessControl_->initDefaultUniforms();
 
@@ -1120,7 +1195,7 @@ void ShaderProgGenerator::buildTessEvalShader()
   if (!prevStage)
     prevStage = vertex_;
 
-  tessEval_->initTessEvalShaderIO(&desc_, prevStage);
+  tessEval_->initTessEvalShaderIO(&desc_, prevStage, &ioDesc_);
 
   tessEval_->initDefaultUniforms();
 
@@ -1255,7 +1330,7 @@ void ShaderProgGenerator::buildGeometryShader()
   if (!prevStage)
     prevStage = vertex_;
 
-  geometry_->initGeometryShaderIO(&desc_, prevStage);
+  geometry_->initGeometryShaderIO(&desc_, prevStage, &ioDesc_);
 
   geometry_->initDefaultUniforms();
 
@@ -1332,7 +1407,7 @@ void ShaderProgGenerator::buildFragmentShader()
     prevStage = vertex_;
 
 
-  fragment_->initFragmentShaderIO(&desc_, prevStage);
+  fragment_->initFragmentShaderIO(&desc_, prevStage, &ioDesc_);
 
 
   fragment_->initDefaultUniforms();
@@ -1619,25 +1694,25 @@ void ShaderProgGenerator::generateShaders()
   // check what needs to be passed down from vertex shader
 
   if (desc_.shadeMode != SG_SHADE_UNLIT)
-    inputNormal_ = true;
+    ioDesc_.inputNormal_ = true;
 
   if (desc_.textured())
   {
-    inputTexCoord_ = true;
-    passTexCoord_ = true;
+    ioDesc_.inputTexCoord_ = true;
+    ioDesc_.passTexCoord_ = true;
   }
 
   if (desc_.vertexColors)
-    inputColor_ = true;
+    ioDesc_.inputColor_ = true;
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
-    passNormal_ = true;
-    passPosVS_ = true;
+    ioDesc_.passNormalVS_ = true;
+    ioDesc_.passPosVS_ = true;
   }
 
   if (desc_.shadeMode == SG_SHADE_FLAT || desc_.shadeMode == SG_SHADE_GOURAUD || desc_.vertexColors)
-    passColor_ = true;
+    ioDesc_.passColor_ = true;
 
 
   // scan macros of modifiers for attribute requests,
@@ -1660,24 +1735,29 @@ void ShaderProgGenerator::generateShaders()
   // scan requested inputs from modifiers
 
   if (dummy.hasDefine(SG_REQUEST_POSVS))
-    passPosVS_ = true;
+    ioDesc_.passPosVS_ = true;
   if (dummy.hasDefine(SG_REQUEST_TEXCOORD))
   {
-    inputTexCoord_ = true;
-    passTexCoord_ = true;
+    ioDesc_.inputTexCoord_ = true;
+    ioDesc_.passTexCoord_ = true;
   }
   if (dummy.hasDefine(SG_REQUEST_VERTEXCOLOR))
   {
-    inputColor_ = true;
-    passColor_ = true;
+    ioDesc_.inputColor_ = true;
+    ioDesc_.passColor_ = true;
   }
-  if (dummy.hasDefine(SG_REQUEST_NORMAL))
+  if (dummy.hasDefine(SG_REQUEST_NORMALVS))
   {
-    inputNormal_ = true;
-    passNormal_ = true;
+    ioDesc_.inputNormal_ = true;
+    ioDesc_.passNormalVS_ = true;
+  }
+  if (dummy.hasDefine(SG_REQUEST_NORMALOS))
+  {
+    ioDesc_.inputNormal_ = true;
+    ioDesc_.passNormalOS_ = true;
   }
   if (dummy.hasDefine(SG_REQUEST_POSOS))
-    passPosOS_ = true;
+    ioDesc_.passPosOS_ = true;
 
 
 
@@ -1835,24 +1915,29 @@ void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString 
         // scan requested inputs
 
         if (trimmedLine.startsWith(SG_REQUEST_POSVS))
-          passPosVS_ = true;
+          ioDesc_.passPosVS_ = true;
         else if (trimmedLine.startsWith(SG_REQUEST_TEXCOORD))
         {
-          inputTexCoord_ = true;
-          passTexCoord_ = true;
+          ioDesc_.inputTexCoord_ = true;
+          ioDesc_.passTexCoord_ = true;
         }
         else if (trimmedLine.startsWith(SG_REQUEST_VERTEXCOLOR))
         {
-          inputColor_ = true;
-          passColor_ = true;
+          ioDesc_.inputColor_ = true;
+          ioDesc_.passColor_ = true;
         }
-        else if (trimmedLine.startsWith(SG_REQUEST_NORMAL))
+        else if (trimmedLine.startsWith(SG_REQUEST_NORMALVS))
         {
-          inputNormal_ = true;
-          passNormal_ = true;
+          ioDesc_.inputNormal_ = true;
+          ioDesc_.passNormalVS_ = true;
+        }
+        else if (trimmedLine.startsWith(SG_REQUEST_NORMALOS))
+        {
+          ioDesc_.inputNormal_ = true;
+          ioDesc_.passNormalOS_ = true;
         }
         else if (trimmedLine.startsWith(SG_REQUEST_POSOS))
-          passPosOS_ = true;
+          ioDesc_.passPosOS_ = true;
       }
 
     }
@@ -2051,6 +2136,7 @@ QString ShaderGenDesc::toString() const
 
   return res;
 }
+
 
 
 } // namespace ACG
