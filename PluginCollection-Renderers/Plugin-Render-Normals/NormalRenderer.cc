@@ -56,25 +56,14 @@ public:
 
   void modifyVertexIO( ACG::ShaderGenerator* _shader )
   {
-    _shader->addOutput("vec3 fragNormal");
-  }
-
-  void modifyVertexEndCode( QStringList* _code )
-  {
-    _code->push_back("#ifdef SG_NORMALS");
-    _code->push_back("fragNormal = vec3(inNormal);");
-    _code->push_back("#endif ");
-  }
-
-  void modifyFragmentIO(ACG::ShaderGenerator* _shader)
-  {
-    _shader->addInput("vec3 fragNormal");
+    // request object space normals
+    _shader->addDefine("SG_REQUEST_NORMALOS");
   }
 
   void modifyFragmentEndCode(QStringList* _code)
   {
-    _code->push_back("#ifdef SG_NORMALS");
-    _code->push_back("outFragment = vec4(fragNormal.x/2.0+0.5,fragNormal.y/2.0+0.5,fragNormal.z/2.0+0.5,1.0);");
+    _code->push_back("#ifdef SG_INPUT_NORMALOS");
+    _code->push_back("outFragment = vec4(normalize(SG_INPUT_NORMALOS) * 0.5 + vec3(0.5, 0.5, 0.5),1.0);");
     _code->push_back("#endif ");
   }
 
