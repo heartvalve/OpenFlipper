@@ -311,6 +311,9 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
     newEntry.vertexFileLastMod = fileInfo.lastModified();
   }
 
+  if (_macros)
+    newEntry.macros = *_macros;
+
   CacheList::iterator oldCache = cacheStatic_.end();
 
   for (CacheList::iterator it = cacheStatic_.begin(); it != cacheStatic_.end();  ++it)
@@ -412,12 +415,12 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   if (_a->strTessEvaluationTemplate != _b->strTessEvaluationTemplate)
     return -1;
 
+  if (_a->macros != _b->macros)
+    return -1;
+
 
   if (a->numLights)
     return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
-
-  if (_a->macros != _b->macros)
-    return -1;
 
   return 0; // false
 }
