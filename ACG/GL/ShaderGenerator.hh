@@ -393,6 +393,26 @@ public:
   ShaderGenerator();
   virtual ~ShaderGenerator();
 
+
+  struct DefaultIODesc
+  {
+    DefaultIODesc();
+
+    /// default attributes that should be imported in vertex shader
+    bool inputTexCoord_, // texcoords
+      inputColor_,    // vertex colors 
+      inputNormal_;   // view space normals
+
+    /// default attributes that should be passed down from vertex shader
+    bool passPosVS_, // view space position
+      passPosOS_, // object space position
+      passTexCoord_, // texcoords
+      passColor_,    // vertex colors 
+      passNormalVS_, // view space normals
+      passNormalOS_; // object space normals
+  };
+  
+
   /** \brief Set glsl version
   */
   void setGLSLVersion(int _version);
@@ -403,28 +423,23 @@ public:
 
   /** \brief Adds fitting vertex shader io for a given description
   */
-  void initVertexShaderIO(const ShaderGenDesc* _desc, 
-    bool _requestPosVS = false,
-    bool _requestPosOS = false,
-    bool _requestNormal = false,
-    bool _requestTexCoord = false,
-    bool _requestColor = false);
+  void initVertexShaderIO(const ShaderGenDesc* _desc, const DefaultIODesc* _iodesc);
 
   /** \brief Adds fitting tess-control shader io for a given description
   */
-  void initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+  void initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc);
 
   /** \brief Adds fitting tess-evaluation shader io for a given description
   */
-  void initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+  void initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc);
 
   /** \brief Adds fitting geometry shader io for a given description
   */
-  void initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+  void initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc);
 
   /** \brief Adds fitting fragment shader io for a given description
   */
-  void initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage);
+  void initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc);
 
   /** \brief Adds frequently used uniform parameters
    *
@@ -996,19 +1011,9 @@ private:
   QStringList tessControlLayout_;
   QStringList tessEvalLayout_;
 
-  /// default attributes that should be imported in vertex shader
-  bool inputTexCoord_, // texcoords
-    inputColor_,    // vertex colors 
-    inputNormal_;   // view space normals
 
-  /// default attributes that should be passed down from vertex shader
-  bool passPosVS_, // view space position
-    passPosOS_, // object space position
-    passTexCoord_, // texcoords
-    passColor_,    // vertex colors 
-    passNormal_;   // view space normals
-
-
+  /// default IO descriptor for the vertex shader
+  ShaderGenerator::DefaultIODesc ioDesc_;
 
 
   static QString shaderDir_;
