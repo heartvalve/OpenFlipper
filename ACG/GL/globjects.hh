@@ -252,6 +252,9 @@ public:
   void setUnit(GLenum u) {unit = u;}
   GLenum getUnit() const { return unit; }
 
+  // test for shader_image_load_store support
+  static bool supportsImageLoadStore();
+
 private:
 
   GLenum target, unit;
@@ -273,10 +276,34 @@ public:
 //-----------------------------------------------------------------------------
 
 
-class Texture2D : public Texture
+class ACGDLLEXPORT Texture2D : public Texture
 {
 public:
-  Texture2D(GLenum unit=GL_NONE) : Texture(GL_TEXTURE_2D, unit) {}
+  Texture2D(GLenum unit=GL_NONE);
+
+  // initialize and set texture data via glTexImage2D
+  void setData(GLint _level, GLint _internalFormat, GLsizei _width, GLsizei _height, GLenum _format, GLenum _type, const GLvoid* _data);
+
+  // use texture as image load/store    (equivalent of unordered access buffers in dx11)
+  //  allows data scattering operations in shader ie. random read/write access
+  //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
+  // _index zero-based image unit
+  // _access access operations in shader: GL_READ_WRITE, GL_READ_ONLY, GL_WRITE_ONLY
+  // requires opengl 4.2
+  void bindAsImage(GLuint _index, GLenum _access);
+
+  // get params from glTexImage2D
+  GLsizei getWidth() const {return width_;}
+  GLsizei getHeight() const {return height_;}
+  GLint getInternalFormat() const {return internalFormat_;}
+  GLenum getFormat() const {return format_;}
+  GLenum getType() const {return type_;}
+
+private:
+
+  GLsizei width_, height_;
+  GLint internalFormat_;
+  GLenum format_, type_;
 };
 
 
@@ -345,7 +372,7 @@ class ACGDLLEXPORT TextureBuffer : public Texture
 {
 public:
   TextureBuffer(GLenum u=GL_NONE)
-    : Texture(GL_TEXTURE_BUFFER, u), bufferSize_(0), buffer_(0) {}
+    : Texture(GL_TEXTURE_BUFFER, u), bufferSize_(0), buffer_(0), usage_(0), fmt_(0) {}
 
   ~TextureBuffer();
 
@@ -355,14 +382,28 @@ public:
   // _usage buffer usage hint - https://www.opengl.org/sdk/docs/man3/xhtml/glBufferData.xml
   void setBufferData(int _size, const void* _data, GLenum _internalFormat, GLenum _usage = GL_STATIC_DRAW);
 
+  // use buffer as image load/store    (equivalent of unordered access buffers in dx11)
+  //  allows data scattering operations in shader
+  //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
+  // _index image unit
+  // _access access operations in shader: GL_READ_WRITE, GL_READ_ONLY, GL_WRITE_ONLY
+  // requires opengl 4.2
+  void bindAsImage(GLuint _index, GLenum _access);
+
   int getBufferSize() const {return bufferSize_;}
 
   GLuint getBufferId() const {return buffer_;}
+
+  GLenum getUsage() const {return usage_;}
+
+  GLenum getFormat() const {return fmt_;}
 
 private:
 
   int bufferSize_;
   GLuint buffer_;
+  GLenum usage_;
+  GLenum fmt_;
 };
 
 #endif
@@ -532,6 +573,74 @@ public:
 };
 
 #endif
+
+
+//== CLASS DEFINITION =========================================================
+
+/*
+Atomic counter for shaders:
+ http://www.opengl.org/wiki/Atomic_Counter
+
+This is a global counter that can be incremented/decremented within shaders.
+Counting is atomic for all shader invocations (ie. inc/decrement is thread-safe in parallel invocations)
+
+extension: http://www.opengl.org/registry/specs/ARB/shader_atomic_counters.txt
+opengl-core: 4.2
+
+usage:
+ counter is initialized implicitly or explicitly via init(num)
+ -> reset counter via set()
+ -> call bind() before rendering
+ -> in shader: 
+        layout(binding = 0, offset = 0) uniform atomic_uint myCounter;
+         ...
+        
+          uint counterVal = atomicCounter(myCounter);
+          counterVal = atomicCounterIncrement(myCounter);
+          counterVal = atomicCounterDecrement(myCounter);
+*/
+class ACGDLLEXPORT AtomicCounter
+{
+public:
+  // _numCounters  number of counters in the buffer, each counter is a uint value
+  AtomicCounter(int _numCounters = 1);
+
+  virtual ~AtomicCounter();
+
+  // create counter buffer, implicitly called for a single counter value
+  void init();
+
+  // set counter value
+  void set(unsigned int _value = 0);
+
+  // read counter values after rendering
+  //  _out  ptr to array of size numCounters_, receiving the actual counter values
+  void get(unsigned int* _out);
+
+  // bind
+  void bind();
+
+  // bind to index corresponding to binding point in shader: layout (binding = _index)
+  void bind(GLuint _index);
+
+  // deactivate
+  void unbind();
+
+  // check hardware support
+  static bool isSupported();
+
+  bool isValid() const;
+
+  GLuint getBufferId() const {return buffer_;}
+  int getNumCounters() const {return numCounters_;}
+
+private:
+
+  int numCounters_;
+  GLuint buffer_;
+
+  static int supportStatus_;
+};
 
 
 //=============================================================================
