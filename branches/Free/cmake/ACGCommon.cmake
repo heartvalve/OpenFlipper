@@ -127,7 +127,7 @@ macro (acg_set_target_props target)
       SKIP_BUILD_RPATH 0
     )
   elseif (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE)
-  if (CMAKE_MAJOR_VERSION  >= 3)
+  if (NOT (CMAKE_MAJOR_VERSION  LESS 3) )
       set_target_properties (
         ${target} PROPERTIES
         INSTALL_RPATH "@executable_path/../${ACG_PROJECT_LIBDIR}"
@@ -142,7 +142,7 @@ macro (acg_set_target_props target)
         BUILD_WITH_INSTALL_RPATH 1
         SKIP_BUILD_RPATH 0
       ) 
-    endif(CMAKE_MAJOR_VERSION  >= 3)
+    endif(NOT (CMAKE_MAJOR_VERSION  LESS 3) )
   elseif (NOT APPLE)
 
     set_target_properties (
