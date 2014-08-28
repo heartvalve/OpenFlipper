@@ -745,6 +745,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         if (!selectedVertexIndexBuffer_.empty())
         {
           ro.glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
+          // apply user settings
+          applyRenderObjectSettings(props->primitive(), &ro);
+
           _renderer->addRenderObject(&ro);
         }
 
@@ -759,6 +762,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.shaderDesc.fragmentTemplateFile = fragTemplatePointSize;
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("pointSize", _mat->pointSize());
+
+        // apply user settings
+        applyRenderObjectSettings(props->primitive(), &ro);
 
         _renderer->addRenderObject(&ro);
 
@@ -778,6 +784,10 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         if (!selectedEdgeIndexBuffer_.empty())
         {
           ro.glDrawElements(GL_LINES, selectedEdgeIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedEdgeIndexBuffer_[0]));
+
+          // apply user settings
+          applyRenderObjectSettings(props->primitive(), &ro);
+
           _renderer->addRenderObject(&ro);
         }
 
@@ -796,6 +806,10 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("lineWidth", _state.line_width());
+
+
+        // apply user settings
+        applyRenderObjectSettings(props->primitive(), &ro);
 
         _renderer->addRenderObject(&ro);
 
