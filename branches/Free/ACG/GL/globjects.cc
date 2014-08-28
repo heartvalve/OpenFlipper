@@ -46,6 +46,68 @@
 
 namespace ACG {
 
+
+bool Texture::supportsImageLoadStore()
+{
+  static int status = -1;
+
+  if (status < 0)
+  {
+#if defined(GL_ARB_shader_image_load_store)
+    // core in version 4.2
+    status = checkExtensionSupported("ARB_shader_image_load_store") || openGLVersion(4,2);
+#else
+    // symbol missing, install latest glew version
+    status = 0;
+#endif
+  }
+
+  return status > 0;
+}
+
+
+//-----------------------------------------------------------------------------
+
+Texture2D::Texture2D(GLenum unit)
+  : Texture(GL_TEXTURE_2D, unit),
+  width_(0), height_(0),
+  internalFormat_(0),
+  format_(0), type_(0)
+{}
+
+
+void Texture2D::setData(GLint _level, 
+  GLint _internalFormat, 
+  GLsizei _width, 
+  GLsizei _height, 
+  GLenum _format,
+  GLenum _type,
+  const GLvoid* _data) {
+
+  if (getUnit() == GL_NONE)
+    setUnit(GL_TEXTURE0);
+
+  bind();
+
+  glTexImage2D(GL_TEXTURE_2D, _level, _internalFormat, _width, _height, 0, _format, _type, _data);
+}
+
+void Texture2D::bindAsImage(GLuint _index, GLenum _access){
+
+#if defined(GL_ARB_shader_image_load_store)
+  if (is_valid())
+    glBindImageTexture(_index, id(), 0, GL_FALSE, 0, _access, internalFormat_);
+  else
+    std::cerr << "Texture2D::bindAsImage - error: texture not initialized!" << std::endl;
+#else
+  std::cerr << "Texture2D::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
+#endif
+}
+
+
+
+//-----------------------------------------------------------------------------
+
 #if defined(GL_ARB_vertex_buffer_object)
 
 void VertexBufferObject::del() {
@@ -77,6 +139,9 @@ void VertexBufferObject::gen() {
 #endif
 
 
+//-----------------------------------------------------------------------------
+
+
 #if defined(GL_ARB_texture_buffer_object)
 
 TextureBuffer::~TextureBuffer() {
@@ -93,6 +158,9 @@ void TextureBuffer::setBufferData(
     glBindBuffer(GL_TEXTURE_BUFFER, buffer_);
     glBufferData(GL_TEXTURE_BUFFER, _size, _data, _usage);
 
+    usage_ = _usage;
+    fmt_ = _internalFormat;
+
     // bind buffer to texture
     if (getUnit() == GL_NONE)
         setUnit(GL_TEXTURE0);
@@ -104,8 +172,24 @@ void TextureBuffer::setBufferData(
     bufferSize_ = _size;
 }
 
+void TextureBuffer::bindAsImage(GLuint _index, GLenum _access){
+
+#if defined(GL_ARB_shader_image_load_store)
+  if (id())
+    glBindImageTexture(_index, id(), 0, GL_FALSE, 0, _access, fmt_);
+  else
+    std::cerr << "TextureBuffer::bindAsImage - error: texture not initialized!" << std::endl;
+#else
+  std::cerr << "TextureBuffer::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
+#endif
+}
+
 
 #endif
+
+
+//-----------------------------------------------------------------------------
+
 
 #if defined(GL_NV_vertex_program) || defined(GL_NV_fragment_program)
 
@@ -189,6 +273,137 @@ void ProgramBaseARB::del() {
     if (valid)
         glDeleteProgramsARB(1, &program);
     valid = false;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+
+// support state unknown : -1
+int AtomicCounter::supportStatus_ = -1;
+
+AtomicCounter::AtomicCounter(int _numCounters)
+  : numCounters_(_numCounters), buffer_(0)
+{
+}
+
+AtomicCounter::~AtomicCounter()
+{
+  if (buffer_)
+    glDeleteBuffers(1, &buffer_);
+}
+
+void AtomicCounter::init()
+{
+  // check support and initialize
+#ifdef GL_ARB_shader_atomic_counters
+  if (isSupported() && numCounters_ > 0)
+  {
+    glGenBuffers(1, &buffer_);
+    bind();
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, numCounters_ * sizeof(unsigned int), 0, GL_DYNAMIC_COPY);
+    unbind();
+  }
+#endif
+
+  if (!isValid())
+    std::cerr << "atomic counter failed to initialize!" << std::endl;
+}
+
+void AtomicCounter::bind()
+{
+#ifdef GL_ARB_shader_atomic_counters
+  // implicit initialization
+  if (!isValid())
+    init();
+
+  if (isValid())
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, buffer_);
+#endif
+}
+
+void AtomicCounter::bind(GLuint _index)
+{
+#ifdef GL_ARB_shader_atomic_counters
+  // implicit initialization
+  if (!isValid())
+    init();
+
+  if (isValid())
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, _index, buffer_);
+#endif
+}
+
+void AtomicCounter::unbind()
+{
+#ifdef GL_ARB_shader_atomic_counters
+  glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+#endif
+}
+
+void AtomicCounter::set(unsigned int _value)
+{
+#ifdef GL_ARB_shader_atomic_counters
+  // implicit initialization
+  bind();
+
+  if (isValid())
+  {
+    const size_t bufSize = numCounters_ * sizeof(unsigned int);
+    //     unsigned int* bufData = new unsigned int[numCounters_];
+    //     memset(bufData, int(_value), bufSize);
+    // 
+    //     glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, bufSize, bufData);
+    //     delete [] bufData;
+
+    void* bufPtr = glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, bufSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+    memset(bufPtr, int(_value), bufSize);
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+    unbind();
+  }
+#endif
+}
+
+void AtomicCounter::get(unsigned int* _out)
+{
+#ifdef GL_ARB_shader_atomic_counters
+  if (isValid())
+  {
+    bind();
+
+    const size_t bufSize = numCounters_ * sizeof(unsigned int);
+
+    // doesnt work, driver crash on ati:
+    //    glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, bufSize, _out);
+
+    void* bufPtr = glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, bufSize, GL_MAP_READ_BIT);
+    memcpy(_out, bufPtr, bufSize);
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+    unbind();
+  }
+#endif
+}
+
+bool AtomicCounter::isSupported()
+{
+#ifndef GL_ARB_shader_atomic_counters
+  // missing definition in gl header!
+  supportStatus_ = 0;
+#else
+
+  if (supportStatus_ < 0)
+    supportStatus_ = checkExtensionSupported("GL_ARB_shader_atomic_counters") ? 1 : 0;
+#endif
+
+  return supportStatus_ > 0;
+}
+
+bool AtomicCounter::isValid() const
+{
+  return buffer_ && numCounters_ > 0;
 }
 
 #endif
