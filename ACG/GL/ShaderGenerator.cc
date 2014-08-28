@@ -184,50 +184,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc, const Defau
   }
 
 
-
-
-  // generic io input names
-
-  addDefine(SG_INPUT_POSOS " inPosition");
-  addDefine(SG_INPUT_POSVS " sg_vPosVS");
-  addDefine(SG_INPUT_POSCS " sg_vPosPS");
-
-
-  if (_iodesc->inputTexCoord_)
-    addDefine(SG_INPUT_TEXCOORD " inTexCoord");
-
-  if (_iodesc->inputNormal_)
-  {
-    addDefine(SG_INPUT_NORMALOS " inNormal");
-    addDefine(SG_INPUT_NORMALVS " sg_vNormalVS");
-  }
-
-  if (_iodesc->inputColor_)
-    addDefine(SG_INPUT_VERTEXCOLOR "inColor");
-
-
-
-  // generic io output names
-
-  addDefine(SG_OUTPUT_POSCS " outVertexPosCS");
-
-  if (_iodesc->passPosVS_)
-    addDefine(SG_OUTPUT_POSVS " outVertexPosVS");
-
-  if (_iodesc->passPosOS_)
-    addDefine(SG_OUTPUT_POSOS " outVertexPosOS");
-  
-  if (_iodesc->passTexCoord_)
-    addDefine(SG_OUTPUT_TEXCOORD " outVertexTexCoord");
-
-  if (_iodesc->passNormalVS_)
-    addDefine(SG_OUTPUT_NORMALVS " outVertexNormal");
-
-  if (_iodesc->passNormalOS_)
-    addDefine(SG_OUTPUT_NORMALOS " outVertexNormalOS");
-
-  if (_iodesc->passColor_)
-    addDefine(SG_OUTPUT_VERTEXCOLOR " outVertexColor");
+  defineIOAbstraction(_iodesc, true, false);
 }
 
 void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
@@ -239,6 +196,8 @@ void ShaderGenerator::initTessControlShaderIO(const ShaderGenDesc* _desc, Shader
   outputPrefix_ = "outTc"; // outputs: outTcPosition, outTcTexCoord..
 
   matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
+
+  defineIOAbstraction(_iodesc, false, false);
 }
 
 void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
@@ -250,6 +209,8 @@ void ShaderGenerator::initTessEvalShaderIO(const ShaderGenDesc* _desc, ShaderGen
   outputPrefix_ = "outTe"; // outputs: outTePosition, outTeTexCoord..
 
   matchInputs(_prevStage, true, inputPrefix_, outputPrefix_);
+
+  defineIOAbstraction(_iodesc, false, false);
 }
 
 void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGenerator* _prevStage, const DefaultIODesc* _iodesc) 
@@ -310,6 +271,7 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc, ShaderGen
       addOutput(strColorOut);
   }
 
+  defineIOAbstraction(_iodesc, false, false);
 }
 
 
@@ -324,8 +286,103 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc, ShaderGen
 
   matchInputs(_prevStage, false);
   addOutput("vec4 outFragment");
+
+  defineIOAbstraction(_iodesc, false, true);
 }
 
+
+void ShaderGenerator::defineIOAbstraction( const DefaultIODesc* _iodesc, bool _vs, bool _fs )
+{
+  if (_vs)
+  {
+    // input name abstraction
+
+    addDefine(SG_INPUT_POSOS " inPosition");
+
+    if (_iodesc->inputTexCoord_)
+      addDefine(SG_INPUT_TEXCOORD " inTexCoord");
+
+    if (_iodesc->inputNormal_)
+      addDefine(SG_INPUT_NORMALOS " inNormal");
+
+    if (_iodesc->inputColor_)
+      addDefine(SG_INPUT_VERTEXCOLOR "inColor");
+
+
+
+    // output name abstraction
+
+    addDefine(SG_OUTPUT_POSCS " outVertexPosCS");
+
+    if (_iodesc->passPosVS_)
+      addDefine(SG_OUTPUT_POSVS " outVertexPosVS");
+
+    if (_iodesc->passPosOS_)
+      addDefine(SG_OUTPUT_POSOS " outVertexPosOS");
+
+    if (_iodesc->passTexCoord_)
+      addDefine(SG_OUTPUT_TEXCOORD " outVertexTexCoord");
+
+    if (_iodesc->passNormalVS_)
+      addDefine(SG_OUTPUT_NORMALVS " outVertexNormal");
+
+    if (_iodesc->passNormalOS_)
+      addDefine(SG_OUTPUT_NORMALOS " outVertexNormalOS");
+
+    if (_iodesc->passColor_)
+      addDefine(SG_OUTPUT_VERTEXCOLOR " outVertexColor");
+  }
+  else
+  {
+    if (_iodesc->passPosVS_)
+    {
+      addDefine(QString(SG_INPUT_POSVS) + QString(" ") + inputPrefix_ + QString("PosVS"));
+      if (!_fs)
+        addDefine(QString(SG_OUTPUT_POSVS) + QString(" ") + inputPrefix_ + QString("PosVS"));
+    }
+
+    if (_iodesc->passPosOS_)
+    {
+      addDefine(QString(SG_INPUT_POSOS) + QString(" ") + inputPrefix_ + QString("PosOS"));
+      if (!_fs)
+        addDefine(QString(SG_OUTPUT_POSOS) + QString(" ") + inputPrefix_ + QString("PosOS"));
+    }
+
+    addDefine(QString(SG_INPUT_POSCS) + QString(" ") + inputPrefix_ + QString("PosCS"));
+    if (!_fs)
+      addDefine(QString(SG_OUTPUT_POSCS) + QString(" ") + inputPrefix_ + QString("PosCS"));
+
+    if (_iodesc->passNormalVS_)
+    {
+      addDefine(QString(SG_INPUT_NORMALVS) + QString(" ") + inputPrefix_ + QString("Normal"));
+      if (!_fs)
+        addDefine(QString(SG_OUTPUT_NORMALVS) + QString(" ") + outputPrefix_ + QString("Normal"));
+    }
+
+    if (_iodesc->passNormalOS_)
+    {
+      addDefine(QString(SG_INPUT_NORMALOS) + QString(" ") + inputPrefix_ + QString("NormalOS"));
+      if (!_fs)
+        addDefine(QString(SG_OUTPUT_NORMALOS) + QString(" ") + outputPrefix_ + QString("NormalOS"));
+    }
+
+    if (_iodesc->passTexCoord_)
+    {
+      addDefine(QString(SG_INPUT_TEXCOORD) + QString(" ") + inputPrefix_ + QString("TexCoord"));
+      if (!_fs)
+        addDefine(QString(SG_OUTPUT_TEXCOORD) + QString(" ") + outputPrefix_ + QString("TexCoord"));
+    }
+
+    if (_iodesc->passColor_)
+    {
+      addDefine(QString(SG_INPUT_VERTEXCOLOR) + QString(" ") + inputPrefix_ + QString("Color"));
+      if (!_fs)
+        addDefine(QString(SG_INPUT_VERTEXCOLOR) + QString(" ") + outputPrefix_ + QString("Color"));
+    }
+  }
+
+  
+}
 
 
 

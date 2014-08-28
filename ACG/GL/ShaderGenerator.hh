@@ -543,6 +543,17 @@ public:
   */
   void matchInputs(const ShaderGenerator* _previousShaderStage, bool _passToNextStage, QString _inputPrefix = "outVertex", QString _outputPrefix = "outGeometry");
 
+  /** \brief Define abstract IO names via shader defines.
+   *
+   * Default shader inputs and outputs can be conveniently accessed via SG_INPUT_X 
+   * and SG_OUTPUT_X defines without having to worry about the combinatoric problem of shader stages.
+   * For example, in a fragment-shader view-space normals can always be accessed via SG_INPUT_NORMALVS, regardless whether there is a geometry shader or not.
+   *
+   * @param _iodesc shader IO descriptor
+   * @param _vs IO abstraction for vertex shader
+   * @param _fs IO abstraction for fragment shader
+  */
+  void defineIOAbstraction(const DefaultIODesc* _iodesc, bool _vs, bool _fs);
 
   /** \brief get number of outputs
   */
