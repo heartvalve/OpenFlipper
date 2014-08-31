@@ -165,7 +165,7 @@ void TextBrowserWidget::sideAreaPaintEvent(QPaintEvent *event) {
 
 bool TextBrowserWidget::getFold(int _position, Fold& _fold) {
   std::map<int,size_t>::iterator it = blockPosToFold_.find(_position);
-  if (it != blockPosToFold_.end()) {
+  if (!folds_.empty() && it != blockPosToFold_.end()) {
     _fold = folds_[it->second];
     return true;
   } else
