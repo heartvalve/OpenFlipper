@@ -800,11 +800,19 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
 
     // We need at least version 3.2 or higher to support geometry shaders
     if ( !ACG::openGLVersion(3,2) )
+    {
+      if (!desc_.geometryTemplateFile.isEmpty())
+        std::cerr << "Warning: removing geometry shader from ShaderDesc" << std::endl;
+
       desc_.geometryTemplateFile.clear();
+    }
 
     // We need at least version 4.0 or higher to support tessellation
     if ( !ACG::openGLVersion(4, 0) )
     {
+      if (!desc_.tessControlTemplateFile.isEmpty() || !desc_.tessEvaluationTemplateFile.isEmpty())
+        std::cerr << "Warning: removing tessellation shader from ShaderDesc" << std::endl;
+
       desc_.tessControlTemplateFile.clear();
       desc_.tessEvaluationTemplateFile.clear();
     }
@@ -837,23 +845,31 @@ ShaderProgGenerator::~ShaderProgGenerator(void)
 
 void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList* _out)
 {
-  QFile file(_fileName);
+  QString absFilename = getAbsFilePath(_fileName);
 
-  file.open(QIODevice::ReadOnly | QIODevice::Text);
 
-  if (!file.isReadable())
-    std::cout << "error: file missing -> \"" << _fileName.toStdString() << "\"" << std::endl;
+  QFile file(absFilename);
 
-  else
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    QTextStream filestream(&file);
-
-    while (!filestream.atEnd())
+    if (!file.isReadable())
+      std::cout << "error: unreadable file -> \"" << absFilename.toStdString() << "\"" << std::endl;
+    else
     {
-      QString szLine = filestream.readLine();
-      _out->push_back(szLine.trimmed());
+      QTextStream filestream(&file);
+
+      while (!filestream.atEnd())
+      {
+        QString szLine = filestream.readLine();
+        _out->push_back(szLine.trimmed());
+      }
     }
+
+    file.close();
   }
+  else
+    std::cout << "error: " << file.errorString().toStdString() << " -> \"" << absFilename.toStdString() << "\"" << std::endl;
+
 }
 
 
@@ -1136,7 +1152,13 @@ int ShaderProgGenerator::checkForIncludes(QString _str, QStringList* _outImport,
     {
       QString fullPathToIncludeFile = _includePath + QDir::separator() + strIncludeFile;
 
-      loadStringListFromFile(fullPathToIncludeFile, _outImport);
+      // unify separator chars
+      fullPathToIncludeFile.replace('\\', '/');
+
+      // get rid of ".." usage inside shader includes
+      QString cleanFilepath = QDir::cleanPath(fullPathToIncludeFile);
+
+      loadStringListFromFile(cleanFilepath, _outImport);
     }
 
     return 1;
@@ -2004,8 +2026,19 @@ void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString 
 
 QString ShaderProgGenerator::getPathName(QString _strFileName)
 {
-  QFileInfo fileInfo(_strFileName);
+  QFileInfo fileInfo(getAbsFilePath(_strFileName));
   return fileInfo.absolutePath();
+}
+
+QString ShaderProgGenerator::getAbsFilePath(QString _strFileName)
+{
+  QString absFilename;
+  if ( QDir(_strFileName).isRelative() )
+    absFilename = getShaderDir() + QDir::separator() + _strFileName;
+  else
+    absFilename = _strFileName;
+
+  return QDir::cleanPath(absFilename);
 }
 
 void ShaderProgGenerator::setShaderDir( QString _dir )
