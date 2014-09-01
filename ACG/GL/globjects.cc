@@ -90,6 +90,12 @@ void Texture2D::setData(GLint _level,
   bind();
 
   glTexImage2D(GL_TEXTURE_2D, _level, _internalFormat, _width, _height, 0, _format, _type, _data);
+
+  width_ = _width;
+  height_ = _height;
+  internalFormat_ = _internalFormat;
+  format_ = _format;
+  type_ = _type;
 }
 
 void Texture2D::bindAsImage(GLuint _index, GLenum _access){
