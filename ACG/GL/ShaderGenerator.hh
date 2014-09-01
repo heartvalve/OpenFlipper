@@ -973,7 +973,10 @@ private:
   void modifyLightingCode(QStringList* _code, ShaderModifier* _modifier);
 
   /// returns path to _strFileName without last slash
-  QString getPathName(QString _strFileName);
+  static QString getPathName(QString _strFileName);
+
+  /// returns clean absolute file path to _strFileName including filename
+  static QString getAbsFilePath(QString _strFileName);
 
   /// checks if _str is an include directive
   /// eventually imports the included file to the specified generator
