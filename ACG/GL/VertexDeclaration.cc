@@ -418,6 +418,26 @@ const VertexElement* VertexDeclaration::getElement(unsigned int i) const
 }
 
 
+int VertexDeclaration::findElementIdByUsage(VERTEX_USAGE _usage) const
+{
+  for (size_t i = 0; i < elements_.size(); ++i)
+    if (elements_[i].usage_ == _usage)
+      return int(i);
+  
+  return -1;
+}
+
+const VertexElement* VertexDeclaration::findElementByUsage(VERTEX_USAGE _usage) const
+{
+  int eid = findElementIdByUsage(_usage);
+
+  if (eid >= 0)
+    return getElement((unsigned int)eid);
+
+  return 0;
+}
+
+
 unsigned int VertexDeclaration::getVertexStride() const
 {
   return vertexStride_;

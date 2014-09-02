@@ -249,6 +249,14 @@ public:
   */
   const VertexElement* getElement(unsigned int i) const;
 
+  /*! find element id by usage, return -1 if not found
+  */
+  int findElementIdByUsage(VERTEX_USAGE _usage) const;
+
+  /*! find element ptr by usage, return 0 if not found
+  */
+  const VertexElement* findElementByUsage(VERTEX_USAGE _usage) const;
+
   /*! get size of GL_FLOAT, GL_INT ...
   */
   static unsigned int getGLTypeSize(unsigned int _type);
