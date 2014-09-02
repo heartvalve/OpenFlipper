@@ -255,6 +255,10 @@ public:
   // test for shader_image_load_store support
   static bool supportsImageLoadStore();
 
+
+  // test for texture buffer support
+  static bool supportsTextureBuffer();
+
 private:
 
   GLenum target, unit;
@@ -366,13 +370,11 @@ public:
 #endif
 
 
-#if defined(GL_ARB_texture_buffer_object)
 
 class ACGDLLEXPORT TextureBuffer : public Texture
 {
 public:
-  TextureBuffer(GLenum u=GL_NONE)
-    : Texture(GL_TEXTURE_BUFFER, u), bufferSize_(0), buffer_(0), usage_(0), fmt_(0) {}
+  TextureBuffer(GLenum u=GL_NONE);
 
   ~TextureBuffer();
 
@@ -398,6 +400,7 @@ public:
 
   GLenum getFormat() const {return fmt_;}
 
+
 private:
 
   int bufferSize_;
@@ -406,7 +409,6 @@ private:
   GLenum fmt_;
 };
 
-#endif
 
 
 
