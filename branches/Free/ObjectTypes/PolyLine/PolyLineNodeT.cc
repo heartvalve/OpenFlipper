@@ -699,13 +699,16 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ACG::Vec4f defaultColor   = _state.ambient_color()  + _state.diffuse_color();
   ACG::Vec4f selectionColor = ACG::Vec4f(1.0,0.0,0.0,1.0);
 
+  // Viewport size
+  ACG::Vec2f screenSize(float(_state.viewport_width()), float(_state.viewport_height()));
+
   for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i) {
     ACG::SceneGraph::Material localMaterial = *_mat;
 
     const ACG::SceneGraph::DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
 
     ro.setupShaderGenFromDrawmode(props);
-    ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
     //---------------------------------------------------
     // No lighting!
@@ -713,18 +716,6 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
     //---------------------------------------------------
     localMaterial.baseColor(defaultColor);
     ro.setMaterial(&localMaterial);
-
-
-    // use shaders to simulate point size
-    QString geomTemplatePointSize = ShaderProgGenerator::getShaderDir();
-    geomTemplatePointSize += "PointSize/geometry.tpl";
-
-    QString fragTemplatePointSize = ShaderProgGenerator::getShaderDir();
-    fragTemplatePointSize += "PointSize/fragment.tpl";
-
-    // use shaders to simulate line width
-    QString geomTemplateLineWidth = ShaderProgGenerator::getShaderDir();
-    geomTemplateLineWidth += "Wireframe/geom_line2quad.tpl";
 
 
     switch (props->primitive()) {
@@ -737,10 +728,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.setMaterial(&localMaterial);
 
         // Point Size geometry shader
-        ro.shaderDesc.geometryTemplateFile = geomTemplatePointSize;
-        ro.shaderDesc.fragmentTemplateFile = fragTemplatePointSize;
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("pointSize", _mat->pointSize());
+        ro.setupPointRendering(_mat->pointSize(), screenSize);
 
         if (!selectedVertexIndexBuffer_.empty())
         {
@@ -758,10 +746,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.glDrawArrays(GL_POINTS, 0, polyline_.n_vertices());
 
         // Point Size geometry shader
-        ro.shaderDesc.geometryTemplateFile = geomTemplatePointSize;
-        ro.shaderDesc.fragmentTemplateFile = fragTemplatePointSize;
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("pointSize", _mat->pointSize());
+        ro.setupPointRendering(_mat->pointSize(), screenSize);
 
         // apply user settings
         applyRenderObjectSettings(props->primitive(), &ro);
@@ -777,9 +762,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.setMaterial(&localMaterial);
 
         // Line Width geometry shader
-        ro.shaderDesc.geometryTemplateFile = geomTemplateLineWidth;
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("lineWidth", _state.line_width());
+        ro.setupLineRendering(_state.line_width(), screenSize);
 
         if (!selectedEdgeIndexBuffer_.empty())
         {
@@ -802,11 +785,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
           ro.glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices());
 
         // Line Width geometry shader
-        ro.shaderDesc.geometryTemplateFile = geomTemplateLineWidth;
-
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("lineWidth", _state.line_width());
-
+        ro.setupLineRendering(_state.line_width(), screenSize);
 
         // apply user settings
         applyRenderObjectSettings(props->primitive(), &ro);

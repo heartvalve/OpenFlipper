@@ -706,7 +706,13 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       // allow wireframe + solid mode
       ro.depthFunc = GL_LEQUAL;
+      ro.priority = -1; // render before polygon
 
+      ro.setupLineRendering(_state.line_width(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+
+      applyRenderObjectSettings(props->primitive(), &ro);
+      add_line_RenderObjects(_renderer, &ro);
+/*
       // use alpha blending for anti-aliasing in combined wireframe + solid mode
       ro.blending = true;
       ro.blendSrc = GL_SRC_ALPHA;
@@ -749,10 +755,12 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
       ro.shaderDesc.fragmentTemplateFile = fragTemplate;
 
-      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+      ro.setUniform("screenSize", );
       ro.setUniform("lineWidth", _state.line_width());
 
+      applyRenderObjectSettings(props->primitive(), &ro);
       add_face_RenderObjects(_renderer, &ro);
+*/
     }
 
     if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
@@ -766,6 +774,35 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       else
         ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
 
+      // eventually prepare depthbuffer first
+      if (!_drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON) >= 0 && mesh_.n_faces())
+      {
+        ro.priority = 0;
+
+        applyRenderObjectSettings(DrawModes::PRIMITIVE_POLYGON, &ro);
+
+        // disable color write
+        ro.glColorMask(0,0,0,0);
+        add_face_RenderObjects(_renderer, &ro);
+      }
+
+
+      // draw lines after depth image
+      ro.priority = 1;
+      ro.glColorMask(1,1,1,1);
+      ro.depthFunc = GL_LEQUAL;
+
+      ro.setupLineRendering(_state.line_width(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+
+      applyRenderObjectSettings(DrawModes::PRIMITIVE_HIDDENLINE, &ro);
+
+      add_line_RenderObjects(_renderer, &ro);
+
+      
+
+
+
+/*
       // use shaders to simulate line width
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
       geomTemplate += "Wireframe/geometry_hidden.tpl";
@@ -807,8 +844,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.setUniform("lineWidth", _state.line_width());
       ro.setUniform("bkColor", _state.clear_color());
 
+      applyRenderObjectSettings(props->primitive(), &ro);
       add_face_RenderObjects(_renderer, &ro);
-
+*/
     }
 
     if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
@@ -823,17 +861,10 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       // use specular color for lines
       ro.emissive = ro.specular;
 
+      // line thickness
+      ro.setupLineRendering(_state.line_width(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
 
-
-      // use shaders to simulate line width
-      QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geom_line2quad.tpl";
-
-      ro.shaderDesc.geometryTemplateFile = geomTemplate;
-
-      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-      ro.setUniform("lineWidth", _state.line_width());
-
+      applyRenderObjectSettings(props->primitive(), &ro);
       _renderer->addRenderObject(&ro);
 
        // skip other edge primitives for this drawmode layer
@@ -856,16 +887,10 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.glDrawArrays(GL_LINES, 0, int(mesh_.n_halfedges() * 2));
 
 
-
       // use shaders to simulate line width
-      QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geom_line2quad.tpl";
+      ro.setupLineRendering(_state.line_width(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
 
-      ro.shaderDesc.geometryTemplateFile = geomTemplate;
-
-      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-      ro.setUniform("lineWidth", _state.line_width());
-
+      applyRenderObjectSettings(props->primitive(), &ro);
       _renderer->addRenderObject(&ro);
     }  
 
@@ -888,19 +913,10 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
             ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
         }
 
-        // use shaders to simulate line width
-        QString geomTemplate = ShaderProgGenerator::getShaderDir();
-        geomTemplate += "PointSize/geometry.tpl";
+        // use shaders to simulate point size
+        ro.setupPointRendering(_mat->pointSize(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
 
-        QString fragTemplate = ShaderProgGenerator::getShaderDir();
-        fragTemplate += "PointSize/fragment.tpl";
-
-        ro.shaderDesc.geometryTemplateFile = geomTemplate;
-        ro.shaderDesc.fragmentTemplateFile = fragTemplate;
-
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("pointSize", _mat->pointSize());
-
+        applyRenderObjectSettings(props->primitive(), &ro);
         add_point_RenderObjects(_renderer, &ro);
       } break;
     case DrawModes::PRIMITIVE_EDGE:
@@ -909,17 +925,16 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         ro.emissive = ro.specular;
 
         // use shaders to simulate line width
-        QString geomTemplate = ShaderProgGenerator::getShaderDir();
-        geomTemplate += "Wireframe/geom_line2quad.tpl";
+        ro.setupLineRendering(_state.line_width(), Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
 
-        ro.shaderDesc.geometryTemplateFile = geomTemplate;
-
-        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-        ro.setUniform("lineWidth", _state.line_width());
-
+        applyRenderObjectSettings(props->primitive(), &ro);
         add_line_RenderObjects(_renderer, &ro);
       } break;
-    case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
+    case DrawModes::PRIMITIVE_POLYGON: 
+      {
+        applyRenderObjectSettings(props->primitive(), &ro);
+        add_face_RenderObjects(_renderer, &ro);
+      } break;
     default: break;
     }
   }
