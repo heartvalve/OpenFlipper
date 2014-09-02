@@ -66,6 +66,25 @@ bool Texture::supportsImageLoadStore()
 }
 
 
+bool Texture::supportsTextureBuffer()
+{
+  static int status = -1;
+
+  if (status < 0)
+  {
+#if defined(GL_ARB_texture_buffer_object)
+    // core in version 3.0
+    status = checkExtensionSupported("ARB_texture_buffer_object") || openGLVersion(3,0);
+#else
+    // symbol missing, install latest glew version
+    status = 0;
+#endif
+  }
+
+  return status > 0;
+}
+
+
 //-----------------------------------------------------------------------------
 
 Texture2D::Texture2D(GLenum unit)
@@ -147,16 +166,26 @@ void VertexBufferObject::gen() {
 
 //-----------------------------------------------------------------------------
 
-
+TextureBuffer::TextureBuffer(GLenum u)
+  : 
 #if defined(GL_ARB_texture_buffer_object)
+Texture(GL_TEXTURE_BUFFER, u), 
+#else
+Texture(0, u), 
+#endif
+  bufferSize_(0), buffer_(0), usage_(0), fmt_(0) {
+}
+
 
 TextureBuffer::~TextureBuffer() {
-    if (buffer_)
-        glDeleteBuffers(1, &buffer_);
+  if (buffer_)
+    glDeleteBuffers(1, &buffer_);
 }
 
 void TextureBuffer::setBufferData(
         int _size, const void* _data, GLenum _internalFormat, GLenum _usage) {
+#if defined(GL_ARB_texture_buffer_object)
+  if (supportsTextureBuffer()) {
     // setup buffer object
     if (!buffer_)
         glGenBuffers(1, &buffer_);
@@ -176,9 +205,17 @@ void TextureBuffer::setBufferData(
     glTexBuffer(GL_TEXTURE_BUFFER, _internalFormat, buffer_);
 
     bufferSize_ = _size;
+  }
+  else
+    std::cerr << "TextureBuffer::setData - gpu does not support buffer textures!" << std::endl;
+#else
+  std::cerr << "TextureBuffer::setData - glew version too old, rebuild with latest glew!" << std::endl;
+#endif
 }
 
 void TextureBuffer::bindAsImage(GLuint _index, GLenum _access){
+
+#if defined(GL_ARB_texture_buffer_object)
 
 #if defined(GL_ARB_shader_image_load_store)
   if (id())
@@ -188,10 +225,10 @@ void TextureBuffer::bindAsImage(GLuint _index, GLenum _access){
 #else
   std::cerr << "TextureBuffer::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
 #endif
-}
-
 
 #endif
+}
+
 
 
 //-----------------------------------------------------------------------------
