@@ -375,5 +375,38 @@ void RenderObject::addUniformPool( const GLSL::UniformPool& _pool )
 }
 
 
+void RenderObject::setupLineRendering( float _lineWidth, const Vec2f& _screenSize )
+{
+  shaderDesc.geometryTemplateFile = "Wireframe/geom_line2quad.tpl";
+
+  setUniform("lineWidth", _lineWidth);
+  setUniform("screenSize", _screenSize);
+}
+
+bool RenderObject::isDefaultLineObject() const
+{
+  return shaderDesc.geometryTemplateFile == "Wireframe/geom_line2quad.tpl" ||
+    (shaderDesc.geometryTemplateFile == "Wireframe/gl42/geometry.tpl" &&
+    shaderDesc.fragmentTemplateFile == "Wireframe/gl42/fragment.tpl");
+}
+
+void RenderObject::setupPointRendering( float _pointSize, const Vec2f& _screenSize )
+{
+  shaderDesc.geometryTemplateFile = "PointSize/geometry.tpl";
+  shaderDesc.fragmentTemplateFile = "PointSize/fragment.tpl";
+
+  setUniform("pointSize", _pointSize);
+  setUniform("screenSize", _screenSize);
+}
+
+bool RenderObject::isDefaultPointObject() const
+{
+  return shaderDesc.geometryTemplateFile == "PointSize/geometry.tpl" &&
+    shaderDesc.fragmentTemplateFile == "PointSize/fragment.tpl";
+}
+
+
+
+
 } // namespace ACG end
 

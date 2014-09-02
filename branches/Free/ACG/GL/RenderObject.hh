@@ -375,6 +375,36 @@ public:
   void setupShaderGenFromDrawmode(const SceneGraph::DrawModes::DrawModeProperties* _props);
 
 
+  /** \brief Setup rendering of thick lines
+   *
+   * Two default rendering methods for line thickness are available:
+   *  - quad extrusion in geometry shader   (anti-aliasing,  clipping issue due to depth testing with scene)
+   *  - manual rasterization via shader image load/store  (no anti-aliasing,  no clipping issue,  requires gl4.2)
+   * The method used depends on renderer settings.
+   *
+   * Also, this will overwrite the geometry and fragment shader template.
+   * Requires support for geometry shaders with glsl 150
+  */
+  void setupLineRendering(float _lineWidth, const Vec2f& _screenSize);
+
+  /// Test if the object is rendered with one of the default line thickness methods
+  bool isDefaultLineObject() const;
+
+  /** \brief Setup rendering of circle points
+   *
+   * Use default quad extrusion shader.
+   * This will overwrite geometry and fragment shader template.
+   * Requires support for geometry shaders with glsl 150
+  */
+  void setupPointRendering(float _pointSize, const Vec2f& _screenSize);
+
+  /// Test if the object is rendered with one of the default point extension methods
+  bool isDefaultPointObject() const;
+
+
+
+
+
   /** \brief Whenever the need for glBegin() glEnd() immediate mode arises,
        this can be implemented by a deriving class of RenderObject.
        Also it gets called only if numIndices is set to 0.
