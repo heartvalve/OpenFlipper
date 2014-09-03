@@ -138,6 +138,9 @@ void ScreenQuad::init ()
 
 void ScreenQuad::draw (GLSL::Program* _prog)
 {
+  if (_prog)
+    _prog->use();
+
   ScreenQuad& quad = instance();
 
   quad.intDraw(_prog);
