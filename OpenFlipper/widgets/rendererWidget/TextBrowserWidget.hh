@@ -122,6 +122,10 @@ class TextBrowserWidget : public QPlainTextEdit
     static QString const startRenderObjectTag_;
     static QString const startVertexShaderTag_;
     static QString const endVertexShaderTag_;
+    static QString const startTessControlShaderTag_;
+    static QString const endTessControlShaderTag_;
+    static QString const startTessEvalShaderTag_;
+    static QString const endTessEvalShaderTag_;
     static QString const startGeometryShaderTag_;
     static QString const endGeometryShaderTag_;
     static QString const startFragmentShaderTag_;

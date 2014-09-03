@@ -55,6 +55,10 @@
 QString const TextBrowserWidget::startRenderObjectTag_ = "name:";
 QString const TextBrowserWidget::startVertexShaderTag_ = "--vertex-shader--";
 QString const TextBrowserWidget::endVertexShaderTag_ = "--end-vertex-shader--";
+QString const TextBrowserWidget::startTessControlShaderTag_ = "---tesscontrol-shader--";
+QString const TextBrowserWidget::endTessControlShaderTag_ = "--end-tesscontrol-shader--";
+QString const TextBrowserWidget::startTessEvalShaderTag_ = "--tesseval-shader--";
+QString const TextBrowserWidget::endTessEvalShaderTag_ = "--end-tesseval-shader--";
 QString const TextBrowserWidget::startGeometryShaderTag_ = "--geometry-shader--";
 QString const TextBrowserWidget::endGeometryShaderTag_ = "--end-geometry-shader--";
 QString const TextBrowserWidget::startFragmentShaderTag_ = "--fragment-shader--";
@@ -134,6 +138,10 @@ void TextBrowserWidget::sideAreaPaintEvent(QPaintEvent *event) {
           // only draw line numbers on actual shader code
           if (text.contains(TextBrowserWidget::startVertexShaderTag_) ||
               text.contains(TextBrowserWidget::endVertexShaderTag_) ||
+              text.contains(TextBrowserWidget::startTessControlShaderTag_) ||
+              text.contains(TextBrowserWidget::endTessControlShaderTag_) ||
+              text.contains(TextBrowserWidget::startTessEvalShaderTag_) ||
+              text.contains(TextBrowserWidget::endTessEvalShaderTag_) ||
               text.contains(TextBrowserWidget::startGeometryShaderTag_) ||
               text.contains(TextBrowserWidget::endGeometryShaderTag_) ||
               text.contains(TextBrowserWidget::startFragmentShaderTag_) ||
@@ -282,6 +290,62 @@ void TextBrowserWidget::updateFolds() {
 
     startCursor = document()->find(TextBrowserWidget::startVertexShaderTag_, startCursor, QTextDocument::FindWholeWords);
     endCursor = document()->find(TextBrowserWidget::endVertexShaderTag_, endCursor, QTextDocument::FindWholeWords);
+  }
+
+  // search for all tesscontrol shader
+  startCursor = document()->find(TextBrowserWidget::startTessControlShaderTag_, 0, QTextDocument::FindWholeWords);
+  endCursor = document()->find(TextBrowserWidget::endTessControlShaderTag_, 0, QTextDocument::FindWholeWords);
+
+  while (!startCursor.isNull() && !endCursor.isNull()) {
+    startCursor.movePosition(QTextCursor::StartOfLine);
+    endCursor.movePosition(QTextCursor::EndOfLine);
+    folds_.push_back(Fold(startCursor.position(),endCursor.position(),SHADER));
+
+    // map block position to fold
+    int startPos = startCursor.position();
+    const int endPos = endCursor.position();
+    for (; startPos < endPos; ++startPos) {
+      QTextBlock block = document()->findBlock(startPos);
+      blockPosToFold_[block.position()] = folds_.size() - 1;
+    }
+
+    bool moved = startCursor.movePosition(QTextCursor::Down);
+    if (!moved)
+      break;
+    moved = endCursor.movePosition(QTextCursor::Down);
+    if (!moved)
+      break;
+
+    startCursor = document()->find(TextBrowserWidget::startTessControlShaderTag_, startCursor, QTextDocument::FindWholeWords);
+    endCursor = document()->find(TextBrowserWidget::endTessControlShaderTag_, endCursor, QTextDocument::FindWholeWords);
+  }
+
+  // search for all tesseval shader
+  startCursor = document()->find(TextBrowserWidget::startTessEvalShaderTag_, 0, QTextDocument::FindWholeWords);
+  endCursor = document()->find(TextBrowserWidget::endTessEvalShaderTag_, 0, QTextDocument::FindWholeWords);
+
+  while (!startCursor.isNull() && !endCursor.isNull()) {
+    startCursor.movePosition(QTextCursor::StartOfLine);
+    endCursor.movePosition(QTextCursor::EndOfLine);
+    folds_.push_back(Fold(startCursor.position(),endCursor.position(),SHADER));
+
+    // map block position to fold
+    int startPos = startCursor.position();
+    const int endPos = endCursor.position();
+    for (; startPos < endPos; ++startPos) {
+      QTextBlock block = document()->findBlock(startPos);
+      blockPosToFold_[block.position()] = folds_.size() - 1;
+    }
+
+    bool moved = startCursor.movePosition(QTextCursor::Down);
+    if (!moved)
+      break;
+    moved = endCursor.movePosition(QTextCursor::Down);
+    if (!moved)
+      break;
+
+    startCursor = document()->find(TextBrowserWidget::startTessEvalShaderTag_, startCursor, QTextDocument::FindWholeWords);
+    endCursor = document()->find(TextBrowserWidget::endTessEvalShaderTag_, endCursor, QTextDocument::FindWholeWords);
   }
 
   // search for all geometry shader
