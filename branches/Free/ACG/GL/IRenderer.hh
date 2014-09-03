@@ -64,6 +64,8 @@ namespace ACG
 class VertexDeclaration;
 class GLState;
 class FBO;
+class Texture;
+class Texture2D;
 
 namespace SceneGraph {
   namespace DrawModes {
@@ -357,16 +359,35 @@ public:
    */
   virtual QString dumpCurrentRenderObjectsToString(ACG::RenderObject** _list = 0, bool _outputShaders = false, std::vector<ACG::ShaderModifier*>* _modifiers = 0);
 
+  /** \brief Control error detection for checking render objects 
+   *
+   * Levels:
+   *  0 - disable error detection
+   *  1 - fast check (obvious stuff that does not require much time to check)
+   *  2 - intensive check (do additional check, possibly false positives and impact on performance)
+   * 
+   * Default level is 1
+   *
+   * @param _level   detection level
+   */
+  void setErrorDetectionLevel(int _level);
+
+  /// Get error detection level
+  int getErrorDetectionLevel() const;
+
   //=========================================================================
   // Variables
   //=========================================================================
 protected:
 
-  /// Get the number of collected render objects (not including overlay objects)
+  /// Get the number of collected render objects (not including overlay objects or gl4.2 line objects)
   int getNumRenderObjects() const;
 
   /// Get the number of render objects in the overlay (for instance objects from coordsys are overlayed)
   int getNumOverlayObjects() const;
+
+  /// Get the number of default line objects rendered with opengl 4.2
+  int getNumLineGL42Objects() const;
 
   /// Get the number of current light sources
   int getNumLights() const;
@@ -377,12 +398,26 @@ protected:
   /// Get render objects in the sorted list by index (only overlay objects)
   ACG::RenderObject* getOverlayRenderObject(int i);
 
+  /// Get render objects in the sorted list by index (only line objects rendered with gl4.2)
+  ACG::RenderObject* getLineGL42RenderObject(int i);
+
   /// Get light by index
   LightData* getLight(int i);
 
 
   /// Get global ambient light contribution from GL_LIGHT_MODEL_AMBIENT
   const ACG::Vec3f& getGlobalAmbientScale() const {return globalLightModelAmbient_;}
+
+
+  /** Enable/disable line thickness rendering with opengl4.2
+   *
+   * Instead of quad extrusion in a geometry shader, thick lines are manually rasterized in a load/store image.
+   * This image is then composited with the back buffer.
+   * If the gpu does not support image load/store, the default quad extrusion is used anyway and this function has no effect.
+   *
+   * @param _enable  enable/disable
+   */
+  void setLineThicknessRenderingGL42(bool _enable);
 
 
   //=========================================================================
@@ -445,6 +480,32 @@ protected:
 
   /// shader copies depth of the first front layer to the back buffer
   GLSL::Program* depthCopyShader_;
+
+  /// error-detection level for checking render objects
+  int errorDetectionLevel_;
+
+private:
+
+  //=========================================================================
+  // Default rendering of thick lines
+  //=========================================================================
+
+  /** \brief Enable/disable gl4.2 based technique for rendering thick lines
+   *
+   *  If enabled, default line objects are not returned via getRenderObject(),
+   *   but are rendered in finishRenderingPipeline() just before drawing overlays.
+  */
+  bool enableLineThicknessGL42_;
+
+  /// default line render objects that are rendered with gl4.2
+  std::vector<RenderObject*> lineGL42Objects_;
+
+  /// map from viewport id to line buffer
+  std::map< int, Texture* > lineColorBuffers_;
+
+  void renderLineThicknessGL42();
+
+
 };
 
 

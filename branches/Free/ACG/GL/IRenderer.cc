@@ -62,13 +62,23 @@
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/ScreenQuad.hh>
 #include <ACG/GL/FBO.hh>
+#include <ACG/GL/globjects.hh>
+
 
 
 namespace ACG
 {
 
 IRenderer::IRenderer()
-: numLights_(0), renderObjects_(0), depthMapUsed_(false), curViewerID_(0), prevFbo_(0), prevFboSaved_(false), depthCopyShader_(0)
+: numLights_(0), 
+renderObjects_(0), 
+depthMapUsed_(false), 
+curViewerID_(0),
+prevFbo_(0), 
+prevFboSaved_(false),
+depthCopyShader_(0),
+errorDetectionLevel_(1),
+enableLineThicknessGL42_(false)
 {
   prevViewport_[0] = 0;
   prevViewport_[1] = 0;
@@ -96,10 +106,78 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
     std::cout << "error: missing vertex declaration in renderobject: " << _renderObject->debugName << std::endl;
   else
   {
-    if (!_renderObject->depthWrite && 
+    if (errorDetectionLevel_ > 0)
+    {
+      // commonly encountered rendering errors
+
+      //  Why is my object invisible/black?
+      if (!_renderObject->depthWrite && 
         !_renderObject->colorWriteMask[0] && !_renderObject->colorWriteMask[1] &&
         !_renderObject->colorWriteMask[2] && !_renderObject->colorWriteMask[3])
-      std::cout << "warning: depth write and color write disabled in renderobject: " << _renderObject->debugName << std::endl;
+        std::cout << "warning: depth write and color write disabled in renderobject: " << _renderObject->debugName << std::endl;
+
+      if (errorDetectionLevel_ > 1 && _renderObject->shaderDesc.shadeMode == SG_SHADE_UNLIT)
+      {
+        if (_renderObject->emissive.max() < 1e-3f)
+          std::cout << "warning: unlit object rendered with black emissive color: " << _renderObject->debugName << std::endl;
+        else
+        {
+          // rendering with clear color
+
+          float clearColor[4];
+          glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
+
+          if (checkEpsilon(clearColor[0] - _renderObject->emissive[0]) &&
+            checkEpsilon(clearColor[1] - _renderObject->emissive[1]) &&
+            checkEpsilon(clearColor[2] - _renderObject->emissive[2]))
+          {
+            std::cout << "warning: unlit object rendered with clear color as emissive color: " << _renderObject->debugName << std::endl;
+            std::cout << "         Should this be intentional, disable color writing instead via obj->glColorMask(0,0,0,0)" << std::endl;
+          }
+        }
+      }
+
+
+      if (errorDetectionLevel_ > 1)
+      {
+        // Why is there nothing written to the depth-buffer?
+        // this might very well be intentional, so put it in higher level
+
+        if (_renderObject->depthWrite && !_renderObject->depthTest)
+        {
+          std::cout << "warning: trying to write to depth buffer with depth-testing disabled does not work in: " << _renderObject->debugName << std::endl;
+          std::cout << "         If depth-writing was intended, enable depth-testing and set depth-func to GL_ALWAYS" << std::endl;
+        }
+      }
+
+
+      // Why are there gl errors and/or nothing gets drawn?
+      if (_renderObject->shaderDesc.shadeMode != SG_SHADE_UNLIT)
+      {
+        // check for normals
+        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_NORMAL))
+          std::cout << "warning: missing normals for lighting in renderobject: " << _renderObject->debugName << std::endl;
+      }
+
+      if (_renderObject->shaderDesc.textured())
+      {
+        // check for texcoords
+        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_TEXCOORD))
+          std::cout << "warning: missing texcoords for textured mode in renderobject: " << _renderObject->debugName << std::endl;
+      }
+
+      if (_renderObject->shaderDesc.vertexColors)
+      {
+        // check for vertex colors
+        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_COLOR))
+          std::cout << "warning: missing colors for vertexcolor mode in renderobject: " << _renderObject->debugName << std::endl;
+      }
+
+
+      // Why is alpha blending not work?
+      if (fabsf(_renderObject->alpha - 1.0f) > 1e-3f && !(_renderObject->alphaTest || _renderObject->blending))
+        std::cout << "warning: alpha value != 1 but no alpha blending or testing enabled in renderobject: " << _renderObject->debugName << std::endl;
+    }
 
 
     renderObjects_.push_back(*_renderObject);
@@ -116,7 +194,70 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
     p->internalFlags_ = 0;
 
     // precompile shader
-    ACG::ShaderCache::getInstance()->getProgram(&p->shaderDesc);
+    GLSL::Program* shaderProg = ACG::ShaderCache::getInstance()->getProgram(&p->shaderDesc);
+
+
+
+    // check primitive type and geometry shader
+    if (errorDetectionLevel_ > 1 && p->shaderDesc.geometryTemplateFile.length())
+    {
+#ifdef GL_VERSION_3_2
+      GLint geomInputType = 0;
+      glGetProgramiv(shaderProg->getProgramId(), GL_GEOMETRY_INPUT_TYPE, &geomInputType);
+
+
+      if (geomInputType != p->primitiveMode)
+      {
+
+        switch (geomInputType)
+        {
+        case GL_POINTS: std::cout << "warning: primitive mode is incompatible with points-geometryshader in renderobject: " << _renderObject->debugName << std::endl; break;
+        
+        case GL_LINES: 
+          {
+            if (p->primitiveMode != GL_LINE_STRIP && p->primitiveMode != GL_LINE_LOOP)
+              std::cout << "warning: primitive mode is incompatible with lines-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+          } break;
+
+        case GL_LINES_ADJACENCY:
+          {
+            if (p->primitiveMode != GL_LINE_STRIP_ADJACENCY)
+              std::cout << "warning: primitive mode is incompatible with lines_adjacency-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+          } break;
+
+        case GL_TRIANGLES:
+          {
+            if (p->primitiveMode != GL_TRIANGLE_STRIP && p->primitiveMode != GL_TRIANGLE_FAN)
+              std::cout << "warning: primitive mode is incompatible with triangles-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+          } break;
+          
+        case GL_TRIANGLES_ADJACENCY:
+          {
+            if (p->primitiveMode != GL_TRIANGLE_STRIP_ADJACENCY)
+              std::cout << "warning: primitive mode is incompatible with triangles_adjacency-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+          } break;
+
+        default: std::cout << "warning: unknown input_type for geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+        }
+        
+        
+
+      }
+
+
+#else
+      if (_renderObject->isDefaultLineObject())
+      {
+        if (_renderObject->primitiveMode != GL_LINES && _renderObject->primitiveMode != GL_LINE_STRIP && _renderObject->primitiveMode != GL_LINE_LOOP)
+          std::cout << "warning: primitive mode is incompatible with lines-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+      }
+      else if (_renderObject->isDefaultPointObject())
+      {
+        if (_renderObject->primitiveMode != GL_POINTS)
+          std::cout << "warning: primitive mode is incompatible with points-geometryshader in renderobject: " << _renderObject->debugName << std::endl;
+      }
+#endif
+    }
 
   }
 }
@@ -219,8 +360,6 @@ int IRenderer::cmpPriority(const void* _a, const void* _b)
 }
 
 
-
-
 void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot)
 {
   // First, all render objects get collected.
@@ -232,10 +371,12 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
   // ==========================================================
   // Sort renderable objects based on their priority
+  // Filter for overlay, lines etc.
   // ==========================================================
 
   const size_t numRenderObjects = getNumRenderObjects(),
-    numOverlayObjects = getNumOverlayObjects();
+    numOverlayObjects = getNumOverlayObjects(),
+    numLineObjects = getNumLineGL42Objects();
 
   // sort for priority
   if (sortedObjects_.size() < numRenderObjects)
@@ -244,12 +385,26 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   if (overlayObjects_.size() < numOverlayObjects)
     overlayObjects_.resize(numOverlayObjects);
 
+  if (lineGL42Objects_.size() < numLineObjects)
+    lineGL42Objects_.resize(numLineObjects);
+
   // init sorted objects array
-  size_t sceneObjectOffset = 0, overlayObjectOffset = 0;
+  size_t sceneObjectOffset = 0, overlayObjectOffset = 0, lineObjectOffset = 0;
   for (size_t i = 0; i < renderObjects_.size(); ++i)
   {
     if (renderObjects_[i].overlay)
       overlayObjects_[overlayObjectOffset++] = &renderObjects_[i];
+    else if (enableLineThicknessGL42_ && numLineObjects && renderObjects_[i].isDefaultLineObject())
+    {
+      renderObjects_[i].shaderDesc.geometryTemplateFile = "Wireframe/gl42/geometry.tpl";
+      renderObjects_[i].shaderDesc.fragmentTemplateFile = "Wireframe/gl42/fragment.tpl";
+
+      // disable color write to fbo, but allow RenderObject to control depth write
+      renderObjects_[i].glColorMask(0,0,0,0);
+
+//      sortedObjects_[sceneObjectOffset++] = &renderObjects_[i];
+      lineGL42Objects_[lineObjectOffset++] = &renderObjects_[i];
+    }
     else
       sortedObjects_[sceneObjectOffset++] = &renderObjects_[i];
   }
@@ -302,6 +457,10 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
 void IRenderer::finishRenderingPipeline(bool _drawOverlay)
 {
+  // draw thick lines
+  if (enableLineThicknessGL42_)
+    renderLineThicknessGL42();
+
   if (_drawOverlay)
   {
     const int numOverlayObj = getNumOverlayObjects();
@@ -439,7 +598,7 @@ void IRenderer::sortRenderObjects()
   if (!sortedObjects_.empty())
     qsort(&sortedObjects_[0], getNumRenderObjects(), sizeof(ACG::RenderObject*), cmpPriority);
   if (!overlayObjects_.empty())
-  qsort(&overlayObjects_[0], getNumOverlayObjects(), sizeof(ACG::RenderObject*), cmpPriority);
+    qsort(&overlayObjects_[0], getNumOverlayObjects(), sizeof(ACG::RenderObject*), cmpPriority);
 }
 
 
@@ -602,6 +761,8 @@ void IRenderer::bindObjectRenderStates(ACG::RenderObject* _obj)
 
   glDepthFunc(_obj->depthFunc);
 
+  glDepthRange(_obj->depthRange[0], _obj->depthRange[1]);
+
   //  ACG::GLState::shadeModel(_obj->shadeModel);
 
   glBlendFunc(_obj->blendSrc, _obj->blendDest);
@@ -698,7 +859,8 @@ int IRenderer::getNumRenderObjects() const
 {
   int n = 0;
   for (size_t i = 0; i < renderObjects_.size(); ++i)
-    if (!renderObjects_[i].overlay)
+    if (!renderObjects_[i].overlay && !(renderObjects_[i].isDefaultLineObject() && enableLineThicknessGL42_))
+//    if (!renderObjects_[i].overlay)
       ++n;
 
   return n;
@@ -710,6 +872,20 @@ int IRenderer::getNumOverlayObjects() const
   for (size_t i = 0; i < renderObjects_.size(); ++i)
     if (renderObjects_[i].overlay)
       ++n;
+
+  return n;
+}
+
+int IRenderer::getNumLineGL42Objects() const
+{
+  int n = 0;
+
+  if (enableLineThicknessGL42_)
+  {
+    for (size_t i = 0; i < renderObjects_.size(); ++i)
+      if (renderObjects_[i].isDefaultLineObject())
+        ++n;
+  }
 
   return n;
 }
@@ -734,6 +910,14 @@ ACG::RenderObject* IRenderer::getOverlayRenderObject( int i )
     return &renderObjects_[i];
 
   return overlayObjects_[i];
+}
+
+ACG::RenderObject* IRenderer::getLineGL42RenderObject( int i )
+{
+  if (lineGL42Objects_.empty())
+    return 0;
+
+  return lineGL42Objects_[i];
 }
 
 IRenderer::LightData* IRenderer::getLight( int i )
@@ -774,19 +958,18 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
   }
   for (int i = 0; i < getNumRenderObjects(); ++i)
   {
-    if (_list) {
-      outStrm << "\n" << _list[i]->toString();
+    const RenderObject* obj = _list ? _list[i] : &renderObjects_[i];
+
+    if (obj) {
+      outStrm << "\n" << obj->toString();
 
       if ( _outputShaders ) {
 
         outStrm << "\n";
 
-        // TODO: Remove!!!
-//        _list[i]->shaderDesc.geometryShader = true;
+        outStrm << obj->shaderDesc.toString();
 
-        outStrm << _list[i]->shaderDesc.toString();
-
-        ShaderProgGenerator progGen(&(_list[i]->shaderDesc), usage);
+        ShaderProgGenerator progGen(&(obj->shaderDesc), usage);
 
         if (!usage)
           progGen.generateShaders();
@@ -796,13 +979,30 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
           outStrm << progGen.getVertexShaderCode()[i] << "\n";
         outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
 
-        outStrm << "\n---------------------geometry-shader--------------------\n\n";
-        if ( progGen.hasGeometryShader() )
+        if (progGen.hasTessControlShader())
+        {
+          outStrm << "\n---------------------tesscontrol-shader--------------------\n\n";
+          for (int i = 0; i < progGen.getTessControlShaderCode().size(); ++i)
+            outStrm << progGen.getTessControlShaderCode()[i] << "\n";
+          outStrm << "\n---------------------end-tesscontrol-shader--------------------\n\n";
+        }
+
+        if (progGen.hasTessControlShader())
+        {
+          outStrm << "\n---------------------tesseval-shader--------------------\n\n";
+          if (progGen.hasTessEvaluationShader())
+            for (int i = 0; i < progGen.getTessEvaluationShaderCode().size(); ++i)
+              outStrm << progGen.getTessEvaluationShaderCode()[i] << "\n";
+          outStrm << "\n---------------------end-tesseval-shader--------------------\n\n";
+        }
+
+        if (progGen.hasGeometryShader())
+        {
+          outStrm << "\n---------------------geometry-shader--------------------\n\n";
           for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
             outStrm << progGen.getGeometryShaderCode()[i] << "\n";
-        else
-          outStrm << "No geometry shader\n";
-        outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
+          outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
+        }
 
 
         outStrm << "\n---------------------fragment-shader--------------------\n\n";
@@ -811,44 +1011,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n---------------------end-fragment-shader--------------------\n\n";
       }
 
-    } else {
-      outStrm << "\n" << renderObjects_[i].toString();
-
-
-      if ( _outputShaders ) {
-
-        outStrm << "\n";
-
-        // TODO: Remove!!!
-        //_list[i]->shaderDesc.geometryShader = true;
-
-        outStrm << renderObjects_[i].shaderDesc.toString();
-
-        ShaderProgGenerator progGen(&(renderObjects_[i].shaderDesc), usage);
-
-        if (!usage)
-          progGen.generateShaders();
-
-        outStrm << "\n---------------------vertex-shader--------------------\n\n";
-        for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
-          outStrm << progGen.getVertexShaderCode()[i] << "\n";
-        outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
-
-        outStrm << "\n---------------------geometry-shader--------------------\n\n";
-        if ( progGen.hasGeometryShader() )
-          for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-            outStrm << progGen.getGeometryShaderCode()[i] << "\n";
-        else
-          outStrm << "No geometry shader\n";
-        outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
-
-        outStrm << "\n---------------------fragment-shader--------------------\n\n";
-        for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
-          outStrm << progGen.getFragmentShaderCode()[i] << "\n";
-        outStrm << "\n---------------------end-fragment-shader--------------------\n\n";
-
-      }
-    }
+    } 
 
   }
 
@@ -1023,7 +1186,190 @@ void IRenderer::setViewerID(int _viewerID)
 }
 
 
+void IRenderer::renderLineThicknessGL42()
+{
+#ifdef GL_ARB_shader_image_load_store
+  // quad extrusion has depth clipping issue
+  // GL4.2 method: manually rasterize thick lines into load/store texture, thereby avoiding clipping
 
+  // experimental technique, needs some improvements for rasterization
+  /* possible improvement: 
+    0. init depth buffer with scene objects
+    1. extract visible line object (startpos, endpos) into imageBuffer after depth-test in fragment shader
+    1a. line segment id can be found via atomic counter in geometry shader
+    1b. use imageAtomicMin/max to find start and end pixel pos of each line segment
+         atomic ops work with uint only, thus each segment has 4 texels in the imageBuffer,  offsets are segmentID * 4 + {0,1,2,3}
+    2. read imageBuffer in geometry shader and do usual quad extrusion, now without depth testing
+        => get hw rasterization and msaa
+  */
+
+  //  using image2D does not work: texture always reads 0, even with glGetTexImage2D
+  //  imageBuffer works
+  //  - check with different gpu
+
+  const int numLines = getNumLineGL42Objects();
+
+  // configs
+  const bool useBufferTexture = true;  // imageBuffer or image2D
+  const bool useIntegerTexture = true; // color as R32U or RGBA32F
+
+
+
+  if (numLines)
+  {
+
+    // macro configs for shader
+    QStringList macros;
+
+    if (useBufferTexture)
+      macros.push_back("#define IMAGE_BUFFER");
+    if (useIntegerTexture)
+      macros.push_back("#define FMT_UINT");
+
+
+    // get random access write buffer
+    //  32bit uint per viewport pixel, stores rgba8
+    Texture2D* lineColorImg2D = 0;
+    TextureBuffer* lineColorImgBuf = 0;
+
+    GLsizei w = prevViewport_[2], h = prevViewport_[3];
+    GLsizei lineBPP = useIntegerTexture ? 4 : 16; // bytes per pixel
+
+
+    if (useBufferTexture)
+    {
+      lineColorImgBuf = dynamic_cast<TextureBuffer*>(lineColorBuffers_[curViewerID_]);
+
+      if (!lineColorImgBuf)
+      {
+        lineColorImgBuf = new TextureBuffer(GL_TEXTURE0);
+        lineColorBuffers_[curViewerID_] = lineColorImgBuf;
+      }
+
+      // resize
+      if (lineColorImgBuf->getBufferSize() != w * h * lineBPP)
+        lineColorImgBuf->setBufferData(w*h*lineBPP, 0, GL_R32UI, GL_DYNAMIC_DRAW);
+    }
+    else
+    {
+      lineColorImg2D = dynamic_cast<Texture2D*>(lineColorBuffers_[curViewerID_]);
+
+      if (!lineColorImg2D)
+      {
+        // allocate and store in map
+        lineColorImg2D = new Texture2D(GL_TEXTURE0);
+        lineColorBuffers_[curViewerID_] = lineColorImg2D;
+      }
+
+      // resize
+      if (lineColorImg2D->getWidth() != w || lineColorImg2D->getHeight() != h)
+        lineColorImg2D->setData(0,
+          useIntegerTexture ? GL_R32UI : GL_RGBA32F,
+          w, h, 
+          useIntegerTexture ? GL_RED_INTEGER : GL_RGBA, 
+          useIntegerTexture ? GL_UNSIGNED_INT : GL_FLOAT, 
+          0);  
+    }
+    
+
+    
+
+
+    glViewport(0, 0, w, h);
+
+
+
+    // ---------------------------
+    //  clear line color buffer
+
+    glColorMask(0,0,0,0);
+    glDepthMask(0);
+    glDisable(GL_DEPTH_TEST);
+
+    // image binding is set to slot 0 in shader already
+    if (useBufferTexture)
+      lineColorImgBuf->bindAsImage(0, GL_WRITE_ONLY);
+    else
+      lineColorImg2D->bindAsImage(0, GL_WRITE_ONLY);
+
+    GLSL::Program* shaderClear = ShaderCache::getInstance()->getProgram("ScreenQuad/screenquad.glsl", "Wireframe/gl42/clear.glsl", &macros);
+
+    shaderClear->use();
+//     shaderClear->setUniform("offset", Vec2f(0,0));
+//     shaderClear->setUniform("size", Vec2f(1,1));
+    shaderClear->setUniform("screenSize", Vec2f(w,h));
+
+    ScreenQuad::draw(shaderClear);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+//    GLDebug::dumpTexture2D(lineColorBuf->id(), 0, lineColorBuf->getFormat(), lineColorBuf->getType(), lineBPP*w*h, "c:/dbg/lines_clear.dds");
+//    GLDebug::dumpBufferData(GL_TEXTURE_BUFFER, lineColorBuf2->getBufferId(), "c:/dbg/lines_clear.bin");
+
+    // ---------------------------
+    // 1. pass
+    //  render into line color buffer via imageStore,
+
+    for (int i = 0; i < numLines; ++i)
+    {
+      RenderObject* obj = getLineGL42RenderObject(i);
+
+      renderObject(obj);
+    }
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+//    GLDebug::dumpTexture2D(lineColorBuf->id(), 0, lineColorBuf->getFormat(), lineColorBuf->getType(), lineBPP*w*h, "c:/dbg/lines_image.dds");
+//    GLDebug::dumpBufferData(GL_TEXTURE_BUFFER, lineColorBuf2->getBufferId(), "c:/dbg/lines_image.bin");
+
+
+    // ---------------------------
+    // 2. pass
+    //  composition of line colors and fbo
+
+    restoreInputFbo();
+
+    // image binding is set to slot 0 in shader already
+    if (useBufferTexture)
+      lineColorImgBuf->bindAsImage(0, GL_READ_ONLY);
+    else
+      lineColorImg2D->bindAsImage(0, GL_READ_ONLY);
+
+
+    glColorMask(1,1,1,1);
+    glDisable(GL_DEPTH_TEST);
+
+    // enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLSL::Program* shaderComposite = ShaderCache::getInstance()->getProgram("ScreenQuad/screenquad.glsl", "Wireframe/gl42/composite.glsl", &macros);
+
+    shaderComposite->use();
+//     shaderComposite->setUniform("offset", Vec2f(0,0));
+//     shaderComposite->setUniform("size", Vec2f(1,1));
+    shaderComposite->setUniform("screenSize", Vec2f(w,h));
+
+    ScreenQuad::draw(shaderComposite);
+
+
+  }
+#endif
+}
+
+void IRenderer::setLineThicknessRenderingGL42( bool _enable )
+{
+  if (Texture::supportsImageLoadStore() && Texture::supportsTextureBuffer())
+    enableLineThicknessGL42_ = _enable;
+}
+
+void IRenderer::setErrorDetectionLevel( int _level )
+{
+  errorDetectionLevel_ = std::max(_level, 0); // clamp to [0,n]
+}
+
+int IRenderer::getErrorDetectionLevel() const
+{
+  return errorDetectionLevel_;
+}
 
 } // namespace ACG end
 
