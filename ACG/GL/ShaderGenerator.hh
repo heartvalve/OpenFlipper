@@ -1029,6 +1029,9 @@ private:
   /// default IO descriptor for the vertex shader
   ShaderGenerator::DefaultIODesc ioDesc_;
 
+  /// renormalize before lighting, default false,  can be activated via "#define SG_REQUEST_RENORMALIZE"
+  bool renormalizeLighting_;
+
 
   static QString shaderDir_;
   static QStringList lightingCode_;
