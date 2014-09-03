@@ -71,6 +71,9 @@ namespace ACG
 #define SG_REQUEST_NORMALVS "#define SG_REQUEST_NORMALVS"
 #define SG_REQUEST_NORMALOS "#define SG_REQUEST_NORMALOS"
 
+// renormalize normal-vec before lighting in fragment shader
+#define SG_REQUEST_RENOMARLIZE "#define SG_REQUEST_RENORMARLIZE"
+
 // generic default attribute input keywords
 //  these are extended by the correct input name by the generator for each stage
 #define SG_INPUT_POSVS "SG_INPUT_POSVS"
@@ -790,7 +793,7 @@ QStringList ShaderProgGenerator::lightingCode_;
 
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
                                          unsigned int _usage)
-: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage)
+: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage), renormalizeLighting_(false)
 {
   if (shaderDir_.isEmpty())
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
@@ -1362,9 +1365,13 @@ void ShaderProgGenerator::buildTessEvalShader()
 
     if (line.contains("SG_INPUT") || line.contains("SG_OUTPUT"))
     {
-      
-      mainCode.push_back("// ----------------------------------------");
-      mainCode.push_back("// ShaderGen: resolve SG_OUTPUT = expression(SG_INPUT);");
+
+      QStringList resolvedCode;
+
+      resolvedCode.push_back("// ----------------------------------------");
+      resolvedCode.push_back("// ShaderGen: resolve SG_OUTPUT = expression(SG_INPUT);");
+
+      int numOccurrences = 0;
 
       for (int i = 0; i < tessEval_->getNumInputs(); ++i)
       {
@@ -1374,14 +1381,69 @@ void ShaderProgGenerator::buildTessEvalShader()
         // replace SG_INPUT, SG_OUTPUT with actual names
         QString resolvedLine = line;
 
-        resolvedLine.replace("SG_INPUT", inputName);
-        resolvedLine.replace("SG_OUTPUT", outputName);
+        // avoid confusion with SG_INPUT_NORMALVS etc. naming convention
+        //  resolvedLine.replace("SG_INPUT", inputName);
+        //  resolvedLine.replace("SG_OUTPUT", outputName);
+        // fails to do this
+        
+        // maybe this can be simplified with regexp
+        // ie. replace SG_INPUT with inputName,  but not SG_INPUTN, SG_INPUT_ ..
 
-        mainCode.push_back(resolvedLine);
+        for (int k = 0; k < 2; ++k)
+        {
+          const QString stringToReplace = k ? "SG_OUTPUT" : "SG_INPUT";
+          const int lenStringToReplace = stringToReplace.length();
+          const QString replacementString = k ? outputName : inputName;
+
+          int linePos = resolvedLine.indexOf(stringToReplace);
+
+          while (linePos >= 0)
+          {
+            bool replaceOcc = true;
+
+            int nextCharPos = linePos + lenStringToReplace;
+
+            if (nextCharPos >= resolvedLine.size())
+              nextCharPos = -1;
+
+            if (nextCharPos > 0)
+            {
+              QChar nextChar = resolvedLine.at(nextCharPos);
+
+              if (nextChar == '_' || nextChar.isDigit() || nextChar.isLetter())
+              {
+                // name token continues, this should not be replaced!
+
+                linePos += lenStringToReplace;
+                replaceOcc = false;
+              }
+            }
+
+            // replace
+
+            if (replaceOcc)
+            {
+              resolvedLine.replace(linePos, lenStringToReplace, replacementString);
+              ++numOccurrences;
+            }
+
+            linePos = resolvedLine.indexOf(stringToReplace, linePos + 1);
+          }
+        }
+
+
+        
+
+
+        resolvedCode.push_back(resolvedLine);
       }
 
-      mainCode.push_back("// ----------------------------------------");
+      resolvedCode.push_back("// ----------------------------------------");
 
+      if (numOccurrences)
+        mainCode.append(resolvedCode);
+      else
+        mainCode.push_back(line); // nothing to replace in this line
     }
     else
       mainCode.push_back(line);
@@ -1630,9 +1692,12 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
-    _code->push_back("vec4 sg_vPosVS = out" + inputShader + "PosVS;");
-    _code->push_back("vec3 sg_vNormalVS = out" + inputShader + "Normal;");
+    _code->push_back("vec4 sg_vPosVS = " SG_INPUT_POSVS ";");
 
+    if (renormalizeLighting_)
+      _code->push_back("vec3 sg_vNormalVS = normalize(" SG_INPUT_NORMALVS ");");
+    else
+      _code->push_back("vec3 sg_vNormalVS = " SG_INPUT_NORMALVS ";");
 
     addLightingCode(_code);
   }
@@ -1837,6 +1902,9 @@ void ShaderProgGenerator::generateShaders()
   }
   if (dummy.hasDefine(SG_REQUEST_POSOS))
     ioDesc_.passPosOS_ = true;
+  
+  if (dummy.hasDefine(SG_REQUEST_RENOMARLIZE))
+    renormalizeLighting_ = true;
 
 
 
@@ -2017,6 +2085,8 @@ void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString 
         }
         else if (trimmedLine.startsWith(SG_REQUEST_POSOS))
           ioDesc_.passPosOS_ = true;
+        else if (trimmedLine.startsWith(SG_REQUEST_RENOMARLIZE))
+          renormalizeLighting_ = true;
       }
 
     }
