@@ -120,6 +120,11 @@ endif ()
 
 # sets default build properties
 macro (acg_set_target_props target)
+
+  if (NOT (CMAKE_MAJOR_VERSION  LESS 3))
+    cmake_policy(SET CMP0042 NEW) #enables MACOSX_RPATH for all targets per default
+  endif()
+
   if (WIN32)
     set_target_properties (
       ${target} PROPERTIES
