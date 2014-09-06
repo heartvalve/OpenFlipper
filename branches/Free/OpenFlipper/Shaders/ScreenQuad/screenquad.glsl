@@ -1,8 +1,8 @@
 #version 150
 
 
-uniform vec2 offset;
-uniform vec2 size;
+uniform vec2 offset = vec2(0,0);
+uniform vec2 size = vec2(1,1);
 
 
 in vec4 inPosition;
