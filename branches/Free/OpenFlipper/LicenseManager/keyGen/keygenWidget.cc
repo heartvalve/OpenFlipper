@@ -66,7 +66,7 @@ KeyGen::KeyGen(QString n, QString cHash, QString pHash, QString cpHash, QString 
 	requestSig = request;
 }
 
-QString KeyGen::computeSignature() const {
+QString KeyGen::computeSignature(QByteArray (QString::*_codingfun)()const ) const {
     // Get the salts
     QString saltPre;
     ADD_SALT_PRE(saltPre);
@@ -76,15 +76,23 @@ QString KeyGen::computeSignature() const {
     QString keyRequest = saltPre + name + coreHash + pluginHash + cpuHash
             + productHash + macHashes.join("") + saltPost;
     QString requestSigCheck =
-            QCryptographicHash::hash(keyRequest.toUtf8(),
+            QCryptographicHash::hash((keyRequest.*_codingfun)(),
                                      QCryptographicHash::Sha1).toHex();
 
     return requestSigCheck;
 }
 
-bool KeyGen::isValid() const
+KeyGen::ValidationResult KeyGen::isValid() const
 {
-        return requestSig == computeSignature();
+  if (requestSig == computeSignature(&QString::toUtf8))
+  {
+    return UTF8;
+  }
+  else if(requestSig == computeSignature(&QString::toLatin1))
+  {
+    return LATIN1;
+  }
+  return INVALID;
 }
 
 QString KeyGen::Generate(QString expiryDate) const
@@ -95,10 +103,9 @@ QString KeyGen::Generate(QString expiryDate) const
 	QString saltPost;
 	ADD_SALT_POST(saltPost);
 
-	QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-	QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
+	KeyGen::ValidationResult valid = isValid();
 
-	if ( requestSig != requestSigCheck ){
+	if ( !valid ){
 		return "ERROR";
 	}
 	else{
@@ -114,8 +121,11 @@ QString KeyGen::Generate(QString expiryDate) const
 		license_ += macHashes.join("\n") + "\n";
 
 		QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-		QString licenseHash = QCryptographicHash::hash ( licenseTmp.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
-
+		QString licenseHash;
+		if (valid == UTF8)
+		  licenseHash = QCryptographicHash::hash ( licenseTmp.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
+		else
+		  licenseHash = QCryptographicHash::hash ( licenseTmp.toLatin1()  , QCryptographicHash::Sha1 ).toHex();
 		// Prepend signature
 		license_ = licenseHash + "\n" + license_;
 		return license_;
@@ -244,8 +254,11 @@ void KeyGenWidget::slotAnalyze() {
         QListWidgetItem *newItem = new QListWidgetItem( keyList);
         newItem->setText(it->name);
         newItem->setHidden(false);
-        if (!it->isValid())
-            newItem->setTextColor(QColor(255, 0, 0));
+        KeyGen::ValidationResult r = it->isValid();
+        if (!r)
+          newItem->setTextColor(QColor(255, 0, 0));
+        else if (r == KeyGen::LATIN1)
+          newItem->setTextColor(QColor(128, 128, 0));
 	}
 
 	generateLocalButton->setVisible(false);
@@ -273,6 +286,14 @@ void KeyGenWidget::handleSelectionChanged(const QItemSelection& selection){
 		setKeyGen(&keygens_[i]);
 		generateLocalButton->setVisible(true);
 		generateAllButton->setVisible(true);
+
+		KeyGen::ValidationResult valid = keygens_[i].isValid();
+		if (valid == KeyGen::INVALID)
+		  lbWarning->setText("ERROR: Signature does not match.\nCannot generate key");
+		else if (valid == KeyGen::LATIN1)
+		  lbWarning->setText("WARNING: Request uses old Ascii format.\nKey will be generated with Ascii encoding.");
+		else
+		  lbWarning->setText("");
 	}
 }
 

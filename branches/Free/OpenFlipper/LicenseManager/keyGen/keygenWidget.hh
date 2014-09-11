@@ -61,8 +61,15 @@ class KeyGen
 		//returns string containing the key
 		QString Generate(QString expiryDate) const;
 		//finds all occurrences of info in messy string
-		QString computeSignature() const;
-		bool isValid() const;
+		QString computeSignature(QByteArray (QString::*_codingfun)()const = &QString::toUtf8) const;
+		enum ValidationResult
+		{
+		  INVALID = 0,
+		  UTF8 = 1,
+		  LATIN1 = 2
+		};
+		// returns if the result is valid. INVALID, if invalid, UTF8 if the signature is in new utf8 encoding, latin1 if the signature is in deprecated latin1 encoding
+		ValidationResult isValid() const;
 
 		void copyHardwareHashesFrom(const KeyGen &rhs) {
 		    cpuHash = rhs.cpuHash;
