@@ -79,7 +79,7 @@ License File format:
 
 
 
-LicenseManager::~LicenseManager() 
+LicenseManager::~LicenseManager()
 { 
   exit(0); 
 }
@@ -112,6 +112,56 @@ bool LicenseManager::authenticate() {
   authstring_ = "==\n";
   authstring_ += "PluginName: " + pluginFileName() + "\n";
   
+  // ===============================================================================================
+  // Read License file, if exists
+  // ===============================================================================================
+  QString saltPre;
+  ADD_SALT_PRE(saltPre);
+
+  QString saltPost;
+  ADD_SALT_POST(saltPost);
+
+  QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
+  QFile file( licenseFileName );
+  QStringList elements; //has no elements, if file is invalid or was not found
+  bool signatureOk = false;
+  QByteArray (QString::*codingfun)()const = &QString::toUtf8;
+
+  if (file.open(QIODevice::ReadOnly|QIODevice::Text))
+  {
+    QString licenseContents = file.readAll();
+    elements = licenseContents.split('\n',QString::SkipEmptyParts);
+    bool fileOk = !elements.empty() && elements[0] != "ERROR";
+
+    if (fileOk)
+    {
+      // simplify license file entries
+      for ( int i = 0 ; i < elements.size(); ++i )
+        elements[i] = elements[i].simplified();
+
+      // Check the signature of the file (excluding first element as this is the signature itself)
+      QString license = saltPre;
+      for ( int i = 1 ; i < elements.size(); ++i )
+        license += elements[i];
+      license += saltPost;
+      QString licenseHash = QCryptographicHash::hash ( license.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
+      signatureOk = licenseHash == elements[0];
+
+      if (signatureOk)
+        codingfun = &QString::toUtf8;
+      else
+      {
+        licenseHash = QCryptographicHash::hash ( license.toLatin1()  , QCryptographicHash::Sha1 ).toHex();
+        signatureOk = licenseHash == elements[0];
+        if (signatureOk)
+          codingfun = &QString::toLatin1;
+      }
+
+    }
+    else
+      elements = QStringList();
+  }
+
   // ===============================================================================================
   // Compute hash value of Core application binary
   // ===============================================================================================
@@ -228,7 +278,7 @@ bool LicenseManager::authenticate() {
           if ( (currentMac.count(":") == 5) && 
                ( pCurrAddresses->IfType == IF_TYPE_IEEE80211 || pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD )  ) {
                 // Cleanup and remember mac adress
-                currentMac = currentMac.toUtf8().toUpper();
+                currentMac = (currentMac.*codingfun)().toUpper();
                 currentMac = currentMac.remove(":");
                 macHashes.push_back(currentMac);
           }
@@ -262,7 +312,7 @@ bool LicenseManager::authenticate() {
     }
 
     // Cleanup mac adress
-    QString currentMac = netInterface.hardwareAddress().toUtf8().toUpper();
+    QString currentMac = (netInterface.hardwareAddress().*codingfun)().toUpper();
     currentMac = currentMac.remove(":");
     
     macHashes.push_back(currentMac);
@@ -276,7 +326,7 @@ bool LicenseManager::authenticate() {
 
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
-    macHashes[i] = QCryptographicHash::hash ( macHashes[i].toUtf8() , QCryptographicHash::Sha1 ).toHex();
+    macHashes[i] = QCryptographicHash::hash ( (macHashes[i].*codingfun)() , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Compute hash of processor information
@@ -327,7 +377,7 @@ bool LicenseManager::authenticate() {
     }
   #endif
 
-  QString cpuHash = QCryptographicHash::hash ( processor.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
+  QString cpuHash = QCryptographicHash::hash ( (processor.*codingfun)()  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Get windows product id
@@ -342,54 +392,29 @@ bool LicenseManager::authenticate() {
     QString productId = "-";
   #endif
   
-  QString productHash = QCryptographicHash::hash ( productId.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
+  QString productHash = QCryptographicHash::hash ( (productId.*codingfun)()  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Check License or generate request
   // =============================================================================================== 
-
-  QString saltPre;
-  ADD_SALT_PRE(saltPre);
-  
-  QString saltPost;
-  ADD_SALT_POST(saltPost);
-
-  QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
-  QFile file( licenseFileName );
-
-  if (file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-    QString licenseContents = file.readAll();
-    QStringList elements = licenseContents.split('\n',QString::SkipEmptyParts);
-
-    // simplify license file entries
-    for ( int i = 0 ; i < elements.size(); ++i )
-      elements[i] = elements[i].simplified();
-    
-    // Check the signature of the file (excluding first element as this is the signature itself)
-    QString license = saltPre;
-    for ( int i = 1 ; i < elements.size(); ++i )
-      license += elements[i];
-    license += saltPost;
-    QString licenseHash = QCryptographicHash::hash ( license.toUtf8()  , QCryptographicHash::Sha1 ).toHex();
-    bool signatureOk = licenseHash == elements[0];
-
+  if (!elements.empty()) //valid file was found
+  {
     // Check expiry date
     QDate currentDate = QDate::currentDate();
     QDate expiryDate  = QDate::fromString(elements[1],Qt::ISODate);
     bool expired = (currentDate > expiryDate);
-    
     // Get number of available mac adresses
     QStringList licensedMacs;
     for ( int i = 7 ; i < elements.size(); ++i ) {
       licensedMacs.push_back(elements[i]);
     }
-    
+
     bool macFound = false;
     for ( int i = 0; i < macHashes.size(); ++i ) {
-      if ( licensedMacs.contains(macHashes[i]) ) 
+      if ( licensedMacs.contains(macHashes[i]) )
         macFound = true;
     }
-    
+
     if ( !signatureOk ) {
       authstring_ += tr("License Error: The license file signature for Plugin \"") + name() + tr("\" is invalid!\n\n");
     } else if ( expired ) {
@@ -413,7 +438,7 @@ bool LicenseManager::authenticate() {
     // Clean it on success
     if (  authenticated_ ) 
       authstring_ = "";
-      
+
   }
 
   if ( authenticated_ ) {
