@@ -194,8 +194,9 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
     p->internalFlags_ = 0;
 
     // precompile shader
+#ifdef GL_VERSION_3_2
     GLSL::Program* shaderProg = ACG::ShaderCache::getInstance()->getProgram(&p->shaderDesc);
-
+#endif
 
 
     // check primitive type and geometry shader
