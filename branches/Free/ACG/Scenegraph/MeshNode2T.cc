@@ -775,7 +775,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
 
       // eventually prepare depthbuffer first
-      if (!_drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON) >= 0 && mesh_.n_faces())
+      if ( (!_drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON) >= 0) && ( mesh_.n_faces() != 0 ))
       {
         ro.priority = 0;
 
