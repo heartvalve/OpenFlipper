@@ -332,7 +332,7 @@ bool LicenseManager::authenticate() {
   // Compute hash of processor information
   // ===============================================================================================  
 
-  QString processor = "Unknown";
+  QString processor("Unknown");
 
   #ifdef WIN32
     QSettings registryCPU("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
