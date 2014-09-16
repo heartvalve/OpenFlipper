@@ -102,7 +102,7 @@ BaseWidget::BaseWidget (Context *_ctx, QWidget *_parent) :
   views_ = new QStackedWidget ();
  
 
-  toolbox_->setMinimumWidth (150);
+  toolbox_->setMinimumWidth (275);
 
   QVBoxLayout *layout = new QVBoxLayout;
 
@@ -120,7 +120,7 @@ BaseWidget::BaseWidget (Context *_ctx, QWidget *_parent) :
   splitter_->addWidget (w);
   splitter_->addWidget (views_);
   QList<int> sizes;
-  sizes << 150 << 10000;
+  sizes << 275 << 10000;
   splitter_->setSizes (sizes);
 
   setCentralWidget (splitter_);
