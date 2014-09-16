@@ -449,9 +449,13 @@ public slots:
     /// Lasso selection tool
     void lassoSelect(QRegion& _region, PrimitiveType _primitiveType, bool _deselection);
 
-    /** @} */
+    /// Convert the selection on one object
+    void convertSelection(const int& _objectId ,const QString& _from, const QString& _to, bool _deselect);
 
+    /// Convert the selection on all target objects
     void conversion(const QString& _from, const QString& _to, bool _deselect);
+
+    /** @} */
 
     //===========================================================================
     /** @name Template Functions

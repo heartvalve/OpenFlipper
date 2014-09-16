@@ -702,352 +702,367 @@ void MeshObjectSelectionPlugin::conversionRequested() {
     conversion(from, to, deselect);
 }
 
+void MeshObjectSelectionPlugin::convertSelection(const int& _objectId ,const QString& _from, const QString& _to, bool _deselect) {
+  BaseObject* object = 0;
+
+  PluginFunctions::getObject(_objectId,object);
+
+  if ( object == 0 ) {
+    emit log(LOGERR,"Object not found in convertSelection");
+    return;
+  }
+
+  if(_from == "Vertex Selection") {
+    if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Halfedge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Feature Vertices") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexSelectionToFeatureVertices(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexSelectionToFeatureVertices(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Handle Region") {
+      selectHandleVertices(_objectId, getVertexSelection(_objectId));
+    } else if (_to == "Modeling Region") {
+      selectModelingVertices(_objectId, getVertexSelection(_objectId));
+    }
+
+    if(_deselect) {
+      clearVertexSelection(_objectId);
+    }
+
+  } else if (_from == "Edge Selection") {
+    if(_to == "Vertex Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertEdgeToVertexSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Halfedge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertEdgeToHalfedgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertEdgeToHalfedgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertEdgeToFaceSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Feature Edges") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertEdgeSelectionToFeatureEdges(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertEdgeSelectionToFeatureEdges(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Handle Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
+          if(mesh->status(*e_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
+          if(mesh->status(*e_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      }
+    } else if (_to == "Modeling Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
+          if(mesh->status(*e_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
+          if(mesh->status(*e_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      }
+    }
+
+    if(_deselect) {
+      clearEdgeSelection(_objectId);
+    }
+  } else if (_from == "Halfedge Selection") {
+    if(_to == "Vertex Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertHalfedgeToVertexSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertHalfedgeToVertexSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertHalfedgeToEdgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertHalfedgeToEdgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertHalfedgeToFaceSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertHalfedgeToFaceSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Handle Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
+          if(mesh->status(*h_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
+          if(mesh->status(*h_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      }
+    } else if (_to == "Modeling Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
+          if(mesh->status(*h_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
+          if(mesh->status(*h_it).selected()) {
+            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      }
+    }
+
+    if(_deselect) {
+      clearHalfedgeSelection(_objectId);
+    }
+  } else if (_from == "Face Selection") {
+    if(_to == "Vertex Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertFaceToVertexSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertFaceToEdgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Feature Faces") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertFaceSelectionToFeatureFaces(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertFaceSelectionToFeatureFaces(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Halfedge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertFaceToHalfedgeSelection(PluginFunctions::triMesh(_objectId));
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertFaceToHalfedgeSelection(PluginFunctions::polyMesh(_objectId));
+    } else if (_to == "Handle Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+          if(mesh->status(*f_it).selected()) {
+            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+              ids.push_back(fv_it->idx());
+            }
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+          if(mesh->status(*f_it).selected()) {
+            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+              ids.push_back(fv_it->idx());
+            }
+          }
+        }
+        selectHandleVertices(_objectId, ids);
+      }
+    } else if (_to == "Modeling Region") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        TriMesh* mesh = PluginFunctions::triMesh(_objectId);
+        std::vector<int> ids;
+        for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+          if(mesh->status(*f_it).selected()) {
+            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+              ids.push_back(fv_it->idx());
+            }
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(_objectId);
+        std::vector<int> ids;
+        for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
+          if(mesh->status(*f_it).selected()) {
+            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+              ids.push_back(fv_it->idx());
+            }
+          }
+        }
+        selectModelingVertices(_objectId, ids);
+      }
+    }
+
+    if(_deselect) {
+      clearFaceSelection(_objectId);
+    }
+  } else if (_from == "Feature Vertices") {
+
+    if (_to == "Vertex Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        MeshSelection::convertFeatureVerticesToVertexSelection(PluginFunctions::triMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureVertices(PluginFunctions::triMesh(_objectId));
+        }
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        MeshSelection::convertFeatureVerticesToVertexSelection(PluginFunctions::polyMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureVertices(PluginFunctions::polyMesh(_objectId));
+        }
+      }
+    }
+  } else if (_from == "Feature Edges") {
+
+    if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        MeshSelection::convertFeatureEdgesToEdgeSelection(PluginFunctions::triMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureEdges(PluginFunctions::triMesh(_objectId));
+        }
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        MeshSelection::convertFeatureEdgesToEdgeSelection(PluginFunctions::polyMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureEdges(PluginFunctions::polyMesh(_objectId));
+        }
+      }
+    }
+  } else if (_from == "Feature Faces") {
+
+    if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH) {
+        MeshSelection::convertFeatureFacesToFaceSelection(PluginFunctions::triMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureFaces(PluginFunctions::triMesh(_objectId));
+        }
+      } else if(object->dataType() == DATA_POLY_MESH) {
+        MeshSelection::convertFeatureFacesToFaceSelection(PluginFunctions::polyMesh(_objectId));
+        if (_deselect) {
+          MeshSelection::clearFeatureFaces(PluginFunctions::polyMesh(_objectId));
+        }
+      }
+    }
+  } else if (_from == "Handle Region") {
+    std::vector<int> ids = getHandleVertices(_objectId);
+    if(_to == "Vertex Selection") {
+      selectVertices(_objectId, ids);
+    } else if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Halfedge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Modeling Region") {
+      selectModelingVertices(_objectId, ids);
+    }
+
+    if(_deselect) {
+      clearHandleVertices(_objectId);
+    }
+
+  } else if (_from == "Modeling Region") {
+    std::vector<int> ids = getModelingVertices(_objectId);
+    if(_to == "Vertex Selection") {
+      selectVertices(_objectId, ids);
+    } else if (_to == "Edge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Halfedge Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Face Selection") {
+      if(object->dataType() == DATA_TRIANGLE_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(_objectId), ids);
+      else if(object->dataType() == DATA_POLY_MESH)
+        MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(_objectId), ids);
+    } else if (_to == "Handle Region") {
+      selectHandleVertices(_objectId, ids);
+    }
+
+    if(_deselect) {
+      clearModelingVertices(_objectId);
+    }
+  }
+
+  emit updatedObject(_objectId, UPDATE_SELECTION);
+
+}
+
+
 void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& _to, bool _deselect) {
 
   for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH));
          o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    
-        if(_from == "Vertex Selection") {
-            if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Halfedge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Feature Vertices") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexSelectionToFeatureVertices(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexSelectionToFeatureVertices(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Handle Region") {
-                selectHandleVertices(o_it->id(), getVertexSelection(o_it->id()));
-            } else if (_to == "Modeling Region") {
-                selectModelingVertices(o_it->id(), getVertexSelection(o_it->id()));
-            }
-            
-            if(_deselect) {
-                clearVertexSelection(o_it->id());
-            }
-            
-        } else if (_from == "Edge Selection") {
-            if(_to == "Vertex Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertEdgeToVertexSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Halfedge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertEdgeToHalfedgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertEdgeToHalfedgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertEdgeToFaceSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Feature Edges") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertEdgeSelectionToFeatureEdges(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertEdgeSelectionToFeatureEdges(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Handle Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(*e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(*e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                }
-            } else if (_to == "Modeling Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(*e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(*e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                }
-            }
-            
-            if(_deselect) {
-                clearEdgeSelection(o_it->id());
-            }
-        } else if (_from == "Halfedge Selection") {
-            if(_to == "Vertex Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertHalfedgeToVertexSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertHalfedgeToVertexSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertHalfedgeToEdgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertHalfedgeToEdgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertHalfedgeToFaceSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertHalfedgeToFaceSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Handle Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(*h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(*h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                }
-            } else if (_to == "Modeling Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(*h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(*h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                }
-            }
-            
-            if(_deselect) {
-                clearHalfedgeSelection(o_it->id());
-            }
-        } else if (_from == "Face Selection") {
-            if(_to == "Vertex Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertFaceToVertexSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertFaceToEdgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Feature Faces") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertFaceSelectionToFeatureFaces(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertFaceSelectionToFeatureFaces(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Halfedge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertFaceToHalfedgeSelection(PluginFunctions::triMesh(o_it));
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertFaceToHalfedgeSelection(PluginFunctions::polyMesh(o_it));
-            } else if (_to == "Handle Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(*f_it).selected()) {
-                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
-                                ids.push_back(fv_it->idx());
-                            }
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(*f_it).selected()) {
-                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
-                                ids.push_back(fv_it->idx());
-                            }
-                        }
-                    }
-                    selectHandleVertices(o_it->id(), ids);
-                }
-            } else if (_to == "Modeling Region") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    TriMesh* mesh = PluginFunctions::triMesh(o_it);
-                    std::vector<int> ids;
-                    for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(*f_it).selected()) {
-                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
-                                ids.push_back(fv_it->idx());
-                            }
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
-                    std::vector<int> ids;
-                    for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(*f_it).selected()) {
-                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
-                                ids.push_back(fv_it->idx());
-                            }
-                        }
-                    }
-                    selectModelingVertices(o_it->id(), ids);
-                }
-            }
-            
-            if(_deselect) {
-                clearFaceSelection(o_it->id());
-            }
-        } else if (_from == "Feature Vertices") {
 
-            if (_to == "Vertex Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    MeshSelection::convertFeatureVerticesToVertexSelection(PluginFunctions::triMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureVertices(PluginFunctions::triMesh(o_it));
-                    }
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    MeshSelection::convertFeatureVerticesToVertexSelection(PluginFunctions::polyMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureVertices(PluginFunctions::polyMesh(o_it));
-                    }
-                }
-            }
-        } else if (_from == "Feature Edges") {
-
-            if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    MeshSelection::convertFeatureEdgesToEdgeSelection(PluginFunctions::triMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureEdges(PluginFunctions::triMesh(o_it));
-                    }
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    MeshSelection::convertFeatureEdgesToEdgeSelection(PluginFunctions::polyMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureEdges(PluginFunctions::polyMesh(o_it));
-                    }
-                }
-            }
-        } else if (_from == "Feature Faces") {
-
-            if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH) {
-                    MeshSelection::convertFeatureFacesToFaceSelection(PluginFunctions::triMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureFaces(PluginFunctions::triMesh(o_it));
-                    }
-                } else if(o_it->dataType() == DATA_POLY_MESH) {
-                    MeshSelection::convertFeatureFacesToFaceSelection(PluginFunctions::polyMesh(o_it));
-                    if (_deselect) {
-                        MeshSelection::clearFeatureFaces(PluginFunctions::polyMesh(o_it));
-                    }
-                }
-            }
-        } else if (_from == "Handle Region") {
-            std::vector<int> ids = getHandleVertices(o_it->id());
-            if(_to == "Vertex Selection") {
-                selectVertices(o_it->id(), ids);
-            } else if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Halfedge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Modeling Region") {
-                selectModelingVertices(o_it->id(), ids);
-            }
-            
-            if(_deselect) {
-                clearHandleVertices(o_it->id());
-            }
-            
-        } else if (_from == "Modeling Region") {
-            std::vector<int> ids = getModelingVertices(o_it->id());
-            if(_to == "Vertex Selection") {
-                selectVertices(o_it->id(), ids);
-            } else if (_to == "Edge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Halfedge Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToHalfedgeSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Face Selection") {
-                if(o_it->dataType() == DATA_TRIANGLE_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it), ids);
-                else if(o_it->dataType() == DATA_POLY_MESH)
-                    MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it), ids);
-            } else if (_to == "Handle Region") {
-                selectHandleVertices(o_it->id(), ids);
-            }
-            
-            if(_deselect) {
-                clearModelingVertices(o_it->id());
-            }
-        }
-        
-        emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        convertSelection(o_it->id(),_from,_to,_deselect);
         emit createBackup(o_it->id(), "Selection Conversion", UPDATE_SELECTION);
     }
 }
