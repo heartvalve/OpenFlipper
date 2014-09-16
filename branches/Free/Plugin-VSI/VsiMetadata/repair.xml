@@ -91,15 +91,13 @@ void detectFlatValence3Vertices(int _objectId, double _angle);
       <input name="angle" type="Number">
         <short>Threshold angle</short>
         <long>Threshold angle</long>
+        <precision>0.001</precision>
       </input>
     </inputs>
     <code>
       meshrepair.detectFoldover ([input="obj"], [input="angle"]);
     </code>
   </element>
-
-
-
   <element name="repair_removeselectedval3vertices">
     <category>Mesh Repair</category>
     <short>Remove selected valence 3 vertices</short>

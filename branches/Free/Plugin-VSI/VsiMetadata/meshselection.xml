@@ -1,0 +1,358 @@
+<OpenFlipper>
+  <element name="selection_converter">
+    <category>Mesh Object Selections</category>      
+    <short>Mesh Object Selection Converter</short>
+    <long>Convert selection types on an mesh object</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+      <input name="keep" type="Bool" external="true" runtime="true">
+          <short>Keep original selection</short>
+          <long>Keep the original selection intact or remove it</long>
+          <default>true</default>
+      </input>
+      <input name="input_selection" type="Selection" external="false" runtime="true">
+          <short>Input selection</short>
+          <long>Which input selection should be used</long>
+          <default>C1</default>
+          <names>Vertex Selection,Edge Selection,Halfedge Selection,Face Selection,Feature Vertices,Feature Edges,Feature Faces,Handle Region,Modeling Region</names>
+          <descriptions>Vertex Selection,Edge Selection,Halfedge Selection,Face Selection,Feature Vertices,Feature Edges,Feature Faces,Handle Region,Modeling Region</descriptions>
+      </input>
+      <input name="output_selection" type="Selection" external="false" runtime="true">
+          <short>Output selection</short>
+          <long>To which selection type should the input be converted</long>
+          <default>C1</default>
+          <names>Vertex Selection,Edge Selection,Halfedge Selection,Face Selection,Feature Vertices,Feature Edges,Feature Faces,Handle Region,Modeling Region</names>
+          <descriptions>Vertex Selection,Edge Selection,Halfedge Selection,Face Selection,Feature Vertices,Feature Edges,Feature Faces,Handle Region,Modeling Region</descriptions>
+       </input>
+    </inputs>
+    <code>
+      meshobjectselection.convertSelection( [input="obj"], [input="input_selection"], [input="output_selection"], [input="keep"]);
+    </code>
+  </element>
+  
+  <element name="vertex_selection_clear">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: Clear</short>
+    <long>Clear Vertex Selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.clearVertexSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="vertex_selection_all">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: All</short>
+    <long>Select all verticies</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectAllVertices( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="vertex_selection_boundary">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: Boundary</short>
+    <long>Select all boundary verticies</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectBoundaryVertices( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="vertex_selection_invert">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: Invert</short>
+    <long>Invert vertex selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.invertVertexSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="vertex_selection_shrink">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: Shrink</short>
+    <long>Shrink vertex selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.shrinkVertexSelection( [input="obj"] );
+    </code>
+  </element>  
+
+  <element name="vertex_selection_grow">
+    <category>Mesh Object Selections</category>      
+    <short>Vertex Selection: Grow</short>
+    <long>Grow vertex selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.growVertexSelection( [input="obj"] );
+    </code>
+  </element>  
+    
+  <element name="edge_selection_clear">
+    <category>Mesh Object Selections</category>      
+    <short>Edge Selection: Clear</short>
+    <long>Clear Edge Selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.clearEdgeSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="edge_selection_all">
+    <category>Mesh Object Selections</category>      
+    <short>Edge Selection: All</short>
+    <long>Select all edges</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectAllEdges( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="edge_selection_invert">
+    <category>Mesh Object Selections</category>      
+    <short>Edge Selection: Invert</short>
+    <long>Invert edge selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.invertEdgeSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="edge_selection_boundary">
+    <category>Mesh Object Selections</category>      
+    <short>Edge Selection: Boundary</short>
+    <long>Select all boundary edges</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectBoundaryEdges( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="halfedge_selection_clear">
+    <category>Mesh Object Selections</category>      
+    <short>Halfedge Selection: Clear</short>
+    <long>Clear Halfedge Selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.clearHalfedgeSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="halfedge_selection_all">
+    <category>Mesh Object Selections</category>      
+    <short>Halfedge Selection: All</short>
+    <long>Select all Halfedges</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectAllHalfedges( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="halfedge_selection_invert">
+    <category>Mesh Object Selections</category>      
+    <short>Halfedge Selection: Invert</short>
+    <long>Invert halfedge selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.invertHalfedgeSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="halfedge_selection_boundary">
+    <category>Mesh Object Selections</category>      
+    <short>Halfedge Selection: Boundary</short>
+    <long>Select all boundary Halfedges</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectBoundaryHalfedges( [input="obj"] );
+    </code>
+  </element>
+  
+  
+  <element name="face_selection_clear">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: Clear</short>
+    <long>Clear Face Selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.clearFaceSelection( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="face_selection_all">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: All</short>
+    <long>Select all faces</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectAllFaces( [input="obj"] );
+    </code>
+  </element>
+  
+  <element name="face_selection_boundary">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: Boundary</short>
+    <long>Select all boundary faces</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.selectBoundaryFaces( [input="obj"] );
+    </code>
+  </element>  
+
+  <element name="face_selection_invert">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: Invert</short>
+    <long>Invert face selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.invertFaceSelection( [input="obj"] );
+    </code>
+  </element>  
+  
+  <element name="face_selection_shrink">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: Shrink</short>
+    <long>Shrink face selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.shrinkFaceSelection( [input="obj"] );
+    </code>
+  </element>  
+
+  <element name="vertex_selection_grow">
+    <category>Mesh Object Selections</category>      
+    <short>Face Selection: Grow</short>
+    <long>Grow face selection</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+          <short>ID of an Object</short>
+          <long>ID of an Object</long>
+      </input>
+    </inputs>
+    <code>
+      meshobjectselection.growFaceSelection( [input="obj"] );
+    </code>
+  </element>  
+  
+</OpenFlipper>
