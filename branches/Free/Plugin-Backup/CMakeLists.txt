@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin()
+openflipper_plugin(INSTALLDATA VsiMetadata)

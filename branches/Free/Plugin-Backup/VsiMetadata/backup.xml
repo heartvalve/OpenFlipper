@@ -1,0 +1,21 @@
+<OpenFlipper>  
+  <element name="backup_createBackup">
+    <category>Object Manipulation</category>
+    <short>Create Backup</short>
+    <long>Creates a backup which can be restored via undo.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="name" type="String">
+        <short>Name</short>
+        <long>Name of the backup</long>
+      </input>
+    </inputs>
+    <code>
+        backup.createBackup([input="obj"],[input="name"]);
+    </code>
+  </element> 
+</OpenFlipper>

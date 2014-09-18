@@ -137,6 +137,12 @@ void BackupPlugin::pluginsInitialized() {
     connect(redoContextAction_, SIGNAL(triggered()), this, SLOT(slotObjectRedo()) );
     emit addContextMenuItem(redoContextAction_, DATA_ALL, CONTEXTOBJECTMENU);
   }
+
+//createBackup(int _objectId, QString _name, UpdateType _type= UPDATE_ALL)
+  emit setSlotDescription("createBackup(int,QString)", tr("Creates a backup which can be restored via undo."),
+                               QString("objectId,name").split(","), QString("Id of the object,name of the backup").split(","));
+  emit setSlotDescription("createBackup(int,QString,UpdateType)", tr("Creates a backup which can be restored via undo."),
+                             QString("objectId,name,type").split(","), QString("Id of the object,name of the backup,updatetypes which are changed").split(","));
 }
 
 //-----------------------------------------------------------------------------
@@ -393,6 +399,13 @@ void BackupPlugin::slotRedo(){
       emit updatedObject(group->objectIDs()[i], UPDATE_ALL);
 
   updateButtons();
+}
+
+//-----------------------------------------------------------------------------
+
+void BackupPlugin::createBackup(int _objectId, QString _name, UpdateType _type)
+{
+  slotCreateBackup(_objectId,_name,_type);
 }
 
 //-----------------------------------------------------------------------------
