@@ -9,9 +9,9 @@
           <short>ID of an Object</short>
           <long>ID of an Object</long>
       </input>
-      <input name="keep" type="Bool" external="true" runtime="true">
-          <short>Keep original selection</short>
-          <long>Keep the original selection intact or remove it</long>
+      <input name="deselect" type="Bool" external="true" runtime="true">
+          <short>Deselect original Selection</short>
+          <long>Deselect the original selection or keep it intact</long>
           <default>true</default>
       </input>
       <input name="input_selection" type="Selection" external="false" runtime="true">
@@ -30,7 +30,7 @@
        </input>
     </inputs>
     <code>
-      meshobjectselection.convertSelection( [input="obj"], [input="input_selection"], [input="output_selection"], [input="keep"]);
+      meshobjectselection.convertSelection( [input="obj"], [input="input_selection"], [input="output_selection"], [input="deselect"]);
     </code>
   </element>
   
