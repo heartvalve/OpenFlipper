@@ -104,6 +104,10 @@ initializePlugin()
 void
 SmootherPlugin::pluginsInitialized(){
 
+  emit setSlotDescription("smooth(int,int,QString,QString,double,bool)", "Smooth an object",
+                           QString("object_id,iterations,direction,continuity,maxDistance,respectFeatures").split(","),
+                           QString("id of an object, number of smoothing iterations, Smoothing direction. (tangential;normal;tangential+normal), Continuity. (C1 or C2), max distance the smoothed mesh is allowed to differ from the original,Keep features intact").split(","));
+
   emit setSlotDescription("smooth(int,int,QString,QString,double)", "Smooth an object",
                           QString("object_id,iterations,direction,continuity,maxDistance").split(","),
                           QString("id of an object, number of smoothing iterations, Smoothing direction. (tangential;normal;tangential+normal), Continuity. (C1 or C2), max distance the smoothed mesh is allowed to differ from the original").split(","));
@@ -237,15 +241,7 @@ slot_smooth()
 
 //-----------------------------------------------------------------------------
 
-/** \brief  Smooth object
-*
-* @param _objectId Object to smooth
-* @param _iterations Number of smoothing iterations
-* @param _direction tangential/normal/tangential+normal
-* @param _continuity C0/C1
-* @param _maxDistance the maximum distance that the smoothed mesh is allowed to differ from the original mesh
-*/
-void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance) {
+void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance, bool _respectFeatures ) {
 
   BaseObjectData* baseObjectData;
   if ( ! PluginFunctions::getObject(_objectId,baseObjectData) ) {
@@ -325,6 +321,10 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
       data->distance( FLT_MAX );
       smoother.set_absolute_local_error( FLT_MAX );
     }
+
+    // Keep features?
+    data->features(_respectFeatures);
+    smoother.skip_features(_respectFeatures);
 
     smoother.initialize(component,continuity);
 
