@@ -35,9 +35,14 @@
         <max>1000000000</max>
         <precision>0.000001</precision>
       </input>
+      <input name="keepFeatures" type="Bool" external="false" runtime="false">
+          <short>Keep features</short>
+          <long>Keep the original features intact</long>
+          <default>true</default>
+      </input>
     </inputs>
     <code>
-      smoother.smooth ([input="obj"], [input="iterations"], [input="direction"], [input="continuity"], [input="maxDistance"]);
+      smoother.smooth ([input="obj"], [input="iterations"], [input="direction"], [input="continuity"], [input="maxDistance"], [input="keepFeatures"]);
     </code>
   </element>
 </OpenFlipper>
