@@ -154,14 +154,15 @@ public slots:
 
    /** \brief smooth an object
     *
-    * @param _objectId    Id of the object that should be smoothed
-    * @param _iterations  Number of iterations
-    * @param _direction   Tangential or normal?
-    * @param _continuity  Continuity selection
-    * @param _maxDistance Maximal distance after smoothing
+    * @param _objectId        Id of the object that should be smoothed
+    * @param _iterations      Number of iterations
+    * @param _direction       Tangential or normal?
+    * @param _continuity      Continuity selection
+    * @param _maxDistance     Maximal distance after smoothing
+    * @param _respectFeatures Keep features
     *
     */
-   void smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance = -1.0);
+   void smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance = -1.0, bool _respectFeatures = true);
 
    /** @} */
 
