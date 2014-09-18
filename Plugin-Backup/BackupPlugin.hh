@@ -78,6 +78,8 @@ signals:
   // BaseInterface
   void updateView();
   void updatedObject(int _identifier, const UpdateType& _type);
+  void setSlotDescription(QString     _slotName    ,   QString     _slotDescription,
+                                        QStringList _parameters  , QStringList _descriptions);
   
   //  LoggingInterface
   void log(Logtype _type, QString _message);
@@ -142,6 +144,8 @@ private slots:
 public slots:
   QString version() { return QString("0.1"); };  
   
+  void createBackup(int _objectId, QString _name, UpdateType _type= UPDATE_ALL);
+
 public:
   ~BackupPlugin() {};
   BackupPlugin();
