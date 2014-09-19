@@ -1,0 +1,17 @@
+<OpenFlipper>  
+  <element name="holefilling_fillAllHoles">
+    <category>Algorithms</category>
+    <short>Fill All Holes</short>
+    <long>Detects and fills all holes.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+        holefiller.fillAllHoles([input="obj"]);
+    </code>
+  </element> 
+</OpenFlipper>
