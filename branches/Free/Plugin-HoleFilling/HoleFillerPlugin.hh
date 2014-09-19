@@ -77,7 +77,7 @@ class HoleFillerPlugin : public QObject, BaseInterface, MouseInterface, PickingI
     void updateView();
     void updatedObject(int, UpdateType);
 
-    void addPickMode( const std::string _mode );
+    void addPickMode( const std::string& _mode );
 
     void log(Logtype _type, QString _message);
     void log(QString _message);
