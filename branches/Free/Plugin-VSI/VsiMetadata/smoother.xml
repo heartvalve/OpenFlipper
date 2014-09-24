@@ -24,9 +24,9 @@
       </input>
       <input name="continuity" type="Selection" external="false">
         <short>Smoothing continuity</short>
-        <default>C1</default>
-        <names>C1,C2</names>
-        <descriptions>C1,C2</descriptions>
+        <default>C0</default>
+        <names>C0,C1</names>
+        <descriptions>C0,C1</descriptions>
       </input>
       <input name="maxDistance" type="Number" external="false">
         <short>Maximal distance</short>
