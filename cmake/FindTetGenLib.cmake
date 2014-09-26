@@ -12,7 +12,7 @@ IF (TetGenLib_INCLUDE_DIR)
   SET(TetGenLib_FIND_QUIETLY TRUE)
 ENDIF (TetGenLib_INCLUDE_DIR)
 
-set(TetGenLib_TMP_PATHS /home/zimmer/projects/libs/)
+set(TetGenLib_TMP_PATHS /home/zimmer/projects/libs/ /home/hzimmer/opt/libs/)
 
 FIND_PATH( TetGenLib_INCLUDE_DIR tetgen.h
   PATHS ${TetGenLib_TMP_PATHS}/TetGen/include/)

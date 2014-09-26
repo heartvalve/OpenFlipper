@@ -72,6 +72,7 @@ else()
         NAMES "libgmp.so" "libgmp.dylib"
         PATHS
         /usr/lib/
+        /usr/lib64/
         /usr/lib/x86_64-linux-gnu/
         /usr/local/lib/
         /usr/local/lib/
