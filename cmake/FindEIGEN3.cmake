@@ -12,7 +12,6 @@ else (EIGEN3_INCLUDE_DIR)
 find_path( EIGEN3_INCLUDE_DIR 
 	   NAMES Eigen/Dense 
            PATHS $ENV{EIGEN_DIR}
-                $ENV{HOME}/opt/libs/eigen3/
                  /usr/include/eigen3
                  /usr/local/include
                  /usr/local/include/eigen3/
