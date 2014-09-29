@@ -135,9 +135,9 @@ void
 HoleFiller< MeshT >::fill_hole( EH _eh, int _stages )
 {
   std::cerr << "  Stage 1 : Computing a minimal triangulation ... ";
-  
+
   //remember last vertex for selection of new ones
-  typename MeshT::VertexIter old_end = mesh_.vertices_end();
+  typename MeshT::VertexHandle old_last_handle = *(--mesh_.vertices_end());
 
   // No boundary edge, no hole
   
@@ -239,6 +239,7 @@ HoleFiller< MeshT >::fill_hole( EH _eh, int _stages )
     fairing(handles);
 
     //select all new vertices
+    typename MeshT::VertexIter old_end = ++typename MeshT::VertexIter(mesh_,old_last_handle);
     typename MeshT::VertexIter v_end = mesh_.vertices_end();
 
     for(; old_end != v_end; ++old_end)
