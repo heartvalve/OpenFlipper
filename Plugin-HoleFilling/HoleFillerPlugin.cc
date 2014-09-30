@@ -106,30 +106,27 @@ void HoleFillerPlugin::pluginsInitialized()
    update_menu();
 }
 
+void HoleFillerPlugin::getSelectedHoles(std::vector<int>& _holeIds, std::vector<int>& _objIds)
+{
+  QModelIndexList indices = tool_->tableWidget->selectionModel()->selectedRows();
+
+  //get a map from objectID to (selected) holeIDs
+  for (int i=0; i < indices.size(); i++){
+    int objID  = holeMapping_[ indices[i].row() ].first;
+    int holeID = holeMapping_[ indices[i].row() ].second;
+
+    _holeIds.push_back  ( holeID );
+    _objIds.push_back( objID );
+  }
+}
+
 /// Fill all selected holes
 void HoleFillerPlugin::slotFillSelection(){
-
-  //get selected rows
-  std::vector< int > rows;
-
-  QList<QTableWidgetItem *> items = tool_->tableWidget->selectedItems();
-
-  int itemCount = items.count() / 3;
-
-  for (int i=0; i < itemCount ; i++)
-      rows.push_back( items[i]->row() );
 
   //get a map from objectID to (selected) holeIDs
   std::vector< int > holes;
   std::vector< int > objects;
-
-  for (uint i=0; i < rows.size(); i++){
-    int objID  = holeMapping_[ rows[i] ].first;
-    int holeID = holeMapping_[ rows[i] ].second;
-
-    holes.push_back  ( holeID );
-    objects.push_back( objID );
-  }
+  getSelectedHoles(holes,objects);
 
   //init progressDialog
   QProgressDialog progress(tr("Filling holes..."), tr("Abort"), 0, holes.size(), 0);
@@ -193,27 +190,9 @@ void HoleFillerPlugin::slotFillSelection(){
 /// slot for displaying selected holes
 void HoleFillerPlugin::slotItemSelectionChanged() {
 
-  //get selected rows
-  std::vector< int > rows;
-
-  QList<QTableWidgetItem *> items = tool_->tableWidget->selectedItems();
-
-  int itemCount = items.count() / 3;
-
-  for (int i=0; i < itemCount ; i++)
-      rows.push_back( items[i]->row() );
-
-  //get a map from objectID to (selected) holeIDs
   std::vector< int > holes;
   std::vector< int > objects;
-
-  for (uint i=0; i < rows.size(); i++){
-    int objID  = holeMapping_[ rows[i] ].first;
-    int holeID = holeMapping_[ rows[i] ].second;
-
-    holes.push_back  ( holeID );
-    objects.push_back( objID );
-  }
+  getSelectedHoles(holes,objects);
 
   //iterate over all objects with holes that should be displayed
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {

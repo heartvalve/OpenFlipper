@@ -59,6 +59,9 @@
 
 #include "holefillerToolbar.hh"
 
+#include <vector>
+#include <utility>
+
 class HoleFillerPlugin : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface
 {
   Q_OBJECT
@@ -123,6 +126,9 @@ class HoleFillerPlugin : public QObject, BaseInterface, MouseInterface, PickingI
   private :
 
     void update_menu();
+
+    /// get a map from objectID to (selected) holeIDs
+    void getSelectedHoles(std::vector<int>& _holeIds, std::vector<int>& _objIds);
 
     /// Widget for Toolbox
     HoleFillerToolbarWidget* tool_;
