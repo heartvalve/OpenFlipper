@@ -517,6 +517,13 @@ bool LoadWidget::validFilename() {
   return true;
 }
 
+bool LoadWidget::dirExists()
+{
+  QFileInfo firstEntered = selectedFiles()[0];
+  // Test if directory exists
+  return QDir(firstEntered.dir()).exists();
+}
+
 void LoadWidget::accept() {
     
   if( (!loadMode_) || validFilename() ) {
@@ -524,7 +531,11 @@ void LoadWidget::accept() {
     if ( loadMode_ )
       loadFile();
     else
+    {
+      if (!dirExists()) //if dir does not exist, don't accept
+        return;
       saveFile();
+    }
 
     QFileDialog::accept();
   }

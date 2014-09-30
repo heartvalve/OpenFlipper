@@ -83,6 +83,8 @@ class LoadWidget : public QFileDialog
     int showSave(IdList _ids, QString _filename);
     
     bool validFilename();
+    /// returns true, if the directory of the specified filename (user input via widget) exists
+    bool dirExists();
     
   public slots :
     virtual void accept();
