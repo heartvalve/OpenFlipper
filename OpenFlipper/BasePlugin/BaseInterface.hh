@@ -305,7 +305,7 @@ class BaseInterface {
 
   /** @} */
 
-  private slots :
+  public slots :
 
     /** This function is called when the application exits or when your plugin is about to be unloaded.
       * Here you can clean up your plugin, delete local variables...
