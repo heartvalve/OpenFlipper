@@ -706,14 +706,6 @@ Core::init() {
 
 Core::~Core()
 {
-   for ( uint i = 0 ; i < plugins_.size() ; ++i ){
-     BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins_[i].plugin);
-
-     // Dont call exit if we cannot get the Plugin
-     if ( basePlugin )
-       if ( checkSlot( plugins_[i].plugin , "exit()" ) )
-          QMetaObject::invokeMethod(plugins_[i].plugin, "exit",  Qt::DirectConnection);
-  }
 
   // Delete the objectRoot if it was constructed
   if ( objectRoot_ != 0 ) {
@@ -1160,13 +1152,6 @@ Core::writeOnExit() {
     windowStates.endGroup ();
   }
 
-  // Call exit for all plugins
-   for (uint i = 0 ; i < plugins_.size() ; ++i) {
-      BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins_[i].plugin);
-      if ( basePlugin )
-          if ( checkSlot( plugins_[i].plugin , "exit()" ) )
-            QMetaObject::invokeMethod(plugins_[i].plugin, "exit",  Qt::DirectConnection);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -1175,6 +1160,15 @@ void Core::slotExit() {
   // Write all information on application exit
   writeOnExit();
   
+  // Notify plugins of imminent exit.
+  for ( uint i = 0 ; i < plugins_.size() ; ++i ){
+      BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins_[i].plugin);
+
+      // Dont call exit if we cannot get the Plugin
+      if ( basePlugin )
+          basePlugin->exit();
+ }
+
   // Call clearAll() before closing application
   // in order to call all object's destructors...
   clearAll();
