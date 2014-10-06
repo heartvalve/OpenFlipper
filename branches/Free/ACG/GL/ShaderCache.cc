@@ -62,8 +62,6 @@
 namespace ACG
 {
 
-//#define SG_DEBUG_OUTPUT
-
 ShaderCache::ShaderCache():
     cache_(),
     cacheStatic_(),
@@ -78,6 +76,9 @@ ShaderCache::~ShaderCache()
     delete it->second;
 
   for (CacheList::iterator it = cacheStatic_.begin(); it != cacheStatic_.end();  ++it)
+    delete it->second;
+
+  for (CacheList::iterator it = cacheComputeShaders_.begin(); it != cacheComputeShaders_.end();  ++it)
     delete it->second;
 }
 
@@ -146,12 +147,13 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   // glsl program not in cache, generate shaders
   ShaderProgGenerator progGen(_desc, _usage);
 
-#ifdef SG_DEBUG_OUTPUT
+  if (!dbgOutputDir_.isEmpty())
   {
     static int counter = 0;
 
-    char fileName[0x100];
-    sprintf(fileName, "../../../shader_%02d.glsl", counter++);
+    QString fileName;
+    fileName.sprintf("shader_%02d.glsl", counter++);
+    fileName = dbgOutputDir_ + QDir::separator() + fileName;
 
     QFile fileOut(fileName);
     if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
@@ -200,9 +202,6 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
       fileOut.close();
     }
   }
-#endif
-
-  // TODO: Build geometry shader only if supported!
 
   GLSL::FragmentShader* fragShader = new GLSL::FragmentShader();
   GLSL::VertexShader* vertShader   = new GLSL::VertexShader();
@@ -271,7 +270,12 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   return prog;
 }
 
-GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile, QStringList* _macros, bool _verbose )
+GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, 
+  const char* _tessControlShaderFile,
+  const char* _tessEvalShaderFile,
+  const char* _geometryShaderFile,
+  const char* _fragmentShaderFile,
+  QStringList* _macros, bool _verbose )
 {
   CacheEntry newEntry;
   newEntry.usage = 0;
@@ -294,7 +298,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
     newEntry.strFragmentTemplate = _fragmentShaderFile;
     newEntry.fragmentFileLastMod = fileInfo.lastModified();
   }
-  
+
   // vertex shader
   fileInfo = QFileInfo(_vertexShaderFile);
   if (fileInfo.isRelative())
@@ -310,6 +314,66 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
     newEntry.strVertexTemplate = _vertexShaderFile;
     newEntry.vertexFileLastMod = fileInfo.lastModified();
   }
+
+
+  // geometry shader
+  if (_geometryShaderFile)
+  {
+    fileInfo = QFileInfo(_geometryShaderFile);
+    if (fileInfo.isRelative())
+    {
+      QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_geometryShaderFile);
+      fileInfo = QFileInfo(absFilename);
+
+      newEntry.strGeometryTemplate = absFilename;
+      newEntry.geometryFileLastMod = fileInfo.lastModified();
+    }
+    else
+    {
+      newEntry.strGeometryTemplate = _geometryShaderFile;
+      newEntry.geometryFileLastMod = fileInfo.lastModified();
+    }
+  }
+
+  // tess-ctrl shader
+  if (_tessControlShaderFile)
+  {
+    fileInfo = QFileInfo(_tessControlShaderFile);
+    if (fileInfo.isRelative())
+    {
+      QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_tessControlShaderFile);
+      fileInfo = QFileInfo(absFilename);
+
+      newEntry.strTessControlTemplate = absFilename;
+      newEntry.tessControlFileLastMod = fileInfo.lastModified();
+    }
+    else
+    {
+      newEntry.strTessControlTemplate = _tessControlShaderFile;
+      newEntry.tessControlFileLastMod = fileInfo.lastModified();
+    }
+  }
+
+  // tess-eval shader
+  if (_tessEvalShaderFile)
+  {
+    fileInfo = QFileInfo(_tessEvalShaderFile);
+    if (fileInfo.isRelative())
+    {
+      QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_tessEvalShaderFile);
+      fileInfo = QFileInfo(absFilename);
+
+      newEntry.strTessEvaluationTemplate = absFilename;
+      newEntry.tessEvaluationFileLastMod = fileInfo.lastModified();
+    }
+    else
+    {
+      newEntry.strTessEvaluationTemplate = _tessEvalShaderFile;
+      newEntry.tessEvaluationFileLastMod = fileInfo.lastModified();
+    }
+  }
+
+
 
   if (_macros)
     newEntry.macros = *_macros;
@@ -340,7 +404,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
   }
 
 
-  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile, &glslMacros, _verbose);
+  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _tessControlShaderFile, _tessEvalShaderFile, _geometryShaderFile, _fragmentShaderFile, &glslMacros, _verbose);
   glCheckErrors();
 
   if (oldCache != cacheStatic_.end())
@@ -357,6 +421,83 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
   }
 
   cacheStatic_.push_back(std::pair<CacheEntry, GLSL::Program*>(newEntry, prog));
+
+  return prog;
+}
+
+GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile, QStringList* _macros, bool _verbose )
+{
+  return getProgram(_vertexShaderFile, 0, 0, 0, _fragmentShaderFile, _macros, _verbose);
+}
+
+GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFile, QStringList* _macros /* = 0 */, bool _verbose /* = true */)
+{
+  CacheEntry newEntry;
+  newEntry.usage = 0;
+
+  // store filenames and timestamps in new entry
+  // use vertex shader filename as compute shader
+  QFileInfo fileInfo(_computeShaderFile);
+  if (fileInfo.isRelative())
+  {
+    QString absFilename = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(_computeShaderFile);
+    fileInfo = QFileInfo(absFilename);
+
+    newEntry.strVertexTemplate = absFilename;
+    newEntry.vertexFileLastMod = fileInfo.lastModified();
+  }
+  else
+  {
+    newEntry.strVertexTemplate = _computeShaderFile;
+    newEntry.vertexFileLastMod = fileInfo.lastModified();
+  }
+
+  if (_macros)
+    newEntry.macros = *_macros;
+
+  CacheList::iterator oldCache = cacheComputeShaders_.end();
+
+  for (CacheList::iterator it = cacheComputeShaders_.begin(); it != cacheComputeShaders_.end();  ++it)
+  {
+    // If the shaders are equal, we return the cached entry
+    if (!compareShaderGenDescs(&it->first, &newEntry))
+    {
+      if ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry))
+        oldCache = it;
+      else
+        return it->second;
+    }
+  }
+
+
+  // convert QStringList to GLSL::StringList
+
+  GLSL::StringList glslMacros;
+
+  if (_macros)
+  {
+    for (QStringList::const_iterator it = _macros->constBegin(); it != _macros->constEnd(); ++it)
+      glslMacros.push_back(it->toStdString());
+  }
+
+
+  GLSL::Program* prog = GLSL::loadComputeProgram(_computeShaderFile, &glslMacros, _verbose);
+  glCheckErrors();
+
+  if (oldCache != cacheComputeShaders_.end())
+  {
+    if (!prog || !prog->isLinked())
+    {
+      delete prog;
+      return oldCache->second;
+    }
+    else
+    {
+      cacheComputeShaders_.erase(oldCache);
+    }
+  }
+
+  cacheComputeShaders_.push_back(std::pair<CacheEntry, GLSL::Program*>(newEntry, prog));
 
   return prog;
 }
@@ -430,8 +571,13 @@ void ACG::ShaderCache::clearCache()
 {
   cache_.clear();
   cacheStatic_.clear();
+  cacheComputeShaders_.clear();
 }
 
+void ACG::ShaderCache::setDebugOutputDir(const char* _outputDir)
+{
+  dbgOutputDir_ = _outputDir;
+}
 
 //=============================================================================
 } // namespace ACG

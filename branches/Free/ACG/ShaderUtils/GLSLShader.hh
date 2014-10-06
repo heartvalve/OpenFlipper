@@ -164,6 +164,21 @@ namespace GLSL {
 
   //--------------------------------------------------------------------------
 
+  /** \brief GLSL compute shader.
+  */
+  class ACGDLLEXPORT ComputeShader : public Shader {
+
+    public:
+      ComputeShader();
+      virtual ~ComputeShader();
+  };
+
+  typedef ComputeShader* PtrComputeShader;
+  typedef const ComputeShader* PtrConstComputeShader;
+
+  //--------------------------------------------------------------------------
+
+
   /** \brief GLSL program class.
   *
   * A GLSL program links together the vertex and fragment shaders.
@@ -286,6 +301,7 @@ namespace GLSL {
   GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
   GLSL::PtrShader ACGDLLEXPORT loadTessControlShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
   GLSL::PtrShader ACGDLLEXPORT loadTessEvaluationShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
+  GLSL::PtrComputeShader ACGDLLEXPORT loadComputeShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
 
   /** load shaders and create GLSL program if successful
    *
@@ -321,6 +337,14 @@ namespace GLSL {
                                           const GLSL::StringList *macros = 0,
                                           bool verbose = true);
 
+  /** load glsl compute shader and create GLSL program if successful
+   *
+   * Shader file paths for this function are assumed to be relative
+   * to the "Shader" directory as specified in   ShaderProgGenerator::getShaderDir()
+  */
+  GLSL::PtrProgram ACGDLLEXPORT loadComputeProgram(const char *computeShaderFile,
+                                                   const GLSL::StringList *macros = 0,
+                                                   bool verbose = true);
 }
 
 #endif // GLSLSHADER_H
