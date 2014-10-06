@@ -97,13 +97,49 @@ public:
    * However, the program should be queried every time before using the program as it may have been deleted and recompiled in the meantime.
    *
    * @param _vertexShaderFile relative (from shader directory) or absolute filename of vertex shader
-   * @param _fragmentShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _tessControlShaderFile relative (from shader directory) or absolute filename of tessellation control shader, null accepted
+   * @param _tessEvalShaderFile relative (from shader directory) or absolute filename of tessellation eval shader, null accepted
+   * @param _geometryShaderFile relative (from shader directory) or absolute filename of geometry shader, null accepted
+   * @param _fragmentShaderFile relative (from shader directory) or absolute filename of fragment shader
+   * @param _macros optional list of glsl preprocessor macros, which are added directly after the #version directive (example: "#define USE_METHOD 1", "#define METHOD_PARAM 0"...)
+   * @param _verbose log or suppress error output
+   * @return The program (Either from cache or newly compiled and linked)
+   */
+  GLSL::Program* getProgram(const char* _vertexShaderFile,
+    const char* _tessControlShaderFile,
+    const char* _tessEvalShaderFile,
+    const char* _geometryShaderFile,
+    const char* _fragmentShaderFile,
+    QStringList* _macros = 0, bool _verbose = true);
+  
+  /** \brief Query a static shader program from cache
+   *
+   * Can be used to load a shader and have external changes automatically applied by the timestamp watchdog.
+   * However, the program should be queried every time before using the program as it may have been deleted and recompiled in the meantime.
+   *
+   * @param _vertexShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _fragmentShaderFile relative (from shader directory) or absolute filename of fragment shader
    * @param _macros optional list of glsl preprocessor macros, which are added directly after the #version directive (example: "#define USE_METHOD 1", "#define METHOD_PARAM 0"...)
    * @param _verbose log or suppress error output
    * @return The program (Either from cache or newly compiled and linked)
    */
   GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile, QStringList* _macros = 0, bool _verbose = true);
+
+
+    /** \brief Query a static compute shader program from cache
+   *
+   * Can be used to load a shader and have external changes automatically applied by the timestamp watchdog.
+   * However, the program should be queried every time before using the program as it may have been deleted and recompiled in the meantime.
+   *
+   * @param _computeShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _macros optional list of glsl preprocessor macros, which are added directly after the #version directive (example: "#define USE_METHOD 1", "#define METHOD_PARAM 0"...)
+   * @param _verbose log or suppress error output
+   * @return The program (Either from cache or newly compiled and linked)
+   */
+  GLSL::Program* getComputeProgram(const char* _computeShaderFile, QStringList* _macros = 0, bool _verbose = true);
   
+
+
   /** \brief Delete all cached shaders
    */
   void clearCache();
@@ -113,6 +149,11 @@ public:
    */
   void setTimeCheck(bool _on){timeCheck_ = _on;}
   bool getTimeCheck(){return timeCheck_;}
+
+
+  /** \brief Enable debug output of generated shaders to specified directory
+   */
+  void setDebugOutputDir(const char* _outputDir);
 
 protected:
   ShaderCache();
@@ -153,7 +194,14 @@ protected:
 
   /// cache containing static shaders loaded from files (separate from dynamic cache to reduce access time)
   CacheList cacheStatic_;
+
+  /// cache for static compute shaders
+  CacheList cacheComputeShaders_;
+
   bool timeCheck_;
+
+  /// output directory for shaders in dynamic cache
+  QString dbgOutputDir_;
 };
 
 
