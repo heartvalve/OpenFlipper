@@ -54,6 +54,7 @@
 #include "BoundingBoxNode.hh"
 #include "SceneGraph.hh"
 #include "../GL/gl.hh"
+#include "../GL/GLPrimitives.hh"
 
 
 //== NAMESPACES ===============================================================
@@ -71,65 +72,101 @@ availableDrawModes() const
 }
 
 //----------------------------------------------------------------------------
-BoundingBoxNode::~BoundingBoxNode() {
 
+BoundingBoxNode::BoundingBoxNode( BaseNode* _parent, std::string _name ) :
+MaterialNode(_parent,
+  _name,
+  MaterialNode::BaseColor |
+  MaterialNode::LineWidth),
+  box_(0)
+{
+  drawMode(DrawModes::WIREFRAME);
+
+
+  box_ = new GLLineBox();
+}
+
+//----------------------------------------------------------------------------
+BoundingBoxNode::~BoundingBoxNode() {
+  delete box_;
+}
+
+//----------------------------------------------------------------------------
+
+void BoundingBoxNode::computeAABB( Vec3d* _outMin, Vec3d* _outMax )
+{
+  ACG::SceneGraph::BoundingBoxAction act;
+  ACG::SceneGraph::traverse(this, act);
+
+  if (_outMin)
+    *_outMin = (ACG::Vec3d) act.bbMin();
+
+  if (_outMax)
+    *_outMax = (ACG::Vec3d) act.bbMax();
 }
 
 //----------------------------------------------------------------------------
 
 void
 BoundingBoxNode::
-draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
+draw(GLState&  _state  , const DrawModes::DrawMode& _drawMode)
 {
-
-  ACG::SceneGraph::BoundingBoxAction act;
-  ACG::SceneGraph::traverse(this, act);
-
-  ACG::Vec3d bbmin = (ACG::Vec3d) act.bbMin();
-  ACG::Vec3d bbmax = (ACG::Vec3d) act.bbMax();
-
   if (_drawMode & DrawModes::WIREFRAME)
   {
+    ACG::Vec3d bbmin;
+    ACG::Vec3d bbmax;
+    computeAABB(&bbmin, &bbmax);
+
+    ACG::Vec3d bbcenter = (bbmin + bbmax) * 0.5;
+    ACG::Vec3d bbsize = bbmax - bbmin;
+
+
     glPushAttrib (GL_ENABLE_BIT);
 
     ACG::GLState::disable(GL_LIGHTING);
 
-    glBegin(GL_LINES);
+    _state.push_modelview_matrix();
 
-    glVertex3f(bbmin[0],bbmin[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmin[0],bbmin[1],bbmin[2]);
+    _state.translate(bbcenter);
+    _state.scale(bbsize[0], bbsize[1], bbsize[2]);
 
-    glVertex3f(bbmin[0],bbmin[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmax[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmax[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmax[2]);
-    glVertex3f(bbmin[0],bbmin[1],bbmax[2]);
+    glColor4f(0.0f,1.0f,0.0f,1.0f);
 
-    glVertex3f(bbmin[0],bbmin[1],bbmin[2]);
-    glVertex3f(bbmin[0],bbmin[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmin[1],bbmax[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmax[0],bbmax[1],bbmax[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmin[2]);
-    glVertex3f(bbmin[0],bbmax[1],bbmax[2]);
+    box_->draw();
 
-    glEnd();
-
+    _state.pop_modelview_matrix();
     glPopAttrib ();
   }
 }
 
+//----------------------------------------------------------------------------
 
+void BoundingBoxNode::getRenderObjects(IRenderer* _renderer, GLState& _state , const DrawModes::DrawMode& _drawMode , const ACG::SceneGraph::Material* _mat)
+{
+  int dmlayerId = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_WIREFRAME);
+
+  if (dmlayerId >= 0)
+  {
+    ACG::Vec3d bbmin;
+    ACG::Vec3d bbmax;
+    computeAABB(&bbmin, &bbmax);
+
+    ACG::Vec3d bbcenter = (bbmin + bbmax) * 0.5;
+    ACG::Vec3d bbsize = bbmax - bbmin;
+
+    // create renderobject
+    RenderObject ro;
+    ro.initFromState(&_state);
+    ro.depthTest = true;
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+    ro.emissive = Vec3f(0.0f, 1.0f, 0.0f);
+
+    ro.modelview.translate(bbcenter);
+    ro.modelview.scale(bbsize[0], bbsize[1], bbsize[2]);
+
+    box_->addToRenderer(_renderer, &ro);
+  }
+}
 
 //=============================================================================
 } // namespace SceneGraph
