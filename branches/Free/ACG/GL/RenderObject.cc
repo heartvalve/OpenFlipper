@@ -201,11 +201,6 @@ RenderObject::~RenderObject() {
   uniformPool_.clear();
 }
 
-void RenderObject::executeImmediateMode()
-{
-  // implemented by deriving class
-}
-
 QString RenderObject::toString() const
 {
   // several mappings: (int)GLEnum -> string

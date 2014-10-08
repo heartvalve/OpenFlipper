@@ -110,6 +110,9 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
     {
       // commonly encountered rendering errors
 
+      if (!_renderObject->numIndices)
+        std::cout << "warning: numIndices is 0 in renderobject: " << _renderObject->debugName << std::endl;
+
       //  Why is my object invisible/black?
       if (!_renderObject->depthWrite && 
         !_renderObject->colorWriteMask[0] && !_renderObject->colorWriteMask[1] &&
@@ -798,11 +801,6 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
       glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
         ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
     }
-  }
-  else
-  {
-    // user defined draw-call
-    _obj->executeImmediateMode();
   }
 }
 
