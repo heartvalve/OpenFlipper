@@ -58,6 +58,7 @@ GLPrimitive::GLPrimitive() :
         vboDataInvalid_(true),
         normalOrientation_(OUTSIDE),
         numTris_(0),
+        numLines_(0),
         vboData_(0),
         curTriPtr_(0),
         vbo_(0)
@@ -88,6 +89,9 @@ void GLPrimitive::addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, c
   if (!numTris_)
     return;
 
+  assert(numLines_ == 0);
+
+
   if (!vboData_)
     vboData_ = new float[8 * 3 * numTris_];
 
@@ -108,6 +112,39 @@ void GLPrimitive::addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, c
       *(pTri++) = _tex[i][k];
   }
 }
+
+
+void GLPrimitive::addLineToVBO( const ACG::Vec3f* _p, const ACG::Vec3f* _n, const ACG::Vec2f* _tex )
+{
+  if (!numLines_ || vboDataInvalid_)
+    numLines_ = getNumLines();
+
+  if (!numLines_)
+    return;
+
+  assert(numTris_ == 0);
+
+  if (!vboData_)
+    vboData_ = new float[8 * 2 * numLines_];
+
+  if (curTriPtr_ == numLines_)
+    return;
+
+  float* pLine = &vboData_[0] + (curTriPtr_++) * 2 * 8;
+
+  // copy line segment
+  for (int i = 0; i < 2; ++i) {
+    for (int k = 0; k < 3; ++k)
+      *(pLine++) = _p[i][k];
+
+    for (int k = 0; k < 3; ++k)
+      *(pLine++) = _n[i][k];
+
+    for (int k = 0; k < 2; ++k)
+      *(pLine++) = _tex[i][k];
+  }
+}
+
 
 //------------------------------------------------------------------------
 
@@ -138,22 +175,23 @@ bool GLPrimitive::checkVBO()
   // update vbo data and upload to gpu if needed
   // return false iff vbo empty
 
+  int bufSize = numTris_ ? numTris_ * 3 * 8 * 4 : numLines_ * 2 * 8 * 4;
+
   if (!vbo_) {
-    if (!vboData_ || !numTris_)
+    if (!vboData_ || (!numTris_ && !numLines_) || (numTris_ && numLines_))
       return false;
 
     // create vbo
     glGenBuffersARB(1, &vbo_);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numTris_ * 3 * 8 * 4, vboData_, GL_STATIC_DRAW_ARB);
-
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufSize, vboData_, GL_STATIC_DRAW_ARB);
 
     delete[] vboData_;
     vboData_ = 0;
   } else if (vboDataInvalid_) {
     updateVBOData();
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numTris_ * 3 * 8 * 4, vboData_, GL_STATIC_DRAW_ARB);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufSize, vboData_, GL_STATIC_DRAW_ARB);
     vboDataInvalid_ = false;
   }
 
@@ -176,7 +214,10 @@ void GLPrimitive::draw()
 {
   bindVBO();
 
-  glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
+  if (numTris_)
+    glDrawArrays(GL_TRIANGLES, 0, numTris_ * 3);
+  else
+    glDrawArrays(GL_LINES, 0, numLines_ * 2);
 
   unBindVBO();
 }
@@ -190,8 +231,10 @@ void GLPrimitive::addToRenderer( class IRenderer* _renderer, RenderObject* _ro )
     _ro->vertexBuffer = vbo_;
     _ro->vertexDecl = &vertexDecl_;
 
-    _ro->glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
-
+    if (numTris_)
+      _ro->glDrawArrays(GL_TRIANGLES, 0, numTris_ * 3);
+    else
+      _ro->glDrawArrays(GL_LINES, 0, numLines_ * 2);
 
     _renderer->addRenderObject(_ro);
   }
@@ -208,6 +251,18 @@ void GLPrimitive::updateVBOData() {
   }
 
   updateVBO();
+}
+
+//------------------------------------------------------------------------
+
+unsigned int GLPrimitive::getVBO()
+{
+  return checkVBO() ? vbo_ : 0;
+}
+
+const VertexDeclaration* GLPrimitive::getVertexDecl() const
+{
+  return &vertexDecl_;
 }
 
 //========================================================================
@@ -841,6 +896,187 @@ GLDisk::GLDisk(int _slices, int _loops, float _innerRadius, float _outerRadius) 
 {
 }
 
+
+//========================================================================
+// GLBox
+//========================================================================
+
+GLBox::GLBox()
+{
+  updateVBO();
+}
+
+GLBox::~GLBox()
+{
+}
+
+int GLBox::getNumTriangles()
+{
+  return 12;
+}
+
+//------------------------------------------------------------------------
+
+void GLBox::updateVBO()
+{
+  static const Vec3f pos[8] =
+  {
+    Vec3f(-0.5f,-0.5f,0.5f), Vec3f(-0.5f,-0.5f,-0.5f), Vec3f(0.5f,-0.5f,-0.5f),
+    Vec3f(0.5f,-0.5f,0.5f), Vec3f(-0.5f,0.5f,0.5f), Vec3f(0.5f,0.5f,0.5f),
+    Vec3f(0.5f,0.5f,-0.5f), Vec3f(-0.5f,0.5f,-0.5f)
+  };
+
+  static const Vec3f norm[6] = 
+  {
+    Vec3f(0.0f,-1.0f,0.0f), Vec3f(0.0f,1.0f,0.0f), Vec3f(0.0f,0.0f,1.0f),
+    Vec3f(1.0f,0.0f,0.0f), Vec3f(0.0f,0.0f,-1.0f), Vec3f(-1.0f,0.0f,0.0f)
+  };
+
+  static const Vec2f texc[4] = 
+  {
+    Vec2f(1.0f,0.0f), Vec2f(1.0f,1.0f), Vec2f(0.0f,1.0f), Vec2f(0.0f,0.0f)
+  };
+
+  // tri: p,p,p  ,n,n,n ,t,t,t
+  static const int tris[12][9] = 
+  {
+    {0,1,2 ,0,0,0 ,0,1,2}, {2,3,0 ,0,0,0 ,2,3,0}, {4,5,6 ,1,1,1 ,3,0,1},
+    {6,7,4 ,1,1,1 ,1,2,3}, {0,3,5 ,2,2,2 ,3,0,1}, {5,4,0 ,2,2,2 ,1,2,3},
+    {3,2,6 ,3,3,3 ,3,0,1}, {6,5,3 ,3,3,3 ,1,2,3}, {2,1,7 ,4,4,4 ,3,0,1},
+    {7,6,2 ,4,4,4 ,1,2,3}, {1,0,4 ,5,5,5 ,3,0,1}, {4,7,1 ,5,5,5 ,1,2,3}
+  };
+
+  for (int i = 0; i < 12; ++i)
+  {
+    Vec3f triPos[3] = {  pos[tris[i][0]],  pos[tris[i][1]],  pos[tris[i][2]]  };
+    Vec3f triNorm[3] = { norm[tris[i][3]],  norm[tris[i][4]],   norm[tris[i][5]]  };
+    Vec2f triTexc[3] =  {  texc[tris[i][6]],  texc[tris[i][7]],   texc[tris[i][8]]  };
+
+    addTriangleToVBO(triPos, triNorm, triTexc);
+  }
+}
+
+//------------------------------------------------------------------------
+
+GLLineBox::GLLineBox()
+{
+  updateVBO();
+}
+
+GLLineBox::~GLLineBox()
+{
+}
+
+//------------------------------------------------------------------------
+
+int GLLineBox::getNumTriangles()
+{
+  return 0;
+}
+
+int GLLineBox::getNumLines()
+{
+  return 12;
+}
+
+//------------------------------------------------------------------------
+
+void GLLineBox::updateVBO()
+{
+  static const Vec3f pos[8] =
+  {
+    Vec3f(-0.5f,-0.5f,0.5f), Vec3f(-0.5f,-0.5f,-0.5f), Vec3f(0.5f,-0.5f,-0.5f),
+    Vec3f(0.5f,-0.5f,0.5f), Vec3f(-0.5f,0.5f,0.5f), Vec3f(0.5f,0.5f,0.5f),
+    Vec3f(0.5f,0.5f,-0.5f), Vec3f(-0.5f,0.5f,-0.5f)
+  };
+
+  static const Vec3f norm[6] = 
+  {
+    Vec3f(0.0f,-1.0f,0.0f), Vec3f(0.0f,1.0f,0.0f), Vec3f(0.0f,0.0f,1.0f),
+    Vec3f(1.0f,0.0f,0.0f), Vec3f(0.0f,0.0f,-1.0f), Vec3f(-1.0f,0.0f,0.0f)
+  };
+
+  static const Vec2f texc[4] = 
+  {
+    Vec2f(1.0f,0.0f), Vec2f(1.0f,1.0f), Vec2f(0.0f,1.0f), Vec2f(0.0f,0.0f)
+  };
+
+  // line: p,p  ,n,n ,t,t
+  static const int lines[12][6] = 
+  {
+    {1,2, 0,0, 0,3}, {0,3, 0,0, 0,3}, {4,5, 0,0, 0,3}, {7,6, 0,0, 0,3},
+    {1,7, 0,0, 0,3}, {0,4, 0,0, 0,3}, {2,6, 0,0, 0,3}, {3,5, 0,0, 0,3},
+    {1,0, 0,0, 0,3}, {2,3, 0,0, 0,3}, {7,4, 0,0, 0,3}, {6,5, 0,0, 0,3}
+  };
+
+  for (int i = 0; i < 12; ++i)
+  {
+    Vec3f p[2] = {  pos[lines[i][0]],  pos[lines[i][1]]};
+    Vec3f n[2] = { norm[lines[i][3]],  norm[lines[i][4]]};
+    Vec2f t[2] =  {  texc[lines[i][6]],  texc[lines[i][7]]};
+
+    addLineToVBO(p, n, t);
+  }
+}
+
+//------------------------------------------------------------------------
+
+/*
+bool GLBox::checkLineIBO()
+{
+  bool success = false;
+  if (lineIbo_)
+    success = true;
+  else
+  {
+    if (lineIboData_)
+    {
+      glGenBuffersARB(1, &lineIbo_);
+      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIbo_);
+      glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, numLines_*2*4, lineIboData_, GL_STATIC_DRAW_ARB);
+
+      delete[] lineIboData_;
+      lineIboData_ = 0;
+
+      success = true;
+    }
+  }
+
+  return success;
+}
+
+//------------------------------------------------------------------------
+
+void GLBox::drawLines()
+{
+  bindVBO();
+
+  if (checkLineIBO()) 
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIbo_);
+
+  glDrawElements(GL_LINES, numLines_*2, GL_UNSIGNED_INT, 0);
+
+  unBindVBO();
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+void GLBox::addToRendererLines(class IRenderer* _renderer, const struct RenderObject* _base)
+{
+  if (checkLineIBO() && checkVBO())
+  {
+    RenderObject ro = *_base;
+
+    ro.vertexBuffer = getVBO();
+    ro.indexBuffer = lineIbo_;
+
+    ro.vertexDecl = getVertexDecl();
+
+    ro.glDrawElements(GL_LINES, numLines_*2, GL_UNSIGNED_INT, 0);
+
+    _renderer->addRenderObject(&ro);
+  }
+}
+*/
 //------------------------------------------------------------------------
 
 }

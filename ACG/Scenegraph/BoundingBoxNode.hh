@@ -63,6 +63,10 @@
 //== NAMESPACES ===============================================================
 
 namespace ACG {
+
+// prototype declaration
+class GLLineBox;
+
 namespace SceneGraph {
 
 //== CLASS DEFINITION =========================================================
@@ -80,14 +84,7 @@ public:
 
   /// default constructor
   BoundingBoxNode( BaseNode*    _parent=0,
-	    std::string  _name="<BoundingBoxNode>" ) :
-       MaterialNode(_parent,
-		 _name,
-		 MaterialNode::BaseColor |
-		 MaterialNode::LineWidth)
-  {
-    drawMode(DrawModes::WIREFRAME);
-  }
+	    std::string  _name="<BoundingBoxNode>" );
 
   /// destructor
   virtual ~BoundingBoxNode();
@@ -100,6 +97,16 @@ public:
 
   /// draw lines and normals
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
+
+  /// draw with renderobjects
+  void getRenderObjects(IRenderer* _renderer, GLState& _state , const DrawModes::DrawMode& _drawMode , const ACG::SceneGraph::Material* _mat);
+
+  /// compute aabb of subtree
+  void computeAABB(Vec3d* _outMin, Vec3d* _outMax);
+
+private:
+
+  GLLineBox* box_;
 };
 
 

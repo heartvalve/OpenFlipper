@@ -74,13 +74,22 @@ public:
   virtual ~GLPrimitive();
 
   // bind vbo + gl draw call
-  void draw();
+  virtual void draw();
 
   // add to deferred draw call to renderer
-  void addToRenderer(class IRenderer* _renderer, struct RenderObject* _ro);
+  virtual void addToRenderer(class IRenderer* _renderer, struct RenderObject* _ro);
 
-  // triangle count must be known before updateVBO
+  // Triangle or line count must be known before updateVBO.
+  // A GLPrimitive can consist of either only lines or only triangles.
+  // If getNumTriangles returns nonzero, its assumed to consist of tris only.
+  // Otherwise, getNumLines has to return nonzero and GLPrimitive is treated as a line-list.
   virtual int getNumTriangles() = 0;
+  virtual int getNumLines() {return 0;}
+
+  // get opengl vbo id
+  unsigned int getVBO();
+
+  const VertexDeclaration* getVertexDecl() const;
 
   enum NormalOrientation {OUTSIDE, INSIDE};
 
@@ -90,6 +99,7 @@ protected:
   virtual void updateVBO() = 0;
 
   void addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, const ACG::Vec2f* _tex);
+  void addLineToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, const ACG::Vec2f* _tex);
 
   void bindVBO();
 
@@ -106,6 +116,7 @@ private:
   void updateVBOData();
 
   int numTris_;
+  int numLines_;
   float* vboData_;
   int curTriPtr_;
 
@@ -235,6 +246,40 @@ public:
 };
 
 //------------------------------------------------------------------------
+
+// axis-aligned unit cube centered at origin
+class ACGDLLEXPORT GLBox: public GLPrimitive {
+public:
+
+  GLBox();
+  ~GLBox();
+
+  int getNumTriangles();
+
+private:
+
+  void updateVBO();
+};
+
+//------------------------------------------------------------------------
+
+// axis-aligned unit cube centered at origin,  only lines
+class ACGDLLEXPORT GLLineBox: public GLPrimitive {
+public:
+
+  GLLineBox();
+  ~GLLineBox();
+
+  int getNumTriangles();
+  int getNumLines();
+
+private:
+
+  void updateVBO();
+};
+
+//------------------------------------------------------------------------
+
 
 } // namespace ACG
 
