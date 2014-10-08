@@ -956,6 +956,37 @@ void DepthPeeling::initDualDepthPeeling()
   ACG::glCheckErrors();
 }
 
+QString DepthPeeling::renderObjectsInfo( bool _outputShaderInfo )
+{
+  QString infoString;
+
+  ACG::ShaderModifier* availableMods[4] = 
+  {
+    &PeelInitModifier::instance, &PeelLayerModifier::instance,
+    &PeelDualInitModifier::instance, &PeelDualLayerModifier::instance
+  };
+
+
+  // write modified shaders for init and peel passes
+
+  infoString += "PeelInit:\n\n\n";
+
+  std::vector<ACG::ShaderModifier*> mods;
+  mods.push_back(availableMods[peelMode_*2]);
+
+  infoString += dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo, &mods);
+
+
+  infoString += "\n\n-----------------------------------------------\n\n\n\n";
+  infoString += "PeelLayer:\n\n\n";
+
+  mods[0] = availableMods[peelMode_*2 + 1];
+
+  infoString += dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo, &mods);
+    
+  return infoString;
+}
+
 
 // 
 // void DepthPeeling::dbgDrawTex( GLuint _texID )
