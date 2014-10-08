@@ -105,7 +105,7 @@ struct ACGDLLEXPORT RenderObject
    */
   RenderObject();
 
-  virtual ~RenderObject();
+  ~RenderObject();
 
 
   /** \brief Priority to allow sorting of objects
@@ -402,15 +402,6 @@ public:
   bool isDefaultPointObject() const;
 
 
-
-
-
-  /** \brief Whenever the need for glBegin() glEnd() immediate mode arises,
-       this can be implemented by a deriving class of RenderObject.
-       Also it gets called only if numIndices is set to 0.
-       glBegin and glEnd have to be called in here.
-  */
-  virtual void executeImmediateMode();
 
   /** Returns a text representation of the RenderObject for debugging purposes.
   */
