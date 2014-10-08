@@ -270,14 +270,16 @@ protected:
   /** \brief Save active Fbo configuration (fbo id + viewport)
    * @param _outFboId [out] pointer to address receiving the currently active fbo id
    * @param _outViewport [out] pointer to address of 4 GLint values receiving the currently active viewport
+   * @param _outDrawBuffer [out] pointer to address receiving the currently active drawbuffer target (ie GL_BACK, GL_COLOR_ATTACHMENTi ..)
   */
-  virtual void saveActiveFbo(GLint* _outFboId, GLint* _outViewport) const;
+  virtual void saveActiveFbo(GLint* _outFboId, GLint* _outViewport, GLint* _outDrawBuffer) const;
 
   /** \brief Restore a previously saved input Fbo configuration (fbo id + viewport)
-   * @param _fboId pointer to address receiving the currently active fbo id
+   * @param _fboId fbo id
    * @param _outViewport [in] pointer to address of 4 GLint values receiving the currently active viewport
+   * @param _drawBuffer draw-buffer target of fbo
   */
-  virtual void restoreFbo(GLint _fboId, const GLint* _outViewport) const;
+  virtual void restoreFbo(GLint _fboId, const GLint* _outViewport, GLint _drawBuffer) const;
 
   /** \brief Clear input Fbo.
    *
@@ -471,6 +473,9 @@ protected:
 
   /// previous fbo
   GLint prevFbo_;
+
+  /// previous drawbuffer target (ie GL_BACK, GL_COLOR_ATTACHMENTi...)
+  GLint prevDrawBuffer_;
 
   /// previous viewport
   GLint prevViewport_[4];
