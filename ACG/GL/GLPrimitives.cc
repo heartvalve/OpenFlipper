@@ -1012,8 +1012,8 @@ void GLLineBox::updateVBO()
   for (int i = 0; i < 12; ++i)
   {
     Vec3f p[2] = {  pos[lines[i][0]],  pos[lines[i][1]]};
-    Vec3f n[2] = { norm[lines[i][3]],  norm[lines[i][4]]};
-    Vec2f t[2] =  {  texc[lines[i][6]],  texc[lines[i][7]]};
+    Vec3f n[2] = { norm[lines[i][2]],  norm[lines[i][3]]};
+    Vec2f t[2] =  {  texc[lines[i][4]],  texc[lines[i][5]]};
 
     addLineToVBO(p, n, t);
   }

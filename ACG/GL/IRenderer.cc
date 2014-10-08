@@ -74,7 +74,8 @@ IRenderer::IRenderer()
 renderObjects_(0), 
 depthMapUsed_(false), 
 curViewerID_(0),
-prevFbo_(0), 
+prevFbo_(0),
+prevDrawBuffer_(GL_BACK),
 prevFboSaved_(false),
 depthCopyShader_(0),
 errorDetectionLevel_(1),
@@ -210,7 +211,7 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
       glGetProgramiv(shaderProg->getProgramId(), GL_GEOMETRY_INPUT_TYPE, &geomInputType);
 
 
-      if (geomInputType != p->primitiveMode)
+      if (geomInputType != GLint(p->primitiveMode))
       {
 
         switch (geomInputType)
@@ -527,12 +528,20 @@ void IRenderer::finishRenderingPipeline(bool _drawOverlay)
 
   GLint curFbo;
   GLint curViewport[4];
+  GLint curDrawBuf;
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
   glGetIntegerv(GL_VIEWPORT, curViewport);
+  glGetIntegerv(GL_DRAW_BUFFER, &curDrawBuf);
   
   if (curFbo != prevFbo_)
   {
     std::cout << "warning: input and output fbo are not the same in renderer implementation" << std::endl;
+    restoreInputFbo();
+  }
+
+  if (curDrawBuf != prevDrawBuffer_)
+  {
+    std::cout << "warning: input and output draw-buffer are not the same in renderer implementation" << std::endl;
     restoreInputFbo();
   }
 
@@ -550,27 +559,28 @@ void IRenderer::finishRenderingPipeline(bool _drawOverlay)
 void IRenderer::saveInputFbo()
 {
   // save active fbo
-  saveActiveFbo(&prevFbo_, prevViewport_);
+  saveActiveFbo(&prevFbo_, prevViewport_, &prevDrawBuffer_);
   prevFboSaved_ = true;
 }
 
 void IRenderer::restoreInputFbo()
 {
   if (prevFboSaved_)
-    restoreFbo(prevFbo_, prevViewport_);
+    restoreFbo(prevFbo_, prevViewport_, prevDrawBuffer_);
 }
 
-void IRenderer::saveActiveFbo( GLint* _outFboId, GLint* _outViewport ) const
+void IRenderer::saveActiveFbo( GLint* _outFboId, GLint* _outViewport, GLint* _outDrawBuffer ) const
 {
   // save active fbo
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, _outFboId);
   glGetIntegerv(GL_VIEWPORT, _outViewport);
+  glGetIntegerv(GL_DRAW_BUFFER, _outDrawBuffer);
 }
 
-void IRenderer::restoreFbo( GLint _fboId, const GLint* _outViewport ) const
+void IRenderer::restoreFbo( GLint _fboId, const GLint* _outViewport, GLint _drawBuffer ) const
 {
   glBindFramebuffer(GL_FRAMEBUFFER, _fboId);
-  glDrawBuffer(_fboId == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
+  glDrawBuffer(_drawBuffer);
   glViewport(_outViewport[0], _outViewport[1], _outViewport[2], _outViewport[3]);
 }
 
@@ -1030,7 +1040,8 @@ void IRenderer::copyDepthToBackBuffer( GLuint _depthTex, float _scale /*= 1.0f*/
     // save important opengl states
     GLint curFbo;
     GLint curViewport[4];
-    saveActiveFbo(&curFbo, curViewport);
+    GLint curDrawBuffer;
+    saveActiveFbo(&curFbo, curViewport, &curDrawBuffer);
 
     GLboolean colorMask[4], depthMask;
     glGetBooleanv(GL_COLOR_WRITEMASK, colorMask);
@@ -1066,7 +1077,7 @@ void IRenderer::copyDepthToBackBuffer( GLuint _depthTex, float _scale /*= 1.0f*/
 
     // restore important opengl states
 
-    restoreFbo(curFbo, curViewport);
+    restoreFbo(curFbo, curViewport, curDrawBuffer);
 
     glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
     glDepthMask(depthMask);
