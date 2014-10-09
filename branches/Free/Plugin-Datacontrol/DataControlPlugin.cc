@@ -400,10 +400,6 @@ void DataControlPlugin::fileOpened(int _id){
  */
 void DataControlPlugin::addedEmptyObject(int _id){
   fileOpened(_id);
-  BaseObjectData* obj = 0;
-  PluginFunctions::getObject(_id,obj);
-  if (obj)
-    updateBoundingBox(obj);
 }
 
 //******************************************************************************
