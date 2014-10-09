@@ -402,7 +402,7 @@ void DataControlPlugin::addedEmptyObject(int _id){
   fileOpened(_id);
   BaseObjectData* obj = 0;
   PluginFunctions::getObject(_id,obj);
-  if (!obj)
+  if (obj)
     updateBoundingBox(obj);
 }
 
