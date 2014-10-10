@@ -52,6 +52,8 @@
 
 //== INCLUDES =================================================================
 
+#include <ACG/GL/acg_glew.hh>
+
 #include "QtBaseViewer.hh"
 #include "QtGLViewerLayout.hh"
 #include "CursorPainter.hh"
@@ -653,6 +655,16 @@ void glViewer::drawScene()
   glDisable(GL_SCISSOR_TEST);
 
 
+  const int numPostProcessors = postProcessorManager().numActive(properties_.viewerId());
+
+  bool stereoOpenGL = false;
+  bool stereoAnaglyph = false;
+  
+  if (properties_.stereo()) {
+    stereoOpenGL = OpenFlipper::Options::stereoMode () == OpenFlipper::Options::OpenGL && OpenFlipper::Options::glStereo ();
+    stereoAnaglyph = !stereoOpenGL;
+  }
+
   // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
     drawScene_mono();
@@ -665,7 +677,53 @@ void glViewer::drawScene()
     if (shaderRenderPlugin)
       shaderRenderPlugin->setViewerID( properties_.viewerId() );
 
-    renderPlugin->render(glstate_,properties_);
+    if (properties_.stereo()) {
+      // save current fbo
+      GLuint backbufferFbo = 0;
+      GLuint backbufferTarget = 0;
+      glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&backbufferFbo);
+      glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&backbufferTarget);
+
+      // setup stereo rendering
+      ACG::GLMatrixd projSave = glstate_->projection();
+      ACG::GLMatrixd projLR[2];
+      computeProjStereo(glstate_->viewport_width(), glstate_->viewport_height(), properties_, projLR, projLR+1);
+
+      updateStereoFBOs(glstate_->viewport_width(), glstate_->viewport_height());
+
+
+      // left eye: fbo 0
+      // right eye: fbo 1
+
+      for (int eye = 0; eye < 2; ++eye) {
+
+        glstate_->set_projection(projLR[eye]);
+        if (stereoOpenGL && !numPostProcessors) {
+          // render directly into back_left
+          glDrawBuffer(eye ? GL_BACK_RIGHT : GL_BACK_LEFT);
+        }
+        else {
+          stereoFBO_[eye].bind();
+          glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        }
+        glEnable(GL_SCISSOR_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
+        renderPlugin->render(glstate_,properties_);
+        drawCursor();
+      }
+
+      // restore projection
+      glstate_->set_projection(projSave);
+
+      // restore backbuffer
+      glBindFramebuffer(GL_FRAMEBUFFER, backbufferFbo);
+      glDrawBuffer(backbufferTarget);
+    }
+    else {
+      renderPlugin->render(glstate_,properties_);
+      drawCursor();
+    }
   }
   checkGLError();
 
@@ -673,54 +731,134 @@ void glViewer::drawScene()
   // =================================================================================
   // Post-Processing pipeline
 
-
-  const int numPostProcessors = postProcessorManager().numActive(properties_.viewerId());
-
-  if (numPostProcessors)
-  {
+  if (numPostProcessors || stereoAnaglyph) {
     GLuint backbufferFbo = 0;
+    GLuint backbufferTarget = 0;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&backbufferFbo);
+    glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&backbufferTarget);
 
 
     updatePostProcessingBufs(glstate_->viewport_width(),glstate_->viewport_height());
-
-    readBackBuffer(glstate_);
 
     // 1st post processing source: active fbo
     int postProcSrc = 1;
     PostProcessorInput postProcInput;
 
-    postProcInput.colorTex_ = readBackFbo_.getAttachment(GL_COLOR_ATTACHMENT0);
-    postProcInput.depthTex_ = readBackFbo_.getAttachment(GL_DEPTH_ATTACHMENT);
-    postProcInput.width     = readBackFbo_.width();
-    postProcInput.height    = readBackFbo_.height();
+    std::vector<const PostProcessorInput*> postProcInputVec;
+    postProcInputVec.push_back(&postProcInput);
 
-    // execute post processing chain with 2 FBOs
-    for (int i = 0; i < numPostProcessors; ++i)  {
+    // # executions of postproc chain
+    int numChainExecs = properties_.stereo() ? 2 : 1;
 
-      int postProcTarget = 1 - postProcSrc;
+    // stereo anaglyph specifics
+    // input textures to resolve stereo buffers to anaglyph
+    PostProcessorInput resolveStereoAnaglyph[2];
 
-      GLuint targetFBO = postProcessFBO_[postProcTarget].getFboID();
+    // execute
 
-      // write to back buffer in last step
-      if (i + 1 == numPostProcessors)
-        targetFBO = backbufferFbo;
+    for (int chainId = 0; chainId < numChainExecs; ++chainId) {
 
-      // apply post processor
-      PostProcessorInfo* proc = postProcessorManager().active( properties_.viewerId(), i );
-      if (proc && proc->plugin)
-        proc->plugin->postProcess(glstate_, postProcInput, targetFBO);
+      if (!properties_.stereo()) {
+        readBackBuffer(glstate_);
+
+        postProcInput.colorTex_ = readBackFbo_.getAttachment(GL_COLOR_ATTACHMENT0);
+        postProcInput.depthTex_ = readBackFbo_.getAttachment(GL_DEPTH_ATTACHMENT);
+        postProcInput.width     = readBackFbo_.width();
+        postProcInput.height    = readBackFbo_.height();
+      }
+      else {
+        postProcInput.colorTex_ = stereoFBO_[chainId].getAttachment(GL_COLOR_ATTACHMENT0);
+        postProcInput.depthTex_ = stereoFBO_[chainId].getAttachment(GL_DEPTH_ATTACHMENT);
+        postProcInput.width     = stereoFBO_[chainId].width();
+        postProcInput.height    = stereoFBO_[chainId].height();
+      }
+
+      resolveStereoAnaglyph[chainId].colorTex_ = stereoFBO_[chainId].getAttachment(GL_COLOR_ATTACHMENT0);
+      resolveStereoAnaglyph[chainId].depthTex_ = stereoFBO_[chainId].getAttachment(GL_DEPTH_ATTACHMENT);
+      resolveStereoAnaglyph[chainId].width     = stereoFBO_[chainId].width();
+      resolveStereoAnaglyph[chainId].height    = stereoFBO_[chainId].height();
+
+      // execute post processing chain with 2 FBOs
+      for (int i = 0; i < numPostProcessors; ++i)  {
+
+        int postProcTarget = 1 - postProcSrc;
+
+        PostProcessorOutput targetFBO(postProcessFBO_[postProcTarget].getFboID(),
+          GL_COLOR_ATTACHMENT0,
+          postProcessFBO_[postProcTarget].width(), postProcessFBO_[postProcTarget].height());
+
+        // write to back buffer in last step
+        if (i + 1 == numPostProcessors) {
+
+          if (stereoOpenGL) {
+            targetFBO.fbo_ = backbufferFbo;
+            targetFBO.drawBuffer_ = chainId == 0 ? GL_BACK_LEFT : GL_BACK_RIGHT;
+          }
+          else if (stereoAnaglyph) {
+            // only write to stereo buffer image if its not the input of the last postproc
+            if (i > 1) {
+              targetFBO.fbo_ = stereoFBO_[chainId].getFboID();
+              targetFBO.drawBuffer_ = GL_COLOR_ATTACHMENT0;
+            }
+            else {
+              resolveStereoAnaglyph[chainId].colorTex_ = postProcessFBO_[postProcTarget].getAttachment(GL_COLOR_ATTACHMENT0);
+              resolveStereoAnaglyph[chainId].depthTex_ = postProcessFBO_[postProcTarget].getAttachment(GL_DEPTH_ATTACHMENT);
+              resolveStereoAnaglyph[chainId].width     = postProcessFBO_[postProcTarget].width();
+              resolveStereoAnaglyph[chainId].height    = postProcessFBO_[postProcTarget].height();
+            }
+          }
+          else {
+            targetFBO.fbo_ = backbufferFbo;
+            targetFBO.drawBuffer_ = backbufferTarget;
+          }
+        }
+
+        // apply post processor
+        PostProcessorInfo* proc = postProcessorManager().active( properties_.viewerId(), i );
+        if (proc && proc->plugin)
+          proc->plugin->postProcess(glstate_, postProcInputVec, targetFBO);
 
 
-      // swap target/source fbo
-      postProcSrc = postProcTarget;
+        // swap target/source fbo
+        postProcSrc = postProcTarget;
 
-      postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
+        postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
+      }
+
     }
+
+
+    glBindFramebuffer(GL_FRAMEBUFFER, backbufferFbo);
+    glDrawBuffer(backbufferTarget);
+
+    // resolve stereo anaglyph
+    if (stereoAnaglyph)  {
+      PostProcessorInfo* procAnaglyph = postProcessorManager().getPostProcessor("Anaglyph Stereo Postprocessor Plugin");
+
+      if (procAnaglyph) {
+
+        std::vector<const PostProcessorInput*> anaglyphInput(2);
+        anaglyphInput[0] = resolveStereoAnaglyph;
+        anaglyphInput[1] = resolveStereoAnaglyph + 1;
+
+        PostProcessorOutput anaglyphOutput(backbufferFbo, 
+          backbufferTarget,
+          glstate_->viewport_width(),glstate_->viewport_height());
+
+
+        procAnaglyph->plugin->postProcess(glstate_, anaglyphInput, anaglyphOutput);
+      }
+      else
+        std::cerr << "error: stereo anaglyph plugin missing!" << std::endl;
+
+    }
+    
   }
   
 
   // =================================================================================
+
+  glDrawBuffer(GL_BACK);
 
   // unbind vbo for qt log window
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
@@ -869,6 +1007,13 @@ void glViewer::drawScene_mono()
 
   }
 
+  drawCursor();
+
+}
+
+
+void glViewer::drawCursor()
+{
   if (properties_.cursorPainter() && properties_.cursorPainter()->enabled () && properties_.cursorPositionValid() )
   {
     glstate_->push_modelview_matrix ();
@@ -880,8 +1025,8 @@ void glViewer::drawScene_mono()
     properties_.cursorPainter()->paintCursor (glstate_);
     glstate_->pop_modelview_matrix ();
   }
-
 }
+
 
 void glViewer::setHome()
 {
@@ -2519,6 +2664,60 @@ void glViewer::updatePostProcessingBufs(int _width, int _height)
     }
     else
       fbos[i]->resize(_width, _height);
+  }
+}
+
+void glViewer::computeProjStereo( int _viewportWidth, int _viewportHeight, Viewer::ViewerProperties& _properties, ACG::GLMatrixd* _outLeft, ACG::GLMatrixd* _outRight )
+{
+  double l, r, t, b, w, h, a, radians, wd2, ndfl, zerop, xrange;
+
+  w = double(_viewportWidth);
+  h = double(_viewportHeight);
+  a = w / h;
+
+  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+  radians = fovy * 0.5 / 180.0 * M_PI;
+  wd2     = _properties.nearPlane() * tan(radians);
+  zerop   = _properties.nearPlane() + ((_properties.farPlane() - _properties.nearPlane()) * OpenFlipperSettings().value("Core/Stereo/FocalDistance", 0.5).toDouble() );
+  ndfl    = _properties.nearPlane() / zerop ;
+  xrange  = a * wd2 * 2 * zerop / _properties.nearPlane();
+
+  l = -a*wd2;
+  r =  a*wd2;
+  t =  wd2;
+  b = -wd2;
+
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance", 0.07).toDouble() * xrange;
+  double offset2 = offset * ndfl;
+
+  if (_outLeft)
+  {
+    _outLeft->identity();
+    _outLeft->frustum(l+offset2, r+offset2, b, t, _properties.nearPlane(), _properties.farPlane());
+    _outLeft->translate(offset, 0.0, 0.0);
+  }
+
+  if (_outRight)
+  {
+    _outRight->identity();
+    _outRight->frustum(l-offset2, r-offset2, b, t, _properties.nearPlane(), _properties.farPlane());
+    _outRight->translate(-offset, 0.0, 0.0);
+  }
+}
+
+void glViewer::updateStereoFBOs( int _width, int _height )
+{
+  for (int i = 0; i < 2; ++i)
+  {
+    if (!stereoFBO_[i].getFboID())
+    {
+      stereoFBO_[i].init();
+
+      stereoFBO_[i].attachTexture2D(GL_COLOR_ATTACHMENT0, _width, _height, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      stereoFBO_[i].attachTexture2DDepth(_width, _height, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL);
+    }
+    else
+      stereoFBO_[i].resize(_width, _height);
   }
 }
 

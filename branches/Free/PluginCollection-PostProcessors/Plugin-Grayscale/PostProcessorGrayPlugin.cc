@@ -68,7 +68,7 @@ QString PostProcessorGrayscalePlugin::postProcessorName() {
 }
 
 
-void PostProcessorGrayscalePlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
+void PostProcessorGrayscalePlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
 
   // ======================================================================================================
   // Load shader if needed
@@ -82,13 +82,14 @@ void PostProcessorGrayscalePlugin::postProcess(ACG::GLState* _glstate, const Pos
 
   glActiveTexture(GL_TEXTURE0);
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input.colorTex_);
+  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
 
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _targetFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
+  glDrawBuffer(_output.drawBuffer_);
 
   // ======================================================================================================
   // Clear rendering buffer
@@ -112,7 +113,7 @@ void PostProcessorGrayscalePlugin::postProcess(ACG::GLState* _glstate, const Pos
   shader_->use();
   shader_->setUniform("textureSampler", 0);
 
-  ACG::Vec2f texcoordOffset(1.0f / float(_input.width), 1.0f / float(_input.height));
+  ACG::Vec2f texcoordOffset(1.0f / float(_input[0]->width), 1.0f / float(_input[0]->height));
   shader_->setUniform("texcoordOffset", texcoordOffset);
 
   // ======================================================================================================

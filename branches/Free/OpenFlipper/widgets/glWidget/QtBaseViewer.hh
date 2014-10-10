@@ -539,7 +539,8 @@ private:
   void drawScene_mono();
   /// helper function for setting the projection mode of the coordinate system node
   void setCoordSysProjection(glViewer::ProjectionMode _mode);
-
+  /// draw the cursor
+  void drawCursor();
   
 
 
@@ -1077,6 +1078,37 @@ private:
   /** @} */
 
 
+
+  //===========================================================================
+  /** @name Stereo rendering
+    * @{ */
+  //===========================================================================
+
+private:
+
+  ACG::FBO stereoFBO_[2];
+
+  /** \brief Compute left and right eye projection matrix for stereo rendering
+   *
+   * @param _width  viewport width
+   * @param _height viewport height
+   * @param _properties viewer props
+   * @param _outLeft [out] projection matrix for left eye
+   * @param _outRight [out] projection matrix for right eye
+   */
+  void computeProjStereo(int _width, int _height,
+    Viewer::ViewerProperties& _properties,
+    ACG::GLMatrixd* _outLeft, ACG::GLMatrixd* _outRight);
+
+  /** \brief Update target fbos for stereo rendering
+   *
+   * @param _width  viewport width
+   * @param _height viewport height
+   */
+  void updateStereoFBOs(int _width, int _height);
+
+
+  /** @} */
 
 
   //===========================================================================

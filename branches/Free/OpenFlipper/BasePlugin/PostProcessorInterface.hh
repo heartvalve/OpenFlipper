@@ -55,17 +55,36 @@
 
 struct PostProcessorInput
 {
-  PostProcessorInput(GLuint colTex = 0, 
-                     GLuint depthTex = 0,
-                     int width = 0,
-                     int height = 0)
-                     : colorTex_(colTex), depthTex_(depthTex), width(width), height(height) {}
+  PostProcessorInput(GLuint _colTex = 0, 
+                     GLuint _depthTex = 0,
+                     int _width = 0,
+                     int _height = 0)
+                     : colorTex_(_colTex), depthTex_(_depthTex), width(_width), height(_height) {}
 
   GLuint colorTex_;
   GLuint depthTex_;
 
   int width, height;
 };
+
+
+struct PostProcessorOutput 
+{
+  PostProcessorOutput(GLuint _fbo = 0, 
+    GLuint _drawBuffer = 0,
+    int _width = 0,
+    int _height = 0)
+    : fbo_(_fbo), drawBuffer_(_drawBuffer), width(_width), height(_height) {}
+
+  // opengl fbo id
+  GLuint fbo_;
+
+  // draw target of fbo: GL_BACK, GL_FRONT, GL_COLOR_ATTACHMENT0..
+  GLuint drawBuffer_;
+
+  int width, height;
+};
+
 
 
 /** \brief Interface to add global image post processor functions from within plugins.
@@ -88,13 +107,22 @@ class PostProcessorInterface {
     /** \brief post processor function
      *
      */
-    virtual void postProcess(ACG::GLState* _glState, const PostProcessorInput& _input, GLuint _targetFBO = 0) {};
+    virtual void postProcess(ACG::GLState* _glState, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) = 0;
 
     /** \brief announce name for the postProcessor function
      *
      * @return The name of the post processor
      */
     virtual QString postProcessorName() = 0;
+
+
+    /** \brief does post processor resolve stereo buffer
+     *
+     * The post processor gets the left and right image as input and composes a combined stereo output.
+     * 
+     * @return true if implementation resolves stereo buffer, false otherwise
+     */
+    virtual bool isStereoProcessor() {return false;}
 
     /** \brief Return options menu
      *

@@ -73,7 +73,7 @@ QAction* PostProcessorPhilipsStereoPlugin::optionsAction() {
 
 //-----------------------------------------------------------------------------
 
-void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
+void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
 
   // load shader if needed
   if (!pProgram_)
@@ -93,10 +93,10 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
   glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, _input.depthTex_);
+  glBindTexture(GL_TEXTURE_2D, _input[0]->depthTex_);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _input.colorTex_);
+  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
 
   pProgram_->setUniform("ColorTexture", 0);
   pProgram_->setUniform("DepthStencil", 1);
@@ -134,7 +134,8 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _targetFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
+  glDrawBuffer(_output.drawBuffer_);
 
   // ======================================================================================================
   // Clear buffers
