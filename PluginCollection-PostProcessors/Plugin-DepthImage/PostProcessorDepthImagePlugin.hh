@@ -72,7 +72,7 @@ class PostProcessorDepthImagePlugin : public QObject, BaseInterface, PostProcess
     
   private slots:
 
-    void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
+    void postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output);
 
     QString postProcessorName();
 

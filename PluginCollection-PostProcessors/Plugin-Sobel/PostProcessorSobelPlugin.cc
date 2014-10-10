@@ -67,7 +67,7 @@ QString PostProcessorSobelPlugin::postProcessorName() {
   return QString("Sobel");
 }
 
-void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
+void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
 
   // ======================================================================================================
   // Load shader if needed
@@ -79,15 +79,18 @@ void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const PostPro
   // Bind input texture
   // ======================================================================================================
 
+  const PostProcessorInput* input = _input[0];
+
   glActiveTexture(GL_TEXTURE0);
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input.colorTex_);
+  glBindTexture(GL_TEXTURE_2D, input->colorTex_);
 
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _targetFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
+  glDrawBuffer(_output.drawBuffer_);
 
   // ======================================================================================================
   // Clear rendering buffer
@@ -111,7 +114,7 @@ void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const PostPro
   shader_->use();
   shader_->setUniform("textureSampler", 0);
 
-  ACG::Vec2f texcoordOffset(1.0f / float(_input.width), 1.0f / float(_input.height));
+  ACG::Vec2f texcoordOffset(1.0f / float(input->width), 1.0f / float(input->height));
   shader_->setUniform("texcoordOffset", texcoordOffset);
 
   // ======================================================================================================

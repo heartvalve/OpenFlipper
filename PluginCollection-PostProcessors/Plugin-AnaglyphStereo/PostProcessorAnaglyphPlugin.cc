@@ -34,55 +34,76 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 19248 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2014-07-21 14:27:08 +0200 (Mon, 21 Jul 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
 #include <ACG/GL/acg_glew.hh>
 
-#include "PostProcessorDepthImagePlugin.hh"
+#include "PostProcessorAnaglyphPlugin.hh"
 
 #include <iostream>
 #include <ACG/GL/GLState.hh>
+#include <ACG/GL/gl.hh>
 #include <ACG/GL/ScreenQuad.hh>
+#include <ACG/GL/ShaderCache.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-
-PostProcessorDepthImagePlugin::PostProcessorDepthImagePlugin()
-: shader_(0)
+PostProcessorAnaglyphPlugin::PostProcessorAnaglyphPlugin()
 {
-
 }
 
-
-PostProcessorDepthImagePlugin::~PostProcessorDepthImagePlugin()
+PostProcessorAnaglyphPlugin::~PostProcessorAnaglyphPlugin()
 {
-  delete shader_;
 }
 
-QString PostProcessorDepthImagePlugin::postProcessorName() {
-  return QString("Show Depth Image");
+QString PostProcessorAnaglyphPlugin::checkOpenGL() {
+  if ( ! ACG::openGLVersion(3, 0) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
+
+  return QString("");
 }
 
-void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
+
+
+QString PostProcessorAnaglyphPlugin::postProcessorName() {
+  return QString("AnaglyphStereo");
+}
+
+
+void PostProcessorAnaglyphPlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
+
+  if (_input.size() != 2) {
+    std::cerr << "PostProcessorAnaglyphPlugin: two input images required!" << std::endl;
+    return;
+  }
 
   // ======================================================================================================
-  // Load shader if needed
+  // Fetch shader from cache
   // ======================================================================================================
-  if (!shader_)
-    shader_ = GLSL::loadProgram("ShowDepth/screenquad.glsl", "ShowDepth/depth.glsl");
+
+  QStringList macros;
+
+  if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::AnaglyphCustom)
+    macros.push_back("#define ANAGLYPH_CUSTOM");
+
+  GLSL::Program* shader = ACG::ShaderCache::getInstance()->getProgram("ScreenQuad/screenquad.glsl", "AnaglyphStereo/anaglyph.glsl", &macros);
 
   // ======================================================================================================
   // Bind input texture
   // ======================================================================================================
 
+  glActiveTexture(GL_TEXTURE1);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, _input[1]->colorTex_);
+
   glActiveTexture(GL_TEXTURE0);
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input[0]->depthTex_);
+  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
 
   // ======================================================================================================
   // Bind output FBO
@@ -90,11 +111,6 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate, const st
 
   glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
   glDrawBuffer(_output.drawBuffer_);
-
-  // ======================================================================================================
-  // Clear rendering buffer
-  // ======================================================================================================
-  _glstate->clearBuffers();
 
   // ======================================================================================================
   // Setup render states
@@ -110,19 +126,43 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate, const st
   // Setup shader
   // ======================================================================================================
 
-  shader_->use();
-  shader_->setUniform("textureSampler", 0);
+  shader->use();
+  shader->setUniform("SceneLeft", 0);
+  shader->setUniform("SceneRight", 1);
+
+  if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::AnaglyphCustom)
+  {
+    // column major
+    std::vector<float> le = OpenFlipper::Options::anaglyphLeftEyeColorMatrix();
+    std::vector<float> re = OpenFlipper::Options::anaglyphRightEyeColorMatrix();
+
+    ACG::GLMatrixf ml, mr;
+
+    for (int r = 0; r < 3; ++r)
+    {
+      for (int c = 0; c < 3; ++c)
+      {
+        ml(r,c) = le[c*3 + r];
+        mr(r,c) = re[c*3 + r];
+      }
+    }
+
+    shader->setUniformMat3("EyeColMatrixLeft", ml);
+    shader->setUniformMat3("EyeColMatrixRight", mr);
+  }
 
   // ======================================================================================================
   // Execute
   // ======================================================================================================
 
-  ACG::ScreenQuad::draw(shader_);
+  ACG::ScreenQuad::draw(shader);
 
-  shader_->disable();
+
+  shader->disable();
 }
 
+
 #if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2( postprocessordepthimageplugin , PostProcessorDepthImagePlugin );
+  Q_EXPORT_PLUGIN2( postprocessoranaglyphstereoplugin , PostProcessorAnaglyphPlugin );
 #endif
 

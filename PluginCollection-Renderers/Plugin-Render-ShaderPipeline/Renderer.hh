@@ -81,6 +81,7 @@ public slots:
 
   QString renderObjectsInfo(bool _outputShaderInfo) { return dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo); };
 
+
 private slots:
 
   //BaseInterface
@@ -93,12 +94,5 @@ private slots:
   void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {_mode = ACG::SceneGraph::DrawModes::DEFAULT;}
   
   QString checkOpenGL();
-
-
-private:
-
-  void computeProjStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties,
-    ACG::GLMatrixd* _outLeft, ACG::GLMatrixd* _outRight);
-
 };
 

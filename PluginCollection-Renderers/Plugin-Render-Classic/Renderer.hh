@@ -98,45 +98,5 @@ private slots:
   void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {_mode = ACG::SceneGraph::DrawModes::DEFAULT;}
   
   QString checkOpenGL();
-
-private:
-  void drawScene_mono(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-  //===========================================================================
-   /** @name Stereo
-    * @{ */
-   //===========================================================================
-
-   private:
-
-     /// helper called by drawScene() when stereo viewing is active.
-     void drawScene_stereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-     /// helper called by drawScene_stereo() when opengl stereo viewing is active.
-     void drawScene_glStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-     /// helper called by drawScene_stereo() when anaglyph stereo viewing is active.
-     void drawScene_anaglyphStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-     /// helper called by drawScene_stereo() when custom anaglyph stereo viewing is active.
-     void drawScene_customAnaglyphStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-     /// helper called to initialize/update custom anaglyph stereo
-     void updateCustomAnaglyphStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-
-     /// helper called to cleanup custom anaglyph stereo
-     void finiCustomAnaglyphStereo();
-
-     /** @} */
-
-private:
-
-     // custom anaglyph stuff
-     int    agTexWidth_;
-     int    agTexHeight_;
-     GLuint agTexture_[2];
-     GLuint agProgram_;
-     bool   customAnaglyphSupported_;
-
 };
 
