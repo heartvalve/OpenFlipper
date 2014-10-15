@@ -469,6 +469,12 @@ void QtMaterialDialog::undoChanges()
 void QtMaterialDialog::changeDiffuseColor(QColor _newColor)
 {
   diffuse_ = convertColor( _newColor );
+
+  if (diffuse_[3] < 1.0f)
+  {
+    ui_.blending->setCheckState(Qt::Checked);
+  }
+
   applyChanges();
 }
 
