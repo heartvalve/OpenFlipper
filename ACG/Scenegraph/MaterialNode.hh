@@ -96,8 +96,8 @@ public:
         alphaTest_(false),
         alphaClip_(0),
         blending_(false),
-        blendParam1_(GL_ONE),
-        blendParam2_(GL_ZERO),
+        blendParam1_(GL_SRC_ALPHA),
+        blendParam2_(GL_ONE_MINUS_SRC_ALPHA),
         colorMaterial_(true),
         backfaceCulling_(false),
         multiSampling_(true) {};
