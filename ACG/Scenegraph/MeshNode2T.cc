@@ -217,6 +217,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   GLenum prev_depth = _state.depthFunc();
   
   glPushAttrib(GL_ENABLE_BIT);
+  
+  if(draw_with_offset_)
+  {
+    ACG::GLState::enable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(0.001f, 0.0f);
+  }
 
   /// get bound texture buffer and target
   GLuint lastBuffer = ACG::GLState::getBoundTextureBuffer();
