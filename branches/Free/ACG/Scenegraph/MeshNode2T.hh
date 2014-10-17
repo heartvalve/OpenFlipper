@@ -508,6 +508,12 @@ public:
   /** \brief measures the size in bytes of allocated memory
   */
   unsigned int getMemoryUsage();
+  
+private:
+  bool draw_with_offset_;
+
+public:
+  void set_offset(bool enable) { draw_with_offset_ = enable; }
 };
 
 //=============================================================================
