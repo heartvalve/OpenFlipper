@@ -1232,7 +1232,7 @@ private slots:
      * @param _objectName The name in scripting environment used for the new object
      * @param _uiFilename ui file to load
      */
-    void createWidget(QString _objectName, QString _uiFilename);
+    void createWidget(QString _objectName, QString _uiFilename, bool _show = true);
 
     /// Set the active ViewMode
     void setViewMode(QString _viewMode);
