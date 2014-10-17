@@ -84,7 +84,7 @@ void Core::scriptLogFunction( QString _output) {
    emit scriptLog(_output);
 }
 
-void Core::createWidget(QString _objectName, QString _uiFilename) {
+void Core::createWidget(QString _objectName, QString _uiFilename, bool _show) {
   if ( OpenFlipper::Options::gui()) {
     QUiLoader loader;
 
@@ -114,7 +114,7 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
     scriptEngine_.globalObject().setProperty(_objectName, scriptUi);
 
 
-    ui->show();
+    if(_show) ui->show();
   } else {
     emit log(LOGERR,tr("Error! Script tried to create Widget in ui less batc mode! Creation Aborted!"));
   }
