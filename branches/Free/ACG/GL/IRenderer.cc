@@ -141,6 +141,60 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
         }
       }
 
+      if (_renderObject->textures().size())
+      {
+        // Why are my textures sampled as black?
+
+        // mipmap enabled, but no mipmap chain provided?
+
+        for (std::map<size_t,RenderObject::Texture>::const_iterator it = _renderObject->textures().begin();
+          it != _renderObject->textures().end(); ++it)
+        {
+          glBindTexture(it->second.type, it->second.id);
+
+          GLint minFilter = GL_NONE;
+          glGetTexParameteriv(it->second.type, GL_TEXTURE_MIN_FILTER, &minFilter);
+
+          if (minFilter == GL_NEAREST_MIPMAP_LINEAR ||
+            minFilter == GL_NEAREST_MIPMAP_NEAREST ||
+            minFilter == GL_LINEAR_MIPMAP_LINEAR ||
+            minFilter == GL_LINEAR_MIPMAP_NEAREST)
+          {
+            GLint maxLevel = 0;
+            glGetTexParameteriv(it->second.type, GL_TEXTURE_MAX_LEVEL, &maxLevel);
+
+            GLint texWidth = 0;
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
+
+            GLint maxLod = -1;
+            for (GLint lod = 0; lod < maxLevel && maxLod < 0; ++lod)
+            {
+              GLint lodWidth;
+              glGetTexLevelParameteriv(GL_TEXTURE_2D, lod, GL_TEXTURE_WIDTH, &lodWidth);
+
+              if (lodWidth <= 0 || lodWidth == GL_INVALID_VALUE)
+                maxLod = lod-1;
+            }
+
+            if (maxLod <= 0 && texWidth > 1)
+            {
+              std::cout << "warning: texture is sampled with mipmapping, but no mipchain is present: " << _renderObject->debugName << " texid: " << it->second.id << std::endl;
+              std::cout << "         automatically disabling mipmapping!!" << std::endl;
+
+              GLint correctedFilter = GL_LINEAR;
+
+              if (minFilter == GL_NEAREST_MIPMAP_LINEAR ||
+                minFilter == GL_LINEAR_MIPMAP_LINEAR)
+                correctedFilter = GL_LINEAR;
+              else
+                correctedFilter = GL_NEAREST;
+
+              glTexParameteri(it->second.type, GL_TEXTURE_MIN_FILTER, correctedFilter);
+            }
+          }
+        }
+
+      }
 
       if (errorDetectionLevel_ > 1)
       {
