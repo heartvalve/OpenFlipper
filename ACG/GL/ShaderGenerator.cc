@@ -1642,16 +1642,12 @@ void ShaderProgGenerator::buildFragmentShader()
 
         if (it.contains("SG_FRAGMENT_BEGIN"))
           addFragmentBeginCode(&mainCode);
-        else
-        {
-          if (it.contains("SG_FRAGMENT_END"))
-            addFragmentEndCode(&mainCode);
-          else
-          {
-            // no SG marker
-            mainCode.push_back(it);
-          }
-        }
+        else if (it.contains("SG_FRAGMENT_END"))
+          addFragmentEndCode(&mainCode);
+        else if (it.contains("SG_FRAGMENT_LIGHTING"))
+          addLightingCode(&mainCode);
+        else // no SG marker
+          mainCode.push_back(it);
 
       }
 
