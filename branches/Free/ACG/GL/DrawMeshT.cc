@@ -2529,6 +2529,8 @@ void ACG::DrawMeshT<Mesh>::addVertexElement( const std::string& _propertyName, P
   // rest of property desc is initialized later in createVertexDeclaration()
 
   additionalElements_.push_back(prop);
+
+  updateFull();
 }
 
 
