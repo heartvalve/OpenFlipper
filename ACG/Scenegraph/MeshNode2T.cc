@@ -718,55 +718,6 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       applyRenderObjectSettings(props->primitive(), &ro);
       add_line_RenderObjects(_renderer, &ro);
-/*
-      // use alpha blending for anti-aliasing in combined wireframe + solid mode
-      ro.blending = true;
-      ro.blendSrc = GL_SRC_ALPHA;
-      ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
-
-      // use geometry shaders to simulate line width
-   
-      QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geometry_wire.tpl";
-
-      QString fragTemplate = ShaderProgGenerator::getShaderDir();
-      fragTemplate += "Wireframe/fragment_wire.tpl";
-
-#ifdef GL_ARB_texture_buffer_object
-      if (!mesh_.is_trimesh())
-      {
-        // use modified shader for npoly meshes
-        // the shader can identify non-face edges with the poly edge buffer
-        updatePolyEdgeBuf();
-
-        if (polyEdgeBufTex_)
-        {
-          geomTemplate = ShaderProgGenerator::getShaderDir();
-          geomTemplate += "Wireframe/geometry_npoly_wire.tpl";
-
-          fragTemplate = ShaderProgGenerator::getShaderDir();
-          fragTemplate += "Wireframe/fragment_npoly_wire.tpl";
-
-          RenderObject::Texture roTex;
-          roTex.id = polyEdgeBufTex_;
-          roTex.type = GL_TEXTURE_BUFFER;
-
-          // bind poly edge buffer to texture stage 2
-          ro.setUniform("polyEdgeBuffer", 2);
-          ro.addTexture(roTex, 2, false);
-        }
-      }
-#endif
-
-      ro.shaderDesc.geometryTemplateFile = geomTemplate;
-      ro.shaderDesc.fragmentTemplateFile = fragTemplate;
-
-      ro.setUniform("screenSize", );
-      ro.setUniform("lineWidth", _state.line_width());
-
-      applyRenderObjectSettings(props->primitive(), &ro);
-      add_face_RenderObjects(_renderer, &ro);
-*/
     }
 
     if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
@@ -781,7 +732,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
 
       // eventually prepare depthbuffer first
-      if ( (!_drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON) >= 0) && ( mesh_.n_faces() != 0 ))
+      int polyLayer = _drawMode.getLayerIndexByPrimitive(DrawModes::PRIMITIVE_POLYGON);
+      if ( (polyLayer > int(i) || polyLayer < 0) && ( mesh_.n_faces() != 0 ))
       {
         ro.priority = 0;
 
@@ -803,56 +755,6 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       applyRenderObjectSettings(DrawModes::PRIMITIVE_HIDDENLINE, &ro);
 
       add_line_RenderObjects(_renderer, &ro);
-
-      
-
-
-
-/*
-      // use shaders to simulate line width
-      QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geometry_hidden.tpl";
-
-      QString fragTemplate = ShaderProgGenerator::getShaderDir();
-      fragTemplate += "Wireframe/fragment_hidden.tpl";
-
-#ifdef GL_ARB_texture_buffer_object
-      if (!mesh_.is_trimesh())
-      {
-        // use modified shader for npoly meshes
-        // the shader can identify non-face edges with the poly edge buffer
-        updatePolyEdgeBuf();
-
-        if (polyEdgeBufTex_)
-        {
-          geomTemplate = ShaderProgGenerator::getShaderDir();
-          geomTemplate += "Wireframe/geometry_npoly_hidden.tpl";
-
-          fragTemplate = ShaderProgGenerator::getShaderDir();
-          fragTemplate += "Wireframe/fragment_npoly_hidden.tpl";
-
-          RenderObject::Texture roTex;
-          roTex.id = polyEdgeBufTex_;
-          roTex.type = GL_TEXTURE_BUFFER;
-
-          // bind poly edge buffer to texture stage 2
-          ro.setUniform("polyEdgeBuffer", 2);
-          ro.addTexture(roTex, 2, false);
-        }
-      }
-#endif
-
-
-      ro.shaderDesc.geometryTemplateFile = geomTemplate;
-      ro.shaderDesc.fragmentTemplateFile = fragTemplate;
-
-      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
-      ro.setUniform("lineWidth", _state.line_width());
-      ro.setUniform("bkColor", _state.clear_color());
-
-      applyRenderObjectSettings(props->primitive(), &ro);
-      add_face_RenderObjects(_renderer, &ro);
-*/
     }
 
     if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
@@ -939,6 +841,10 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     case DrawModes::PRIMITIVE_POLYGON: 
       {
         applyRenderObjectSettings(props->primitive(), &ro);
+
+        if (!ro.shaderDesc.vertexTemplateFile.isEmpty())
+          drawMesh_->scanVertexShaderForInput(ro.shaderDesc.vertexTemplateFile.toStdString());
+
         add_face_RenderObjects(_renderer, &ro);
       } break;
     default: break;
