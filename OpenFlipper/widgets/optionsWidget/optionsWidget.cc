@@ -273,6 +273,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
   maxRecentBox->setValue( OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
   rbReloadShaders->setChecked(OpenFlipperSettings().value("Core/File/ReloadShaders",false).toBool()) ;
+  leShaderOutputDir->setText(OpenFlipperSettings().value("Core/File/ShaderOutputDir","").toString());
 
   // UI settings
   toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool() ? 0 : 1));
@@ -581,6 +582,9 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/File/MaxRecent",maxRecentBox->value() ) ;
   OpenFlipperSettings().setValue("Core/File/ReloadShaders",rbReloadShaders->isChecked() ) ;
   ACG::ShaderCache::getInstance()->setTimeCheck(rbReloadShaders->isChecked());
+  OpenFlipperSettings().setValue("Core/File/ShaderOutputDir",leShaderOutputDir->text() ) ;
+  ACG::ShaderCache::getInstance()->setDebugOutputDir(leShaderOutputDir->text().toUtf8());
+
   
   // Toolbox orientation
   OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
