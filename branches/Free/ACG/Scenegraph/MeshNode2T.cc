@@ -88,7 +88,8 @@ MeshNodeT(Mesh& _mesh,
   anyPickingBaseIndex_(0),
   perFaceTextureIndexAvailable_(false),
   perFaceTextureCoordsAvailable_(false),
-  textureMap_(0)
+  textureMap_(0),
+  draw_with_offset_(false)
 {
  
   /// \todo : Handle vbo not supported
@@ -214,15 +215,18 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->usePerVertexColors();
 */
     
-  GLenum prev_depth = _state.depthFunc();
   
   glPushAttrib(GL_ENABLE_BIT);
   
+  GLenum prev_depth_offset = _state.depthFunc();
   if(draw_with_offset_)
   {
     ACG::GLState::enable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(0.001f, 0.0f);
+    glPolygonOffset(-1.0f, -10.0f);
+    ACG::GLState::depthFunc(GL_LEQUAL);
   }
+  
+  GLenum prev_depth = _state.depthFunc();
 
   /// get bound texture buffer and target
   GLuint lastBuffer = ACG::GLState::getBoundTextureBuffer();
@@ -599,6 +603,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   // Unbind all remaining buffers
   ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
+  
+  if(draw_with_offset_)
+  {
+    ACG::GLState::depthFunc(prev_depth_offset); 
+  }
   
   glPopAttrib();
 }
