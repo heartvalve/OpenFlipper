@@ -421,6 +421,14 @@ int IRenderer::cmpPriority(const void* _a, const void* _b)
 
 void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot)
 {
+  // grab view transform from glstate
+  viewMatrix_ = _glState->modelview();
+  camPosWS_ = Vec3f( viewMatrix_(0,3), viewMatrix_(1,3), viewMatrix_(2,3) );
+  camDirWS_ = Vec3f( viewMatrix_(0,2), viewMatrix_(1,2), -viewMatrix_(2,2) ); // mind the z flip
+
+//   printf("pos: %f %f %f\ndir: %f %f %f\n", camPosWS_[0], camPosWS_[1], camPosWS_[2],
+//     camDirWS_[0], camDirWS_[1], camDirWS_[2]);
+
   // First, all render objects get collected.
   collectRenderObjects(_glState, _drawMode, _scenegraphRoot);
 
@@ -702,6 +710,8 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
   _prog->setUniformMat3("g_mWVIT", mvIT);
   _prog->setUniform("g_mP", _obj->proj);
 
+  _prog->setUniform("g_vCamPos", camPosWS_);
+  _prog->setUniform("g_vCamDir", camDirWS_);
 
   // material
   

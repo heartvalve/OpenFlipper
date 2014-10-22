@@ -471,6 +471,15 @@ protected:
   /// currently active viewer ID as specified in prepareRenderObjects()
   int curViewerID_;
 
+  /// view transform
+  GLMatrixf viewMatrix_;
+
+  /// cam position in world-space
+  Vec3f camPosWS_;
+
+  /// direction the camera is looking to in world-space
+  Vec3f camDirWS_;
+
   /// previous fbo
   GLint prevFbo_;
 
