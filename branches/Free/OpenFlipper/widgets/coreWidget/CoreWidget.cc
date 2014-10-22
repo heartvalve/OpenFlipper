@@ -383,6 +383,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
 
   ACG::ShaderCache::getInstance()->setTimeCheck(OpenFlipperSettings().value("Core/File/ReloadShaders",false).toBool());
+  ACG::ShaderCache::getInstance()->setDebugOutputDir(OpenFlipperSettings().value("Core/File/ShaderOutputDir","").toString().toUtf8());
 
   // ======================================================================
   // Setup dragging for examiner widget

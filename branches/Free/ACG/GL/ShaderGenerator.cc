@@ -1673,8 +1673,19 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
     inputShader = "Geometry";
 
   // support for projective texture mapping
-  _code->push_back("vec4 sg_vPosCS = out" + inputShader + "PosCS;");
-  _code->push_back("vec2 sg_vScreenPos = out" + inputShader + "PosCS.xy / out" + inputShader + "PosCS.w * 0.5 + vec2(0.5, 0.5);");
+  _code->push_back("vec4 sg_vPosCS = " SG_INPUT_POSCS ";");
+  _code->push_back("vec2 sg_vScreenPos = sg_vPosCS.xy / sg_vPosCS.w * 0.5 + vec2(0.5, 0.5);");
+
+  _code->push_back("#ifdef " SG_INPUT_POSVS);
+  _code->push_back("vec4 sg_vPosVS = " SG_INPUT_POSVS ";");
+  _code->push_back("#endif");
+
+  _code->push_back("#ifdef " SG_INPUT_NORMALVS);
+  _code->push_back("vec3 sg_vNormalVS = " SG_INPUT_NORMALVS ";");
+  if (renormalizeLighting_)
+    _code->push_back("sg_vNormalVS = normalize(sg_vNormalVS);");
+  _code->push_back("#endif");
+
 
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, SG_ALPHA);");
 
@@ -1687,16 +1698,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
-  {
-    _code->push_back("vec4 sg_vPosVS = " SG_INPUT_POSVS ";");
-
-    if (renormalizeLighting_)
-      _code->push_back("vec3 sg_vNormalVS = normalize(" SG_INPUT_NORMALVS ");");
-    else
-      _code->push_back("vec3 sg_vNormalVS = " SG_INPUT_NORMALVS ";");
-
     addLightingCode(_code);
-  }
 
   if (desc_.textured())
   {
@@ -2083,6 +2085,12 @@ void ShaderProgGenerator::scanShaderTemplate(QStringList& _templateSrc, QString 
           ioDesc_.passPosOS_ = true;
         else if (trimmedLine.startsWith(SG_REQUEST_RENOMARLIZE))
           renormalizeLighting_ = true;
+        else if (trimmedLine.startsWith("SG_FRAGMENT_LIGHTING"))
+        {
+          // shader template performs lighting in fragment shader
+          // -> forced phong shading
+          desc_.shadeMode = SG_SHADE_PHONG;
+        }
       }
 
     }
