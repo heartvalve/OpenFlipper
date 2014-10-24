@@ -1,15 +1,46 @@
 /** \page NonFixedPipelinePage The non-fixed OpenGL rendering pipeline
-On this page we will explain how to use the non-fixed (modern) OpenGL rendering pipeline in OpenFlipper.
-First let us introduce the necessary classes.
+
+The ACG library supports two different approaches to rendering the scenegraph: direct fixed-function based and data-driven.
+This page focuses on how to make use of the latter.
+The data-driven approach makes it possible to have complete control over the rendering pipeline in a custom render-plugin.
 
 \section baseNode The BaseNode in the Scenegraph
 
+Every node in the scenegraph is able to provide the renderer with data by creating RenderObject.
+A RenderObject is a collection of data, which is necessary to execute a draw-call.
+This data consists of information about: shaders, textures, uniforms, OpenGL-states, vertex-layout, vertex buffer etc.
+These RenderObjects are created in the getRenderObjects() function of a node.
+Finally, a node is not supposed to execute draw-calls on its own in getRenderObjects(), but should only provide render-object data.
+
+
 \section iRenderer The IRenderer interface
-The IRenderer interface can be derived from and used to attach a RenderObject via the addRenderObject function from within each node within the Scenegraph that is
-to be rendered.
+
+Custom render plugins for the data-driven rendering approach have to implement the IRenderer interface.
+This interface provides basic functionality such as collecting render-object data from the scenegraph and executing a draw-call for a render-object.
 
 \subsection renderObject Defining RenderObjects
-The RenderObject class can be used to define the vertex buffer objects and set further information for the scene nodes.
+
+This is the collection of rendering-data that is necessary for a draw-call.
+It should be noted that any memory addresses set to a RenderObject have to remain valid until used in the render-plugin.
+Thus, addresses set in the getRenderObjects() method should point to permanent data in the heap, not to local data in the stack!
+
+Typically, RenderObjects are initialized somewhat similar to the following manner.
+
+\code
+RenderObject ro;
+ro.initFromState(&_state);                 // copy opengl-states and transforms from GLState
+ro.depthTest = true;                       // force depth-testing
+ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;  // disable lighting
+ro.emissive = Vec3f(1.0f, 1.0f, 1.0f);     // base color
+
+ro.vertexBuffer = myVBO;       // vertex/index buffer
+ro.indexBuffer = myIBO;
+ro.vertexDecl = myVertexDecl;  // vertex layout
+ro.glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);  // same as glDrawElements, but does not execute draw-call! stores data only instead
+
+_renderer->addRenderObject(&ro);
+\endcode
+
 
 \section vertexDeclaration Defining the layout of a vertex element
 The VertexDeclaration class is used to specify the layout of a vertex element (VertexElement)
@@ -144,15 +175,9 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
   // collect renderobjects + prepare OpenGL state
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
 
-  // clear back buffer
-  ACG::Vec4f clearColor = _properties.backgroundColor();
-  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
   // render every object
   for (int i = 0; i < getNumRenderObjects(); ++i)
-    renderObject(sortedObjects_[i]);
+    renderObject( getRenderObject(i) );
 
   // restore common opengl state
   // log window remains hidden otherwise
@@ -163,17 +188,25 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
 
 The code begins and ends by calling prepareRenderingPipeline() and finishRenderingPipeline() 
 which are helper-functions of IRenderer.
-Here, prepareRenderingPipeline traverses the scenegraph to collect render-objects, sorts them
+Here, prepareRenderingPipeline traverses the scenegraph to collect render-objects and sorts them
 by priority in ascending order.
-The sorted list of renderobjects is then stored in the sortedObjects_ array, inherited of IRenderer.
-We then proceed to clear the back buffer and render each object with another helper-function: renderObject().
-renderObject() prepares OpenGL states (vertex/index source, boolean glEnable states..), 
-sets shader uniforms according the data in the RenderObject structure and executes the draw call.
+The sorted list of renderobjects can be accessed via getRenderObject().
+Another helper function: renderObject() prepares OpenGL states (vertex/index source, boolean glEnable states..), 
+sets shader uniforms according the data in the RenderObject structure and executes the draw call of a RenderObject.
 Furthermore it is possible to force the use of a shader or disallow any changes made via glEnable/glDisable
 by specifying the 2nd and 3rd parameter of renderObject().
 Note that renderObject() is only a helper-function and may also be ignored and implemented on your own.
 Finally, finishRenderingPipeline() resets the OpenGL state machine such that it does not
 interfere with following draw-calls made by Qt.
+
+The advantage of this data-driven design is that a custom render-plugin has complete control over the scene-rendering.
+For instance, it is possible to setup custom shaders, modify provided shaders, perform multiple render-passes into custom FBOs etc.
+If custom FBOs are used in a renderer, the input FBO can be easily restored by calling restoreInputFbo().
+Also, the input FBO should not be cleared by a render-plugin, as this is done already by OpenFlipper!
+
+
+
+
 
 The depth-peeling renderer plugin is a more complex example, but showcases the flexibility of the renderer interface.
 It makes use of global shader effects which are fully integrated to the shader-generation pipeline.
