@@ -174,6 +174,7 @@ RenderObject::RenderObject()
   overlay(false),
   modelview(GLMatrixf(ACG::Vec3f(1.0,0.0,0.0),ACG::Vec3f(0.0,1.0,0.0),ACG::Vec3f(0.0,0.0,1.0))),
   proj(modelview),
+  vertexArrayObject(0),
   vertexBuffer(0), indexBuffer(0), sysmemIndexBuffer(0),
   primitiveMode(GL_TRIANGLES), numIndices(0), indexOffset(0), indexType(GL_UNSIGNED_INT),
   vertexDecl(0), 
@@ -260,7 +261,8 @@ QString RenderObject::toString() const
              << "\nindexOffset: " << indexOffset;
 
 
-  resultStrm << "\nvbo-id: " << vertexBuffer
+  resultStrm << "\nvao-id: " << vertexArrayObject
+             << "\nvbo-id: " << vertexBuffer
              << "\nibo-id: " << indexBuffer
              << "\nsysmemIndexBuffer: " << sysmemIndexBuffer;
 
