@@ -143,7 +143,18 @@ struct ACGDLLEXPORT RenderObject
    * @{ */
   //===========================================================================
 
-  /// VBO, IBO ids
+  /** \brief Use vertex array object
+   * 
+   * Optionally, a VAO can be used to setup rendering buffers and attribute locations.
+   * If this is 0 (default), vertex-buffer, index-buffer, vertex-declarition etc. have to be provided individually.
+   * Otherwise, the VAO is used instead of vertexBuffer, indexBuffer etc.
+   * In this case, it is not neccessary to specify a vertex-declaration and provide vertex- and indexbuffer.
+   * This is also the only way to setup a renderobject that makes use of multiple vertexbuffers!
+   */
+  GLuint vertexArrayObject;
+
+
+  /// VBO, IBO ids,  ignored if VAO is provided
   GLuint vertexBuffer,
          indexBuffer;
 
@@ -179,7 +190,7 @@ struct ACGDLLEXPORT RenderObject
   GLenum indexType;
 
 
-  /// Defines the vertex buffer layout
+  /// Defines the vertex buffer layout,  ignored if VAO is provided
   const VertexDeclaration* vertexDecl;
 
   /** @} */

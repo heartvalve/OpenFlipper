@@ -103,7 +103,7 @@ IRenderer::~IRenderer()
 void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
 {
   // do some more checks for error detection
-  if (!_renderObject->vertexDecl)
+  if (!_renderObject->vertexDecl && !_renderObject->vertexArrayObject)
     std::cout << "error: missing vertex declaration in renderobject: " << _renderObject->debugName << std::endl;
   else
   {
@@ -208,27 +208,29 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
         }
       }
 
-
-      // Why are there gl errors and/or nothing gets drawn?
-      if (_renderObject->shaderDesc.shadeMode != SG_SHADE_UNLIT)
+      if (!_renderObject->vertexArrayObject)
       {
-        // check for normals
-        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_NORMAL))
-          std::cout << "warning: missing normals for lighting in renderobject: " << _renderObject->debugName << std::endl;
-      }
+        // Why are there gl errors and/or nothing gets drawn?
+        if (_renderObject->shaderDesc.shadeMode != SG_SHADE_UNLIT)
+        {
+          // check for normals
+          if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_NORMAL))
+            std::cout << "warning: missing normals for lighting in renderobject: " << _renderObject->debugName << std::endl;
+        }
 
-      if (_renderObject->shaderDesc.textured())
-      {
-        // check for texcoords
-        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_TEXCOORD))
-          std::cout << "warning: missing texcoords for textured mode in renderobject: " << _renderObject->debugName << std::endl;
-      }
+        if (_renderObject->shaderDesc.textured())
+        {
+          // check for texcoords
+          if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_TEXCOORD))
+            std::cout << "warning: missing texcoords for textured mode in renderobject: " << _renderObject->debugName << std::endl;
+        }
 
-      if (_renderObject->shaderDesc.vertexColors)
-      {
-        // check for vertex colors
-        if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_COLOR))
-          std::cout << "warning: missing colors for vertexcolor mode in renderobject: " << _renderObject->debugName << std::endl;
+        if (_renderObject->shaderDesc.vertexColors)
+        {
+          // check for vertex colors
+          if (!_renderObject->vertexDecl->findElementByUsage(VERTEX_USAGE_COLOR))
+            std::cout << "warning: missing colors for vertexcolor mode in renderobject: " << _renderObject->debugName << std::endl;
+        }
       }
 
 
@@ -524,6 +526,10 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
 void IRenderer::finishRenderingPipeline(bool _drawOverlay)
 {
+#ifdef GL_ARB_vertex_array_object
+  glBindVertexArray(0);
+#endif
+
   // draw thick lines
   if (enableLineThicknessGL42_)
     renderLineThicknessGL42();
@@ -575,6 +581,10 @@ void IRenderer::finishRenderingPipeline(bool _drawOverlay)
     }
 
   }
+
+#ifdef GL_ARB_vertex_array_object
+  glBindVertexArray(0);
+#endif
 
   glDepthMask(1);
   glColorMask(1,1,1,1);
@@ -684,16 +694,25 @@ void IRenderer::bindObjectVBO(ACG::RenderObject* _obj,
 {
   _prog->use();
 
-  //////////////////////////////////////////////////////////////////////////
-  // NOTE:
-  //  always bind buffers before glVertexAttribPointer calls!!
-  //  freeze in glDrawElements guaranteed (with no error message whatsoever)
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, _obj->vertexBuffer);
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _obj->indexBuffer);
+
+#ifdef GL_ARB_vertex_array_object
+  glBindVertexArray(_obj->vertexArrayObject);
+#endif
+
+  if (!_obj->vertexArrayObject)
+  {
+    //////////////////////////////////////////////////////////////////////////
+    // NOTE:
+    //  always bind buffers before glVertexAttribPointer calls!!
+    //  freeze in glDrawElements guaranteed (with no error message whatsoever)
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, _obj->vertexBuffer);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _obj->indexBuffer);
 
 
-  // activate vertex declaration
-  _obj->vertexDecl->activateShaderPipeline(_prog);
+    // activate vertex declaration
+    _obj->vertexDecl->activateShaderPipeline(_prog);
+
+  }
 }
 
 
@@ -907,8 +926,17 @@ void IRenderer::renderObject(ACG::RenderObject* _obj,
 
   ACG::glCheckErrors();
 
-  // deactivate vertex declaration to avoid errors
-  _obj->vertexDecl->deactivateShaderPipeline(prog);
+  if (_obj->vertexDecl)
+  {
+    // deactivate vertex declaration to avoid errors
+    _obj->vertexDecl->deactivateShaderPipeline(prog);
+  }
+
+
+#ifdef GL_ARB_vertex_array_object
+  if (_obj->vertexArrayObject)
+    glBindVertexArray(0);
+#endif
 
 }
 
