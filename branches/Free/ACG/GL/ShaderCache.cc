@@ -515,9 +515,9 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
         QString fnv_string;
         fnv_string.sprintf("%X", fnv_hash);
 
-        QString dumpFilename = dbgOutputDir_ + QDir::separator() + fileInfo.fileName() + fnv_string;
+        std::string dumpFilename = QString(dbgOutputDir_ + QDir::separator() + fileInfo.fileName() + fnv_string).toStdString();
 
-        std::ofstream dumpStream(dumpFilename.toStdString());
+        std::ofstream dumpStream(dumpFilename.c_str());
         if (dumpStream.is_open())
         {
           for (GLSL::StringList::iterator it = shaderSrc.begin(); it != shaderSrc.end(); ++it)
