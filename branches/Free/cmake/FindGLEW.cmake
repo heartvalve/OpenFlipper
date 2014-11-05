@@ -41,7 +41,7 @@ if( WIN32 )
    SET( GLEW_NAMES glew32 )
    FIND_LIBRARY( GLEW_LIBRARY
                  NAMES ${GLEW_NAMES}
-                 PATHS "c:/glew/lib"  i
+                 PATHS "c:/glew/lib"  
                        "c:/libs/glew/lib" 
                        "c:/libs/glew-1.6.0/lib" 
                        ${COMPILER_PATH}/PlatformSDK/Lib 
