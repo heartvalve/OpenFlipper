@@ -153,20 +153,23 @@ namespace GLSL {
       return false;
     }
 
-    glCompileShader(this->m_shaderId);
+    glCompileShader(m_shaderId);
 
     GLint compileStatus;
-    glGetShaderiv(this->m_shaderId, GL_COMPILE_STATUS, &compileStatus);
+    glGetShaderiv(m_shaderId, GL_COMPILE_STATUS, &compileStatus);
     if (compileStatus == GL_FALSE) {
 
       if (verbose) {
         GLchar *errorLog = new GLchar[GLSL_MAX_LOGSIZE];
-        GLsizei errorLength;
-        char shaderSource[32768];
-        glGetShaderSource(this->m_shaderId, 32768, &errorLength, shaderSource);
+        GLsizei errorLength, srcLength;
+        glGetShaderiv(m_shaderId, GL_SHADER_SOURCE_LENGTH, &srcLength);
+        GLchar* shaderSource = new GLchar[srcLength];
+        glGetShaderSource(m_shaderId, srcLength, &errorLength, shaderSource);
         std::cout << "shader source: " << std::endl << shaderSource << std::endl;
-        glGetShaderInfoLog(this->m_shaderId, GLSL_MAX_LOGSIZE, &errorLength, errorLog);
+        glGetShaderInfoLog(m_shaderId, GLSL_MAX_LOGSIZE, &errorLength, errorLog);
         std::cout << "GLSL compile error:" << std::endl << errorLog << std::endl;
+
+        delete[] shaderSource;
         delete[] errorLog;
       }
 
@@ -218,6 +221,10 @@ namespace GLSL {
   // Compute shader
   //--------------------------------------------------------------------------
 
+
+  ComputeShader::Caps ComputeShader::caps_;
+  bool ComputeShader::capsInitialized_ = false;
+
   ComputeShader::ComputeShader() : Shader(
 #ifdef GL_ARB_compute_shader
     GL_COMPUTE_SHADER
@@ -226,6 +233,32 @@ namespace GLSL {
 #endif
     ) {}
   ComputeShader::~ComputeShader() {}
+
+  const ComputeShader::Caps& ComputeShader::caps() {
+    if (!capsInitialized_) {
+      capsInitialized_ = true;
+
+#ifdef GL_ARB_compute_shader
+      glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &caps_.maxUniformBlocks_);
+      glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &caps_.maxTextureImageUnits_);
+      glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &caps_.maxImageUniforms_);
+      glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &caps_.maxSharedMemorySize_);
+      glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, &caps_.maxUniformComponents_);
+      glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS, &caps_.maxAtomicCounterBufs_);
+      glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTERS, &caps_.maxAtomicCounters_);
+      glGetIntegerv(GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS, &caps_.maxCombinedUniformComponents_);
+      glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &caps_.maxWorkGroupInvocations_);
+
+      for (int i = 0; i < 3; ++i) {
+        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, caps_.maxWorkGroupCount_ + i);
+        glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, caps_.maxWorkGroupSize_ + i);
+      }
+#else
+      memset(&caps_, 0, sizeof(caps_));
+#endif
+    }
+    return caps_;
+  }
 
   //--------------------------------------------------------------------------
   // Shader program object

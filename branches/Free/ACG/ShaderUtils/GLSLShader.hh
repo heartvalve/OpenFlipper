@@ -171,6 +171,30 @@ namespace GLSL {
     public:
       ComputeShader();
       virtual ~ComputeShader();
+
+
+      // get hw caps
+      struct Caps 
+      {
+        int maxUniformBlocks_;
+        int maxTextureImageUnits_;
+        int maxImageUniforms_;
+        int maxSharedMemorySize_;
+        int maxUniformComponents_;
+        int maxAtomicCounterBufs_;
+        int maxAtomicCounters_;
+        int maxCombinedUniformComponents_;
+        int maxWorkGroupInvocations_;
+        int maxWorkGroupCount_[3];
+        int maxWorkGroupSize_[3];
+      };
+      
+      static const Caps& caps();
+
+    private:
+
+      static Caps caps_;
+      static bool capsInitialized_;
   };
 
   typedef ComputeShader* PtrComputeShader;

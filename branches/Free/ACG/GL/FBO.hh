@@ -145,6 +145,7 @@ private:
 
   /// handle of previously bound fbo
   GLuint prevFbo_;
+  GLuint prevDrawBuffer_;
 };
 
 
