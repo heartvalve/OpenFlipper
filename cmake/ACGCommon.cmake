@@ -121,8 +121,10 @@ endif ()
 # sets default build properties
 macro (acg_set_target_props target)
 
-  if (APPLE AND NOT (CMAKE_MAJOR_VERSION  LESS 3))
+  if (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE  AND NOT (CMAKE_MAJOR_VERSION  LESS 3))
     set_target_properties (${target} PROPERTIES MACOSX_RPATH 1)
+  else()
+    set_target_properties(${target} PROPERTIES MACOSX_RPPATH 0) #disable "@rpath" option since fixup_bundle has some problems finding dependencies
   endif()
 
   if (WIN32)
