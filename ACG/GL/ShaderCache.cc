@@ -48,6 +48,7 @@
 #include <cstring>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 
 #include <QFile>
@@ -58,6 +59,7 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GLError.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
+
 
 namespace ACG
 {
@@ -462,7 +464,7 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
     // If the shaders are equal, we return the cached entry
     if (!compareShaderGenDescs(&it->first, &newEntry))
     {
-      if ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry))
+      if ( ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry)) || !it->second)
         oldCache = it;
       else
         return it->second;
@@ -481,7 +483,7 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
   }
 
 
-  GLSL::Program* prog = GLSL::loadComputeProgram(_computeShaderFile, &glslMacros, _verbose);
+  GLSL::Program* prog = GLSL::loadComputeProgram(newEntry.strVertexTemplate.toUtf8(), &glslMacros, _verbose);
   glCheckErrors();
 
   if (oldCache != cacheComputeShaders_.end())
@@ -489,6 +491,41 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
     if (!prog || !prog->isLinked())
     {
       delete prog;
+
+
+      // dump shader source including macros to debug output
+      if (!glslMacros.empty() && !dbgOutputDir_.isEmpty())
+      {
+        GLSL::StringList shaderSrc = GLSL::loadShader(newEntry.strVertexTemplate.toUtf8(), &glslMacros);
+
+        // compute FNV hash of macros
+
+        unsigned int fnv_prime = 16777619;
+        unsigned int fnv_hash = 2166136261;
+
+        for (GLSL::StringList::iterator it = shaderSrc.begin(); it != shaderSrc.end(); ++it)
+        {
+          for (size_t i = 0; i < it->length(); ++i)
+          {
+            fnv_hash *= fnv_prime;
+            fnv_hash ^= static_cast<unsigned char>((*it)[i]);
+          }
+        }
+
+        QString fnv_string;
+        fnv_string.sprintf("%X", fnv_hash);
+
+        QString dumpFilename = dbgOutputDir_ + QDir::separator() + fileInfo.fileName() + fnv_string;
+
+        std::ofstream dumpStream(dumpFilename.toStdString());
+        if (dumpStream.is_open())
+        {
+          for (GLSL::StringList::iterator it = shaderSrc.begin(); it != shaderSrc.end(); ++it)
+            dumpStream << *it;
+          dumpStream.close();
+        }
+      }
+
       return oldCache->second;
     }
     else

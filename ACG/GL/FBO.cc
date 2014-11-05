@@ -21,7 +21,7 @@ namespace ACG
 
 
 FBO::FBO()
-: fbo_(0), depthbuffer_(0), stencilbuffer_(0), width_(0), height_(0), samples_(0), fixedsamplelocation_(GL_TRUE), prevFbo_(0)
+: fbo_(0), depthbuffer_(0), stencilbuffer_(0), width_(0), height_(0), samples_(0), fixedsamplelocation_(GL_TRUE), prevFbo_(0), prevDrawBuffer_(GL_NONE)
 {
 }
 
@@ -276,6 +276,7 @@ bind()
 {
   // save previous fbo id
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&prevFbo_);
+  glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&prevDrawBuffer_);
 
   if ( !fbo_ )
     init();
@@ -298,6 +299,7 @@ unbind()
 {
   //set to normal rendering
   ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, prevFbo_ );
+  ACG::GLState::drawBuffer( prevDrawBuffer_ );
 }
 
 //-----------------------------------------------------------------------------
