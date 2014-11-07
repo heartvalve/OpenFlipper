@@ -276,6 +276,10 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 
   model_->objectChanged( _identifier );
 
+  //block scenegraph reset and redraw in core
+  OpenFlipper::Options::blockSceneGraphUpdates();
+  OpenFlipper::Options::redrawDisabled(true);
+
   // if we are allowed to propagate down
   if ( onlyUp_ == 0 ){
 
@@ -296,6 +300,10 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 
     onlyUp_--;
   }
+
+  OpenFlipper::Options::unblockSceneGraphUpdates();
+  OpenFlipper::Options::redrawDisabled(false);
+  emit updateView();
 }
 
 
@@ -319,6 +327,10 @@ void DataControlPlugin::slotVisibilityChanged( int _identifier ){
 
   //check for changes in the tree
   BaseObject* obj = 0;
+
+  //block scenegraph reset and redraw in core
+  OpenFlipper::Options::blockSceneGraphUpdates();
+  OpenFlipper::Options::redrawDisabled(true);
 
   if ( PluginFunctions::getObject( _identifier, obj) ){
 
@@ -345,10 +357,15 @@ void DataControlPlugin::slotVisibilityChanged( int _identifier ){
     }
   }
 
+  OpenFlipper::Options::unblockSceneGraphUpdates();
+  OpenFlipper::Options::redrawDisabled(false);
+
   BaseObjectData* object = 0;
 
   if ( PluginFunctions::getObject( _identifier, object) )
     updateBoundingBox (object);
+
+  emit updateView();
 
 }
 
