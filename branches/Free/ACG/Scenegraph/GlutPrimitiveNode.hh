@@ -178,7 +178,12 @@ public:
   /// destructor
   virtual ~GlutPrimitiveNode() {}
 
-  void add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec4f _color);
+  /**
+   * Adds a primitive and returns its index.
+   *
+   * @return the index of the new primitive.
+   */
+  size_t add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec4f _color);
 
   void clear(){primitives_.clear();};
   

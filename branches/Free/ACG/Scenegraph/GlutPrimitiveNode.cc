@@ -285,12 +285,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 //----------------------------------------------------------------------------
 
-void 
+size_t
 GlutPrimitiveNode::
 add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec4f _color)
 {
   Primitive p(_type, _pos, _axis, _color);
   primitives_.push_back(p);
+  return primitives_.size() - 1;
 }
 
 //----------------------------------------------------------------------------
