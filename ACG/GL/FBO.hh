@@ -75,10 +75,13 @@ public:
   /// function to attach a depth-buffer texture to fbo (using GL_DEPTH_ATTACHMENT)
   void attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _internalFmt = GL_DEPTH_COMPONENT32, GLenum _format = GL_DEPTH_COMPONENT );
 
-  /// function to add a depth buffer to the fbo
+  /// function to attach a stencil-buffer texture to fbo (texformat = GL_STENCIL_INDEX8)
+  void attachTexture2DStencil(GLsizei _width, GLsizei _height);
+
+  /// function to add a depth renderbuffer to the fbo
   void addDepthBuffer( GLuint _width, GLuint _height );
   
-  /// function to add a stencil buffer to the fbo
+  /// function to add a stencil renderbuffer to the fbo
   void addStencilBuffer( GLuint _width, GLuint _height );
 
   /// return attached texture id

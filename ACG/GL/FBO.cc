@@ -181,7 +181,7 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
 
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
+    glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_UNSIGNED_INT, 0);
   }
   else
     glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
@@ -204,6 +204,68 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
 
   // attach
   attachTexture2D(GL_DEPTH_ATTACHMENT, texID, target);
+}
+
+//-----------------------------------------------------------------------------
+
+void FBO::attachTexture2DStencil( GLsizei _width, GLsizei _height )
+{
+  GLenum _internalFmt = GL_STENCIL_INDEX8;
+  GLenum _format = GL_STENCIL_INDEX;
+
+  // gen texture id
+  GLuint texID;
+  glGenTextures(1, &texID);
+
+#ifdef GL_ARB_texture_multisample
+  GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+#else
+  GLenum target = GL_TEXTURE_2D;
+#endif // GL_ARB_texture_multisample
+
+  // store texture id in internal array
+  RenderTexture intID;
+  intID.id = texID;
+  intID.internalFormat = _internalFmt;
+  intID.format = _format;
+  intID.target = target;
+  internalTextures_.push_back(intID);
+
+
+  // specify texture
+  glBindTexture(target, texID);
+
+#ifdef GL_ARB_texture_multisample
+  if (!samples_)
+  {
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_UNSIGNED_BYTE, 0);
+  }
+  else
+    glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
+
+#else
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_UNSIGNED_BYTE, 0);
+#endif // GL_ARB_texture_multisample
+
+
+  checkGLError();
+
+  width_ = _width;
+  height_ = _height;
+
+  glBindTexture(target, 0);
+
+  // attach
+  attachTexture2D(GL_STENCIL_ATTACHMENT_EXT, texID, target);
 }
 
 //-----------------------------------------------------------------------------
@@ -568,6 +630,7 @@ GLsizei FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations
 
   return _samples;
 }
+
 
 
 //=============================================================================
