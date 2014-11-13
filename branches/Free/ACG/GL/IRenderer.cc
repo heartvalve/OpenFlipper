@@ -102,6 +102,13 @@ IRenderer::~IRenderer()
 
 void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
 {
+  // avoid null-ptr access
+  if (!_renderObject->debugName)
+    _renderObject->debugName = "<unnamed>";
+
+  if (_renderObject->name.empty())
+    _renderObject->name = _renderObject->debugName;
+
   // do some more checks for error detection
   if (!_renderObject->vertexDecl && !_renderObject->vertexArrayObject)
     std::cout << "error: missing vertex declaration in renderobject: " << _renderObject->debugName << std::endl;
