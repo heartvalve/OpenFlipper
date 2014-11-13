@@ -41,10 +41,21 @@
  \*===========================================================================*/
 
 #include <ACG/GL/acg_glew.hh>
-#include "globjects.hh"
+#include <ACG/GL/globjects.hh>
+#include <ACG/GL/GLFormatInfo.hh>
 
+#include <QImage>
+#include <QGLWidget>
+
+#ifdef GLI_FOUND
+#include <gli/gli.hpp>
+#endif
 
 namespace ACG {
+
+
+//-----------------------------------------------------------------------------
+
 
 
 bool Texture::supportsImageLoadStore()
@@ -117,6 +128,58 @@ void Texture2D::setData(GLint _level,
   type_ = _type;
 }
 
+
+void Texture2D::setStorage( GLsizei _levels, GLenum _internalFormat, GLsizei _width, GLsizei _height ) {
+#ifdef GL_ARB_texture_storage
+  bind();
+  glTexStorage2D(GL_TEXTURE_2D, _levels, _internalFormat, _width, _height);
+
+  width_ = _width;
+  height_ = _height;
+  internalFormat_ = _internalFormat;
+
+  GLFormatInfo finfo(_internalFormat);
+  format_ = finfo.format();
+  type_ = finfo.type();
+#endif // GL_ARB_texture_storage
+}
+
+
+bool Texture2D::getData( GLint _level, void* _dst ) {
+  if (is_valid()) {
+    GLint curTex = 0;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &curTex);
+
+    bind();
+    glGetTexImage(GL_TEXTURE_2D, _level, format_, type_, _dst);
+
+    glBindTexture(GL_TEXTURE_2D, curTex);
+
+    return true;
+  }
+  return false;
+}
+
+bool Texture2D::getData( GLint _level, std::vector<char>& _dst ) {
+  if (is_valid()) {
+
+    GLFormatInfo finfo(internalFormat_);
+
+    if (finfo.isValid()) {
+      size_t bufSize = finfo.elemSize() * width_ * height_;
+
+      if (_dst.size() < bufSize)
+        _dst.resize(bufSize);
+
+      if (!_dst.empty())
+        return getData(_level, &_dst[0]);
+    }
+  }
+  return false;
+}
+
+
+
 void Texture2D::bindAsImage(GLuint _index, GLenum _access){
 
 #if defined(GL_ARB_shader_image_load_store)
@@ -127,6 +190,108 @@ void Texture2D::bindAsImage(GLuint _index, GLenum _access){
 #else
   std::cerr << "Texture2D::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
 #endif
+}
+
+bool Texture2D::loadFromFile( const std::string& _filename, GLenum _minFilter, GLenum _magFilter )
+{
+  bool success = false;
+
+  const int numMipmapEnums = 4;
+  GLenum mipmapEnums[numMipmapEnums] = {GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
+  bool mipmaps = false;
+
+  for (int i = 0; i < numMipmapEnums; ++i)
+    mipmaps = mipmaps || _minFilter == mipmapEnums[i];
+
+  if (!_filename.empty())
+  {
+    bind();
+
+#if GLI_VERSION == 51
+
+    if (_filename.find(".dds") != _filename.npos)
+    {
+      gli::texture2D glitex(gli::load_dds(_filename.c_str()));
+      assert(!glitex.empty());
+
+      if(gli::is_compressed(glitex.format()))
+      {
+        for(gli::texture2D::size_type lod = 0; lod < glitex.levels(); ++lod)
+        {
+          glCompressedTexSubImage2D(GL_TEXTURE_2D,
+            GLint(lod),
+            0, 0,
+            GLsizei(glitex[lod].dimensions().x),
+            GLsizei(glitex[lod].dimensions().y),
+            GLenum(gli::internal_format(glitex.format())),
+            GLsizei(glitex[lod].size()),
+            glitex[lod].data());
+        }
+
+        success = true;
+
+        if (mipmaps && glitex.levels() <= 1 && (glitex.dimensions().x > 1 || glitex.dimensions().y > 1))
+        {
+          std::cout << "error: texture required mipmaps  " << _filename << std::endl;
+          success = false;
+        }
+      }
+      else
+      {
+        if (glitex.levels() > 1 || !mipmaps)
+        {
+          for(gli::texture2D::size_type lod = 0; lod < glitex.levels(); ++lod)
+          {
+            setData(GLint(lod),
+              GLenum(gli::internal_format(glitex.format())),
+              GLsizei(glitex[lod].dimensions().x), GLsizei(glitex[lod].dimensions().y),
+              GLenum(gli::external_format(glitex.format())),
+              GLenum(gli::type_format(glitex.format())),
+              glitex[lod].data());
+          }
+
+          success = true;
+        }
+        else
+        {
+          success = !gluBuild2DMipmaps(GL_TEXTURE_2D,
+            GLenum(gli::internal_format(glitex.format())),
+            GLsizei(glitex.dimensions().x), GLsizei(glitex.dimensions().y),
+            GLenum(gli::external_format(glitex.format())),
+            GLenum(gli::type_format(glitex.format())),
+            glitex.data());
+        }
+      } 
+
+    }
+    else
+#endif
+
+    {
+      QImage qtex;
+      
+      if (qtex.load(_filename.c_str()))
+      {
+        QImage gltex = QGLWidget::convertToGLFormat ( qtex );
+
+        success = true;
+
+        if (mipmaps)
+          success = !gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, gltex.width(), gltex.height(), GL_RGBA, GL_UNSIGNED_BYTE, gltex.bits());
+        else
+          setData(0, GL_RGBA, gltex.width(), gltex.height(), GL_RGBA, GL_UNSIGNED_BYTE, gltex.bits());
+      }
+    }
+
+  }
+
+  if (success)
+  {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
+  }
+
+  return success;
 }
 
 
@@ -211,6 +376,31 @@ void TextureBuffer::setBufferData(
 #else
   std::cerr << "TextureBuffer::setData - glew version too old, rebuild with latest glew!" << std::endl;
 #endif
+}
+
+bool TextureBuffer::getBufferData(void* _dst) {
+#if defined(GL_ARB_texture_buffer_object)
+  if (buffer_) {
+    glBindBuffer(GL_TEXTURE_BUFFER, buffer_);
+    glGetBufferSubData(GL_TEXTURE_BUFFER, 0, bufferSize_, _dst);
+    return true;
+  }
+  else
+    std::cerr << "TextureBuffer::getBufferData - gpu does not support buffer textures!" << std::endl;
+#else
+    std::cerr << "TextureBuffer::getBufferData - glew version too old, rebuild with latest glew!" << std::endl;
+#endif
+  return false;
+}
+
+bool TextureBuffer::getBufferData(std::vector<char>& _dst) {
+  if (_dst.size() < size_t(bufferSize_))
+    _dst.resize(bufferSize_);
+
+  if (!_dst.empty())
+    return getBufferData(&_dst[0]);
+
+  return false;
 }
 
 void TextureBuffer::bindAsImage(GLuint _index, GLenum _access){
@@ -317,6 +507,71 @@ void ProgramBaseARB::del() {
         glDeleteProgramsARB(1, &program);
     valid = false;
 }
+
+#endif // GL_ARB_vertex_program
+
+
+//-----------------------------------------------------------------------------
+
+// support state unknown : -1
+int VertexArrayObject::supportStatus_ = -1;
+
+VertexArrayObject::VertexArrayObject() 
+  : id_(0)
+{
+}
+
+VertexArrayObject::~VertexArrayObject()
+{
+#ifdef GL_ARB_vertex_array_object
+  if (id_)
+    glDeleteVertexArrays(1, &id_);
+#endif
+}
+
+
+void VertexArrayObject::bind()
+{
+#ifdef GL_ARB_vertex_array_object
+  if (!id_)
+    init();
+
+  if (id_)
+    glBindVertexArray(id_);
+#endif
+}
+
+void VertexArrayObject::unbind()
+{
+#ifdef GL_ARB_vertex_array_object
+  glBindVertexArray(0);
+#endif
+}
+
+void VertexArrayObject::init()
+{
+#ifdef GL_ARB_vertex_array_object
+  if (id_)
+    glDeleteVertexArrays(1, &id_);
+
+  glGenVertexArrays(1, &id_);
+#endif
+}
+
+bool VertexArrayObject::isSupported()
+{
+#ifndef GL_ARB_vertex_array_object
+  // missing definition in gl header!
+  supportStatus_ = 0;
+#else
+
+  if (supportStatus_ < 0)
+    supportStatus_ = checkExtensionSupported("GL_ARB_vertex_array_object") ? 1 : 0;
+#endif
+
+  return supportStatus_ > 0;
+}
+
 
 
 //-----------------------------------------------------------------------------
@@ -449,5 +704,179 @@ bool AtomicCounter::isValid() const
   return buffer_ && numCounters_ > 0;
 }
 
+
+//-----------------------------------------------------------------------------
+
+int QueryCounter::supportStatus_ = -1;
+
+QueryCounter::QueryCounter()
+  : state_(-1)
+{
+  queryObjects_[0] = queryObjects_[1] = 0;
+}
+
+QueryCounter::~QueryCounter()
+{
+  if (queryObjects_[0])
+    glDeleteQueries(2, queryObjects_);
+}
+
+
+void QueryCounter::restart()
+{
+#ifdef GL_ARB_timer_query
+  if (isSupported())
+  {
+    state_ = 0;
+
+    if (!queryObjects_[0])
+      glGenQueries(2, queryObjects_);
+
+    glQueryCounter(queryObjects_[0], GL_TIMESTAMP);
+  }
 #endif
+}
+
+void QueryCounter::stop()
+{
+#ifdef GL_ARB_timer_query
+  if (state_ == 0)
+  {
+    glQueryCounter(queryObjects_[1], GL_TIMESTAMP);
+    ++state_;
+  }
+#endif
+}
+
+GLuint64 QueryCounter::elapsedNs()
+{
+  GLuint64 timing = 0;
+#ifdef GL_ARB_timer_query
+  stop();
+
+  if (state_ == 1)
+  {
+    GLint available = 0;
+    while (!available)
+      glGetQueryObjectiv(queryObjects_[1], GL_QUERY_RESULT_AVAILABLE, &available);
+
+    GLuint64 timeStart;
+    glGetQueryObjectui64v(queryObjects_[0], GL_QUERY_RESULT, &timeStart);
+    glGetQueryObjectui64v(queryObjects_[1], GL_QUERY_RESULT, &timing);
+    timing -= timeStart;
+  }
+#endif
+  return timing;
+}
+
+GLuint64 QueryCounter::elapsedMs()
+{
+  return elapsedNs() / 1000;
+}
+
+float QueryCounter::elapsedSecs()
+{
+  GLuint64 ms = elapsedMs();
+
+  return float(ms) / 1000.0f;
+}
+
+bool QueryCounter::isSupported()
+{
+#ifndef GL_ARB_timer_query
+  // missing definition in gl header!
+  supportStatus_ = 0;
+#else
+
+  if (supportStatus_ < 0)
+    supportStatus_ = checkExtensionSupported("GL_ARB_timer_query") || openGLVersion(3,2) ? 1 : 0;
+#endif
+
+  return supportStatus_ > 0;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+
+// support state unknown : -1
+int ShaderStorageBufferObject::supportStatus_ = -1;
+int ShaderStorageBufferObject::maxBlockSize_ = -1;
+int ShaderStorageBufferObject::maxBindings_ = -1;
+int ShaderStorageBufferObject::maxCombinedShaderBlocks_ = -1;
+
+ShaderStorageBufferObject::ShaderStorageBufferObject()
+  : VertexBufferObject(
+#ifndef GL_ARB_shader_storage_buffer_object
+   GL_NONE
+#else
+   GL_SHADER_STORAGE_BUFFER
+#endif
+   )
+{
+}
+
+ShaderStorageBufferObject::~ShaderStorageBufferObject()
+{
+}
+
+void ShaderStorageBufferObject::bind( GLuint _index )
+{
+#ifdef GL_ARB_shader_storage_buffer_object
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, _index, id());
+#endif
+}
+
+bool ShaderStorageBufferObject::isSupported()
+{
+#ifndef GL_ARB_shader_storage_buffer_object
+  // missing definition in gl header!
+  supportStatus_ = 0;
+#else
+
+  if (supportStatus_ < 0)
+    supportStatus_ = checkExtensionSupported("GL_ARB_shader_storage_buffer_object") ? 1 : 0;
+#endif
+
+  return supportStatus_ > 0;
+}
+
+void ShaderStorageBufferObject::queryCaps()
+{
+#ifdef GL_ARB_shader_storage_buffer_object
+  if (isSupported())
+  {
+    glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &maxBindings_);
+    glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &maxBlockSize_);
+    glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &maxCombinedShaderBlocks_);
+  }
+#endif
+}
+
+int ShaderStorageBufferObject::getMaxBindings()
+{
+  if (maxBindings_ < 0)
+    queryCaps();
+
+  return maxBindings_;
+}
+
+int ShaderStorageBufferObject::getMaxBlocksize()
+{
+  if (maxBlockSize_ < 0)
+    queryCaps();
+
+  return maxBlockSize_;
+}
+
+int ShaderStorageBufferObject::getMaxCombinedShaderBlocks()
+{
+  if (maxCombinedShaderBlocks_ < 0)
+    queryCaps();
+
+  return maxCombinedShaderBlocks_;
+}
+
+
 } /* namespace ACG */
