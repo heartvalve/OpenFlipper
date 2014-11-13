@@ -63,6 +63,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 
 // C
 #include <cstdio>
@@ -117,7 +118,7 @@ private:
 
 #if defined(GL_ARB_vertex_buffer_object)
 
-class VertexBufferObject
+class ACGDLLEXPORT VertexBufferObject
 {
 public:
 
@@ -169,6 +170,57 @@ public:
 
 
 #endif
+
+
+/* Vertex array object
+https://www.opengl.org/wiki/Vertex_Specification#Vertex_Array_Object
+
+A VAO is a state collection for vertex, index buffers and vertex attribute locations.
+It basically stores all vertex and index buffer related opengl states.
+Maybe Vertex- or GeometryInputState is a more fitting name for this class..
+
+extension: https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt
+opengl-core: 3.0
+
+
+usage:
+
+setup VAO:
+vao.bind()
+usual opengl setup of vertex and indexbuffer and attribute locations
+
+draw with VAO:
+vao.bind()
+glDraw..()
+*/
+class VertexArrayObject
+{
+public:
+  VertexArrayObject();
+  virtual ~VertexArrayObject();
+
+  // check hardware support
+  static bool isSupported();
+
+  void bind();
+  void unbind();
+
+  // implicitly called on bind(), but can be used to reset the VAO
+  void init();
+
+  // opengl object id
+  GLuint id() const {return id_;}
+
+  bool is_valid() const {return id_ != 0;}
+
+  operator GLuint() const {return id_;}
+
+private:
+  GLuint id_;
+
+  static int supportStatus_;
+};
+
 
 
 //== CLASS DEFINITION =========================================================
@@ -251,6 +303,7 @@ public:
 
   void setUnit(GLenum u) {unit = u;}
   GLenum getUnit() const { return unit; }
+  GLenum getTarget() const {return target;}
 
   // test for shader_image_load_store support
   static bool supportsImageLoadStore();
@@ -288,6 +341,15 @@ public:
   // initialize and set texture data via glTexImage2D
   void setData(GLint _level, GLint _internalFormat, GLsizei _width, GLsizei _height, GLenum _format, GLenum _type, const GLvoid* _data);
 
+  // specify storage of texture  (OpenGL 4.2)
+  //  use setData with a nullptr instead if 4.2 is not available
+  void setStorage(GLsizei _levels, GLenum _internalFormat, GLsizei _width, GLsizei _height);
+
+  // initialize and load from file
+  //  supports png, jpg etc. (any format that can be loaded by qt)
+  //  additionally supports dds if the gli library is available while building ACG
+  bool loadFromFile(const std::string& _filename, GLenum _minFilter = GL_NEAREST_MIPMAP_LINEAR, GLenum _magFilter = GL_LINEAR);
+
   // use texture as image load/store    (equivalent of unordered access buffers in dx11)
   //  allows data scattering operations in shader ie. random read/write access
   //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
@@ -302,6 +364,10 @@ public:
   GLint getInternalFormat() const {return internalFormat_;}
   GLenum getFormat() const {return format_;}
   GLenum getType() const {return type_;}
+
+  // read data back to sysmem
+  bool getData(GLint _level, void* _dst);
+  bool getData(GLint _level, std::vector<char>& _dst);
 
 private:
 
@@ -400,6 +466,10 @@ public:
 
   GLenum getFormat() const {return fmt_;}
 
+
+  // read buffer data back to sysmem
+  bool getBufferData(void* _dst);
+  bool getBufferData(std::vector<char>& _dst);
 
 private:
 
@@ -643,6 +713,114 @@ private:
 
   static int supportStatus_;
 };
+
+
+//== CLASS DEFINITION =========================================================
+
+/* 
+Timer query:
+
+Performance counter for profiling GPU timings
+
+extension: https://www.opengl.org/registry/specs/ARB/timer_query.txt
+opengl-core: 3.2
+
+usage:
+counter.restart();
+.. gl-calls
+GLuint64 ns = counter.elapsedNs();
+
+\note elapsedX() methods synchronize CPU and GPU, so this has a performance hit on CPU side
+*/
+class ACGDLLEXPORT QueryCounter
+{
+public:
+  QueryCounter();
+  virtual ~QueryCounter();
+
+  void restart();
+  void stop();
+
+  /// elapsed gpu time since restart() in nanosecs
+  GLuint64 elapsedNs();
+
+  /// elapsed gpu time in millisecs
+  GLuint64 elapsedMs();
+
+  /// elapsed gpu time in seconds
+  float elapsedSecs();
+
+  /// check hw support
+  static bool isSupported();
+
+private:
+
+  GLuint queryObjects_[2];
+  int state_; // -1 : not started,  0 : started,  1 : stopped
+
+  static int supportStatus_;
+};
+
+
+//== CLASS DEFINITION =========================================================
+
+/*
+Shader storage buffer object:
+ http://www.opengl.org/wiki/Shader_Storage_Buffer_Object
+
+Similar to uniform buffer object and also texture buffer.
+Can be read and written to from within shaders.
+Also, the size of a SSBO is typically only bounded by the physical VRAM limitation,
+so it should be used for large data sets or unknown sized arrays.
+
+extension: https://www.opengl.org/registry/specs/ARB/shader_storage_buffer_object.txt
+opengl-core: 4.3
+
+usage:
+init on application-side with data:
+ ssbo.bind();
+ ssbo.upload(datasize, dataptr, GL_DYNAMIC_DRAW);
+
+bind to a binding index:
+ ssbo.bind(idx);
+
+in shader:
+layout (stdxxx, binding = idx) buffer mySSBO
+{
+   vec4 v4;
+   vec4 v_unbounded[];
+};
+
+*/
+class ACGDLLEXPORT ShaderStorageBufferObject : public VertexBufferObject
+{
+public:
+  ShaderStorageBufferObject();
+
+  virtual ~ShaderStorageBufferObject();
+
+  // use this to bind to a shader binding point
+  void bind(GLuint _index);
+
+  // check hardware support
+  static bool isSupported();
+
+  // get hw caps
+  static int getMaxBindings();
+  static int getMaxBlocksize();
+  static int getMaxCombinedShaderBlocks();
+
+private:
+
+  static void queryCaps();
+
+  // hw caps
+  static int supportStatus_;
+  static int maxBlockSize_;
+  static int maxBindings_;
+  static int maxCombinedShaderBlocks_;
+};
+
 
 
 //=============================================================================
