@@ -55,6 +55,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/ShaderGenerator.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 #include <QDir>
 #include <QCoreApplication>
@@ -853,6 +854,7 @@ bool initializeSettings() {
   // Set the Path to the Shaders
   shaderDir_ = dataDir_;
   shaderDir_.cd("Shaders");
+  ACG::ShaderProgGenerator::setShaderDir(OpenFlipper::Options::shaderDirStr());
   
   // Set the Path to the textures
   textureDir_ = dataDir_;
