@@ -48,6 +48,8 @@
 namespace ACG {
 
 
+// MACOS fix
+
 std::map<GLenum, GLFormatInfo> GLFormatInfo::formatMap_;
 
 GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
@@ -62,8 +64,18 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
 
   if (formatMap_.empty())
   {
-    // single channel formats
     registerFmt(GL_RED, GL_RED, GL_UNSIGNED_BYTE, 8, 0, 0, 0, UnsignedInt, true);
+    registerFmt(GL_RG, GL_RG, GL_UNSIGNED_BYTE, 8, 8, 0, 0, UnsignedInt, true);
+    registerFmt(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 8, 8, 8, 0, UnsignedInt, true);
+    registerFmt(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 8, 8, 8, 8, UnsignedInt, true);
+
+    registerFmt(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
+    registerFmt(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
+    registerFmt(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 24, 8, 0, 0, UnsignedInt, false);
+
+
+#ifdef GL_VERSION_3_0
+    // single channel formats
     registerFmt(GL_R8, GL_RED, GL_UNSIGNED_BYTE, 8, 0, 0, 0, UnsignedInt, true);
     registerFmt(GL_R8_SNORM, GL_RED, GL_BYTE, 8, 0, 0, 0, SignedInt, true);
     registerFmt(GL_R8I, GL_RED_INTEGER, GL_BYTE, 8, 0, 0, 0, SignedInt, false);
@@ -79,7 +91,6 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
     registerFmt(GL_R32F, GL_RED, GL_FLOAT, 32, 0, 0, 0, FloatingPt, false);
 
     // dual channel formats
-    registerFmt(GL_RG, GL_RG, GL_UNSIGNED_BYTE, 8, 8, 0, 0, UnsignedInt, true);
     registerFmt(GL_RG8, GL_RG, GL_UNSIGNED_BYTE, 8, 8, 0, 0, UnsignedInt, true);
     registerFmt(GL_RG8_SNORM, GL_RG, GL_BYTE, 8, 8, 0, 0, SignedInt, true);
     registerFmt(GL_RG8I, GL_RG_INTEGER, GL_BYTE, 8, 8, 0, 0, SignedInt, false);
@@ -96,12 +107,10 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
 
 
     // triple channel
-    registerFmt(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 8, 8, 8, 0, UnsignedInt, true);
     registerFmt(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 8, 8, 8, 0, UnsignedInt, true);
     registerFmt(GL_RGB8_SNORM, GL_RGB, GL_BYTE, 8, 8, 8, 0, SignedInt, true);
 
     // quad channel
-    registerFmt(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 8, 8, 8, 8, UnsignedInt, true);
     registerFmt(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 8, 8, 8, 8, UnsignedInt, true);
     registerFmt(GL_RGBA8_SNORM, GL_RGBA, GL_BYTE, 8, 8, 8, 8, SignedInt, true);
 
@@ -112,14 +121,11 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
     registerFmt(GL_RGBA32I, GL_RGBA_INTEGER, GL_INT, 32, 32, 32, 32, SignedInt, false);
     registerFmt(GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT, 32, 32, 32, 32, UnsignedInt, false);
     registerFmt(GL_RGBA32F, GL_RGBA, GL_FLOAT, 32, 32, 32, 32, FloatingPt, false);
-
+#endif // GL_VERSION_3_0
 
     // depth
-    registerFmt(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
-    registerFmt(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
     registerFmt(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 24, 0, 0, 0, UnsignedInt, false);
     registerFmt(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 16, 0, 0, 0, UnsignedInt, false);
-    registerFmt(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 24, 8, 0, 0, UnsignedInt, false);
 #ifdef GL_ARB_depth_buffer_float
     registerFmt(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT, 32, 0, 0, 0, FloatingPt, false);
     registerFmt(GL_DEPTH32F_STENCIL8, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, 32, 8, -24, 0, FloatingPt, false);
