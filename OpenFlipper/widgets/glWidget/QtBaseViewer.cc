@@ -659,10 +659,13 @@ void glViewer::drawScene()
 
   bool stereoOpenGL = false;
   bool stereoAnaglyph = false;
-  
+  ACG::GLMatrixd projSave = glstate_->projection();
+  ACG::GLMatrixd projLR[2];
+
   if (properties_.stereo()) {
     stereoOpenGL = OpenFlipper::Options::stereoMode () == OpenFlipper::Options::OpenGL && OpenFlipper::Options::glStereo ();
     stereoAnaglyph = !stereoOpenGL;
+    computeProjStereo(glstate_->viewport_width(), glstate_->viewport_height(), properties_, projLR, projLR+1);
   }
 
   // Check if we use build in default renderer
@@ -685,10 +688,6 @@ void glViewer::drawScene()
       glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&backbufferTarget);
 
       // setup stereo rendering
-      ACG::GLMatrixd projSave = glstate_->projection();
-      ACG::GLMatrixd projLR[2];
-      computeProjStereo(glstate_->viewport_width(), glstate_->viewport_height(), properties_, projLR, projLR+1);
-
       updateStereoFBOs(glstate_->viewport_width(), glstate_->viewport_height());
 
 
@@ -765,12 +764,26 @@ void glViewer::drawScene()
         postProcInput.depthTex_ = readBackFbo_.getAttachment(GL_DEPTH_ATTACHMENT);
         postProcInput.width     = readBackFbo_.width();
         postProcInput.height    = readBackFbo_.height();
+
+        postProcInput.view_ = glstate_->modelview();
+        postProcInput.proj_ = glstate_->projection();
+        GLclampd range[2];
+        glstate_->getDepthRange(range, range+1);
+        postProcInput.depthRange_[0] = float(range[0]);
+        postProcInput.depthRange_[1] = float(range[1]);
       }
       else {
         postProcInput.colorTex_ = stereoFBO_[chainId].getAttachment(GL_COLOR_ATTACHMENT0);
         postProcInput.depthTex_ = stereoFBO_[chainId].getAttachment(GL_DEPTH_ATTACHMENT);
         postProcInput.width     = stereoFBO_[chainId].width();
         postProcInput.height    = stereoFBO_[chainId].height();
+
+        postProcInput.view_ = glstate_->modelview();
+        postProcInput.proj_ = glstate_->projection();
+        GLclampd range[2];
+        glstate_->getDepthRange(range, range+1);
+        postProcInput.depthRange_[0] = float(range[0]);
+        postProcInput.depthRange_[1] = float(range[1]);
       }
 
       resolveStereoAnaglyph[chainId].colorTex_ = stereoFBO_[chainId].getAttachment(GL_COLOR_ATTACHMENT0);
