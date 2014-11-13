@@ -59,12 +59,23 @@ struct PostProcessorInput
                      GLuint _depthTex = 0,
                      int _width = 0,
                      int _height = 0)
-                     : colorTex_(_colTex), depthTex_(_depthTex), width(_width), height(_height) {}
+                     : colorTex_(_colTex), depthTex_(_depthTex), width(_width), height(_height) 
+  {
+    view_.identity(); 
+    proj_.identity();
+    depthRange_[0] = 0.0; depthRange_[1] = 1.0f;
+  }
 
   GLuint colorTex_;
   GLuint depthTex_;
 
   int width, height;
+
+
+  // view and projection matrix
+  ACG::GLMatrixf view_;
+  ACG::GLMatrixf proj_;
+  float depthRange_[2];
 };
 
 
@@ -74,7 +85,7 @@ struct PostProcessorOutput
     GLuint _drawBuffer = 0,
     int _width = 0,
     int _height = 0)
-    : fbo_(_fbo), drawBuffer_(_drawBuffer), width(_width), height(_height) {}
+    : fbo_(_fbo), drawBuffer_(_drawBuffer), width(_width), height(_height) { }
 
   // opengl fbo id
   GLuint fbo_;
