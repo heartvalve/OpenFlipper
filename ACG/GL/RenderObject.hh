@@ -101,7 +101,6 @@ struct ACGDLLEXPORT RenderObject
 
   /** default constructor
    *   set all members to OpenGL default values
-   *   keep renderobject a POD to avoid possible problems (update: it's not anymore, nevermind then..)
    */
   RenderObject();
 
@@ -115,6 +114,11 @@ struct ACGDLLEXPORT RenderObject
    * \note negative values allowed
    */
   int priority;
+
+  /** \brief Name for logging
+   *
+   */
+  std::string name;
 
   /** \brief Layer based rendering
    *
