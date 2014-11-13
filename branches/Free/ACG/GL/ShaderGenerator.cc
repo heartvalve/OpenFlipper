@@ -441,7 +441,13 @@ void ShaderGenerator::addStringToList(QString _str,
                                       QString _postfix)
 {
   // Construct the whole string
-  QString tmp = _prefix + _str + _postfix;
+  QString tmp = _str;
+
+  if (!_str.startsWith(_prefix))
+    tmp = _prefix + tmp;
+
+  if (!_str.endsWith(_postfix))
+     tmp += _postfix;
 
   // normalize string
   //  remove tabs, double whitespace
