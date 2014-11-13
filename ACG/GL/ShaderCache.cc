@@ -464,7 +464,7 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
     // If the shaders are equal, we return the cached entry
     if (!compareShaderGenDescs(&it->first, &newEntry))
     {
-      if ( ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry)) || !it->second)
+      if ( ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry)) || !it->second || !it->second->isLinked())
         oldCache = it;
       else
         return it->second;
@@ -521,7 +521,7 @@ GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFil
         if (dumpStream.is_open())
         {
           for (GLSL::StringList::iterator it = shaderSrc.begin(); it != shaderSrc.end(); ++it)
-            dumpStream << *it;
+            dumpStream << it->c_str();
           dumpStream.close();
         }
       }
