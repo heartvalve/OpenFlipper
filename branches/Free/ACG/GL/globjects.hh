@@ -193,7 +193,7 @@ draw with VAO:
 vao.bind()
 glDraw..()
 */
-class VertexArrayObject
+class ACGDLLEXPORT VertexArrayObject
 {
 public:
   VertexArrayObject();
