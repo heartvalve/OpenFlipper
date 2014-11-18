@@ -85,6 +85,22 @@ BaseNode* find_node(BaseNode* _root, unsigned int _node_idx)
 
 //----------------------------------------------------------------------------
 
+/** \brief Find a node in the scene graph
+ *
+ *
+ * Traverses scenegraph just like the find_node function, but includes hidden nodes.
+ *
+**/
+BaseNode* find_hidden_node(BaseNode* _root, unsigned int _node_idx)
+{
+  FindNodeAction action(_node_idx);
+  traverse_all(_root, action);
+  return action.node_ptr();
+}
+
+
+//----------------------------------------------------------------------------
+
 
 bool PickAction::operator()(BaseNode* _node)
 {
