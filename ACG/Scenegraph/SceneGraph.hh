@@ -192,6 +192,51 @@ traverse( BaseNode* _node, Action& _action )
 
 //---------------------------------------------------------------------------------
 
+/** Traverse the scenegraph exactly like the traverse() function does,
+    but also include hidden nodes.
+**/
+
+template <class Action>
+void
+traverse_all( BaseNode* _node, Action & _action)
+{
+    if(_node)
+    {
+        bool process_children(true);
+
+        // Executes this nodes enter function (if available)
+        if_has_enter(_action, _node);
+
+        // Test rendering order. If NodeFirst, execute this node and the children later.
+        if(_node->traverseMode() & BaseNode::NodeFirst)
+            process_children &= _action(_node);
+
+        if(process_children)
+        {
+            BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+
+            // Process all children which are not second pass
+            for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+              if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+                traverse_all(*cIt, _action);
+
+            // Process all children which are second pass
+            for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+              if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+                traverse_all(*cIt, _action);
+        }
+
+        // If the children had to be rendered first, we now render the node afterwards
+        if (_node->traverseMode() & BaseNode::ChildrenFirst)
+          _action(_node);
+
+        // Call the leave function of the node.
+        if_has_leave (_action, _node);
+    }
+}
+
+//---------------------------------------------------------------------------------
+
 /** Traverse the scenegraph starting at the node \c _node and apply
     the action \c _action to each node. This traversal function will call the
     enter/leave functions of the action if they have been implemented.
@@ -504,6 +549,9 @@ private:
 
 ACGDLLEXPORT
 BaseNode* find_node( BaseNode* _root, unsigned int _node_idx );
+
+ACGDLLEXPORT
+BaseNode* find_hidden_node( BaseNode* _root, unsigned int _node_idx );
 
 
 //----------------------------------------------------------------------------
