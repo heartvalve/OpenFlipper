@@ -269,14 +269,36 @@ namespace GLSL {
 
 
 
-       void setUniform(const char *_name, GLint *_values, int _count);
-       void setUniform(const char *_name, GLfloat *_values, int _count);
+       void setUniform(const char *_name, const GLint *_values, int _count);
+       void setUniform(const char *_name, const GLfloat *_values, int _count);
+       void setUniform(const char *_name, const ACG::Vec4f *_values, int _count);
        void setUniform(const char *_name, int _index, bool _value);
 
        void setUniform(const char *_name, int _index, int _value);
        void setUniform(const char *_name, int _index, float _value);
 
        /** @} */
+
+       
+
+      //===========================================================================
+       /** @name Uniform buffer blocks
+        *
+        * @{ */
+      //===========================================================================
+
+       GLuint getUniformBlockIndex(const char *_name);
+
+       void setUniformBlockBinding(GLuint _index, int _binding);
+       void setUniformBlockBinding(const char *_name, int _binding);
+
+       int getUniformBlockSize(GLuint _index);
+       int getUniformBlockSize(const char *_name);
+
+       void getUniformBlockOffsets(int _numUniforms, const char **_names, int *_outOffsets);
+
+
+      /** @} */
 
       //===========================================================================
        /** @name Geometry shader parameters
