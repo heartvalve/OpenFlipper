@@ -543,7 +543,7 @@ namespace GLSL {
    *  @param _values Pointer to an array with the new values
    *  @param _count Number of values in the given array
    */
-  void Program::setUniform(const char *_name, GLint *_values, int _count) {
+  void Program::setUniform(const char *_name, const GLint *_values, int _count) {
     checkGLError();
     GLint location = glGetUniformLocation(this->m_programId, _name);
     checkGLError2(_name);
@@ -557,11 +557,25 @@ namespace GLSL {
    *  @param _values Pointer to an array with the new values
    *  @param _count Number of values in the given array
    */
-  void Program::setUniform(const char *_name, GLfloat *_values, int _count) {
+  void Program::setUniform(const char *_name, const GLfloat *_values, int _count) {
     checkGLError();
     GLint location = glGetUniformLocation(this->m_programId, _name);
     checkGLError2(_name);
     glUniform1fv(location, _count, _values);
+    checkGLError();
+  }
+  
+  /** \brief Set Vec4f array uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _values Pointer to an array with the new values
+   * @param _count Number of values in the given array
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec4f* _values, int _count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform4fv(location, _count, (GLfloat*)_values);
     checkGLError();
   }
 
@@ -717,6 +731,91 @@ namespace GLSL {
    */
   void Program::setGeometryVertexCount(GLint _numVerticesOut){
     glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_VERTICES_OUT_EXT, _numVerticesOut);
+  }
+
+  
+  /** \brief Get location of the specified uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _name name of the uniform block
+   * @return block index
+   */
+  GLuint Program::getUniformBlockIndex( const char *_name ) {
+#ifdef GL_ARB_uniform_buffer_object
+    GLuint idx = glGetUniformBlockIndex(m_programId, _name);
+    checkGLError2(_name);
+    return idx;
+#else
+    return 0xFFFFFFFF;
+#endif
+  }
+
+  /** \brief Set binding point of a uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _index block index as returned via getUniformBlockIndex
+   * @param _binding binding point where the buffer is bound to
+   */
+  void Program::setUniformBlockBinding( GLuint _index, int _binding ) {
+#ifdef GL_ARB_uniform_buffer_object
+    glUniformBlockBinding(m_programId, _index, GLuint(_binding));
+    checkGLError();
+#endif
+  }
+
+  /** \brief Set binding point of a uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _name name of the uniform block
+   * @param _binding binding point where the buffer is bound to
+   */
+  void Program::setUniformBlockBinding( const char* _name, int _binding ) {
+    GLuint idx = getUniformBlockIndex(_name);
+    setUniformBlockBinding(idx, _binding);
+  }
+
+  /** \brief Get size in bytes of a uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _index block index as returned via getUniformBlockIndex
+   * @return block index
+   */
+  int Program::getUniformBlockSize( GLuint _index ) {
+    GLint bufsize = 0;
+#ifdef GL_ARB_uniform_buffer_object
+    glGetActiveUniformBlockiv(m_programId, _index, GL_UNIFORM_BLOCK_DATA_SIZE, &bufsize);
+    checkGLError();
+#endif
+    return bufsize;
+  }
+
+  /** \brief Get size in bytes of a uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _name name of the uniform block
+   * @return block index
+   */
+  int Program::getUniformBlockSize( const char* _name ) {
+    GLuint idx = getUniformBlockIndex(_name);
+    return getUniformBlockSize(idx);
+  }
+
+  /** \brief Get offsets of uniforms in a uniform buffer
+   *
+   * Program does not have to be active.
+   * @param _numUniforms number of uniforms to query offsets for
+   * @param _names array of uniform names in the buffer
+   * @param _outOffsets offset for each uniform
+   */
+  void Program::getUniformBlockOffsets( int _numUniforms, const char **_names, int *_outOffsets ) {
+#ifdef GL_ARB_uniform_buffer_object
+    GLuint* idx = new GLuint[_numUniforms];
+    glGetUniformIndices(m_programId, _numUniforms, _names, idx);
+    checkGLError();
+    glGetActiveUniformsiv(m_programId, _numUniforms, idx, GL_UNIFORM_OFFSET, _outOffsets);
+    checkGLError();
+    delete [] idx;
+#endif
   }
 
 
