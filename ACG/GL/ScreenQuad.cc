@@ -55,6 +55,8 @@
 #include "ScreenQuad.hh"
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/GLError.hh>
+#include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/globjects.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -104,10 +106,10 @@ void ScreenQuad::init ()
   {
     float quad[] = 
     {
+      -1.0f,  1.0f, -1.0f,
       -1.0f, -1.0f, -1.0f, 
-      1.0f, -1.0f, -1.0f,
       1.0f,  1.0f, -1.0f,
-      -1.0f,  1.0f, -1.0f
+      1.0f, -1.0f, -1.0f
     };
 
     glGenBuffers(1, &vbo_);
@@ -148,7 +150,19 @@ void ScreenQuad::draw (GLSL::Program* _prog)
 
 //----------------------------------------------------------------------------
 
-void ScreenQuad::intDraw (GLSL::Program* _prog)
+void ScreenQuad::drawInstanced( int _count, GLSL::Program* _prog /*= 0*/ )
+{
+  if (_prog)
+    _prog->use();
+
+  ScreenQuad& quad = instance();
+
+  quad.intDraw(_prog, _count);
+}
+
+//----------------------------------------------------------------------------
+
+void ScreenQuad::intDraw (GLSL::Program* _prog, int _numInstances)
 {
   if (!vbo_)
   {
@@ -165,7 +179,17 @@ void ScreenQuad::intDraw (GLSL::Program* _prog)
 
   glPolygonMode(GL_FRONT, GL_FILL);
 
-  glDrawArrays(GL_QUADS, 0, 4);
+  if (_numInstances < 1)
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  else
+  {
+#ifdef GL_VERSION_3_1
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, _numInstances);
+#else
+    std::cerr << "error: instanced ScreenQuad draw - outdated glew version" << std::endl;
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+#endif
+  }
 
   if (_prog)
     decl_->deactivateShaderPipeline(_prog);

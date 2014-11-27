@@ -85,6 +85,14 @@ public:
   */ 
   static void draw(GLSL::Program* _prog = 0);
 
+  /** \brief Draw the screen quad with instancing
+  *
+  * Can be used for render to 2D-array / 3D volume
+  * The quad is in projected space with coordinates in [-1, 1].
+  * @param _count number of instances
+  * @param _prog GLSL shader to bind attribute id's if needed. Pass null-pointer for fixed function rendering
+  */ 
+  static void drawInstanced(int _count, GLSL::Program* _prog = 0);
 
 
   /** \brief Draw a 2D texture to screen
@@ -111,7 +119,7 @@ private:
   void init();
 
   /// Internal draw function
-  void intDraw(GLSL::Program* _prog);
+  void intDraw(GLSL::Program* _prog, int _numInstances = 0);
 
 
 
