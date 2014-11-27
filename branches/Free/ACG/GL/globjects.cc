@@ -43,6 +43,7 @@
 #include <ACG/GL/acg_glew.hh>
 #include <ACG/GL/globjects.hh>
 #include <ACG/GL/GLFormatInfo.hh>
+#include <ACG/ShaderUtils/GLSLShader.hh>
 
 #include <QImage>
 #include <QGLWidget>
@@ -324,6 +325,13 @@ void VertexBufferObject::gen() {
     glGenBuffersARB(1, &vbo);
     if(vbo > 0u)
         valid = true;
+}
+
+int VertexBufferObject::size() {
+  bind();
+  int bufsize = 0;
+  glGetBufferParameteriv(target, GL_BUFFER_SIZE, &bufsize);
+  return bufsize;
 }
 
 #endif
@@ -793,6 +801,144 @@ bool QueryCounter::isSupported()
 #endif
 
   return supportStatus_ > 0;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+// support state unknown : -1
+int UniformBufferObject::supportStatus_ = -1;
+int UniformBufferObject::maxBlockSize_ = -1;
+int UniformBufferObject::maxBindings_ = -1;
+int UniformBufferObject::maxCombinedShaderBlocks_ = -1;
+int UniformBufferObject::offsetAlignment_ = -1;
+
+UniformBufferObject::UniformBufferObject()
+  : VertexBufferObject(
+#ifndef GL_ARB_uniform_buffer_object
+  GL_NONE
+#else
+  GL_UNIFORM_BUFFER
+#endif
+  ),
+  data_(0)
+{
+}
+
+UniformBufferObject::~UniformBufferObject()
+{
+}
+
+void UniformBufferObject::bind( GLuint _index )
+{
+#ifdef GL_ARB_uniform_buffer_object
+  glBindBufferBase(GL_UNIFORM_BUFFER, _index, id());
+#endif
+}
+
+
+bool UniformBufferObject::isSupported()
+{
+#ifndef GL_ARB_uniform_buffer_object
+  // missing definition in gl header!
+  supportStatus_ = 0;
+#else
+
+  if (supportStatus_ < 0)
+    supportStatus_ = checkExtensionSupported("GL_ARB_uniform_buffer_object") ? 1 : 0;
+#endif
+
+  return supportStatus_ > 0;
+}
+
+void UniformBufferObject::queryCaps()
+{
+#ifdef GL_ARB_uniform_buffer_object
+  if (isSupported())
+  {
+    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &maxBindings_);
+    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxBlockSize_);
+    glGetIntegerv(GL_MAX_COMBINED_UNIFORM_BLOCKS, &maxCombinedShaderBlocks_);
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment_);
+  }
+#endif
+}
+
+int UniformBufferObject::getMaxBindings()
+{
+  if (maxBindings_ < 0)
+    queryCaps();
+
+  return maxBindings_;
+}
+
+int UniformBufferObject::getMaxBlocksize()
+{
+  if (maxBlockSize_ < 0)
+    queryCaps();
+
+  return maxBlockSize_;
+}
+
+int UniformBufferObject::getMaxCombinedShaderBlocks()
+{
+  if (maxCombinedShaderBlocks_ < 0)
+    queryCaps();
+
+  return maxCombinedShaderBlocks_;
+}
+
+int UniformBufferObject::getOffsetAlignment()
+{
+  if (offsetAlignment_ < 0)
+    queryCaps();
+
+  return offsetAlignment_;
+}
+
+void UniformBufferObject::setUniformData( GLSL::Program* _prog, const char* _bufferName, const char* _uniformName, const void* _data, int _datasize, bool _delay )
+{
+  if (_prog && _bufferName && _uniformName && _data)
+  {
+    GLuint idx = _prog->getUniformBlockIndex(_bufferName);
+
+    if (idx != GL_INVALID_INDEX)
+    {
+      size_t bufsize = size_t(_prog->getUniformBlockSize(idx));
+
+      if (data_.size() != bufsize)
+        data_.resize(bufsize, 0);
+
+      int offset = -1;
+      _prog->getUniformBlockOffsets(1, &_uniformName, &offset);
+
+      if (offset >= 0)
+      {
+        memcpy(&data_[offset], _data, _datasize);
+
+        if (!_delay)
+        {
+          VertexBufferObject::bind();
+
+          if (size() != int(bufsize))
+            VertexBufferObject::upload(bufsize, &data_[0], GL_DYNAMIC_DRAW);
+          else
+            uploadSubData(offset, _datasize, _data);
+        }
+      }
+    }
+  }
+}
+
+void UniformBufferObject::upload()
+{
+  if (!data_.empty())
+  {
+    VertexBufferObject::bind();
+
+    VertexBufferObject::upload(data_.size(), &data_[0], GL_DYNAMIC_DRAW);
+  }
 }
 
 

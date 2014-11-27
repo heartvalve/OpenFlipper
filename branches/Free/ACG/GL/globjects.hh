@@ -64,6 +64,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
 // C
 #include <cstdio>
@@ -79,6 +80,10 @@
 
 
 //== NAMESPACES ===============================================================
+
+namespace GLSL {
+  class Program; // prototype
+}
 
 namespace ACG {
 
@@ -143,6 +148,8 @@ public:
   }
 
   GLuint id() const {return vbo;}
+
+  int size();
 
 private:
 
@@ -759,6 +766,80 @@ private:
   int state_; // -1 : not started,  0 : started,  1 : stopped
 
   static int supportStatus_;
+};
+
+
+
+//== CLASS DEFINITION =========================================================
+
+/*
+Uniform buffer object:
+ https://www.opengl.org/wiki/Uniform_Buffer_Object
+
+Grouping shader uniforms into a buffer allows to reuse 
+the same set of uniforms across multiple shaders.
+Also avoids having to call lots of setUniform functions.
+
+extension: https://www.opengl.org/registry/specs/ARB/uniform_buffer_object.txt
+opengl-core: 3.1
+
+usage:
+ACG::Vec4f vec0 = ..;
+ubo.setUniformData(shader, "blockName", "uniformName0", vec0.data());
+
+bind to a binding index:
+ ubo.bind(idx);
+ shader->setUniformBlockBinding(idx);
+
+in shader:
+uniform blockName
+{
+   vec4 uniformName0;
+   vec4 uniformName1;
+   ..
+};
+
+*/
+class ACGDLLEXPORT UniformBufferObject : public VertexBufferObject
+{
+public:
+  UniformBufferObject();
+
+  virtual ~UniformBufferObject();
+
+  // set data for a uniform (makes a byte-wise)
+  //  if _delay is true, the buffer is only locally changed and must be updated later via upload().
+  //  otherwise, the buffer is immediately updated via glBufferSubData
+  void setUniformData(GLSL::Program* _prog, const char* _bufferName, const char* _uniformName, const void* _data, int _datasize, bool _delay = false);
+
+  // upload the buffer after delayed initialization via setUniformData
+  void upload();
+
+  // use this to bind to a shader binding point
+  void bind(GLuint _index);
+
+  // check hardware support
+  static bool isSupported();
+
+  // get hw caps
+  static int getMaxBindings();
+  static int getMaxBlocksize();
+  static int getMaxCombinedShaderBlocks();
+  static int getOffsetAlignment();
+
+private:
+
+  // buffer data (optional)
+  std::vector<char> data_;
+
+  static void queryCaps();
+
+  // hw caps
+  static int supportStatus_;
+  static int maxBlockSize_;
+  static int maxBindings_;
+  static int maxCombinedShaderBlocks_;
+  static int offsetAlignment_;
 };
 
 
