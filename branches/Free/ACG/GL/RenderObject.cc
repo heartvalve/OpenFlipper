@@ -177,6 +177,7 @@ RenderObject::RenderObject()
   vertexArrayObject(0),
   vertexBuffer(0), indexBuffer(0), sysmemIndexBuffer(0),
   primitiveMode(GL_TRIANGLES), numIndices(0), indexOffset(0), indexType(GL_UNSIGNED_INT),
+  numInstances(0),
   vertexDecl(0), 
   culling(true), blending(false), alphaTest(false),
   depthTest(true), depthWrite(true),

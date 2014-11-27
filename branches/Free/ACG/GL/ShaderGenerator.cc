@@ -93,8 +93,8 @@ namespace ACG
 #define SG_OUTPUT_VERTEXCOLOR "SG_OUTPUT_VERTEXCOLOR"
 
 
-int ShaderProgGenerator::numModifiers_ = 0;
-ShaderModifier* ShaderProgGenerator::modifiers_[32] = {0};
+int ShaderProgGenerator::numRegisteredModifiers_ = 0;
+std::vector<ShaderModifier*> ShaderProgGenerator::registeredModifiers_;
 
 
 
@@ -797,10 +797,74 @@ ShaderGenerator::DefaultIODesc::DefaultIODesc()
 QString ShaderProgGenerator::shaderDir_;
 QStringList ShaderProgGenerator::lightingCode_;
 
-ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
-                                         unsigned int _usage)
-: vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), usage_(_usage), renormalizeLighting_(false)
+
+ShaderProgGenerator::ShaderProgGenerator( const ShaderGenDesc* _desc )
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
 {
+  init(_desc, (ShaderModifier**)0, 0);
+}
+
+ShaderProgGenerator::ShaderProgGenerator( const ShaderGenDesc* _desc, const unsigned int* _modifierIDs, unsigned int _numActiveMods )
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, _modifierIDs, _numActiveMods);
+}
+
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<unsigned int>& _modifierIDs)
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, _modifierIDs.empty() ? 0 : &_modifierIDs[0], (unsigned int)_modifierIDs.size());
+}
+
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<unsigned int>* _modifierIDs)
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, !_modifierIDs || _modifierIDs->empty() ? 0 : &((*_modifierIDs)[0]), (unsigned int)_modifierIDs->size());
+}
+
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, ShaderModifier* const* _modifiers, unsigned int _numActiveMods)
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, _modifiers, _numActiveMods);
+}
+
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<ShaderModifier*>& _modifierIDs)
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, _modifierIDs.empty() ? 0 : &(_modifierIDs[0]), (unsigned int)_modifierIDs.size());
+}
+
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<ShaderModifier*>* _modifierIDs)
+  : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
+{
+  init(_desc, !_modifierIDs || _modifierIDs->empty() ? 0 : &((*_modifierIDs)[0]), (unsigned int)_modifierIDs->size());
+}
+
+
+void ShaderProgGenerator::init( const ShaderGenDesc* _desc, const unsigned int* _modifierIDs, unsigned int _numActiveMods )
+{
+  if (_modifierIDs && _numActiveMods)
+  {
+    activeMods_.resize(_numActiveMods);
+
+    for (unsigned int i = 0; i < _numActiveMods; ++i)
+      activeMods_[i] = registeredModifiers_[ _modifierIDs[i] ];
+  }
+
+  init(_desc, (ShaderModifier**)0, 0);
+}
+
+void ShaderProgGenerator::init( const ShaderGenDesc* _desc, ShaderModifier* const* _modifiers, unsigned int _numActiveMods )
+{
+  if (_modifiers && _numActiveMods)
+  {
+    activeMods_.resize(_numActiveMods);
+
+    for (unsigned int i = 0; i < _numActiveMods; ++i)
+      activeMods_[i] = _modifiers[i];
+  }
+
+
   if (shaderDir_.isEmpty())
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
   else
@@ -840,6 +904,7 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
     generateShaders();
   }
 }
+
 
 ShaderProgGenerator::~ShaderProgGenerator(void)
 {
@@ -973,11 +1038,8 @@ void ShaderProgGenerator::buildVertexShader()
 
 
   // apply i/o modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyVertexIO(vertex_);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyVertexIO(vertex_);
 
 
   initGenDefines(vertex_);
@@ -1086,11 +1148,8 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
 
 
   // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyVertexBeginCode(_code);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyVertexBeginCode(_code);
 }
 
 
@@ -1120,11 +1179,8 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
 
 
   // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyVertexEndCode(_code);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyVertexEndCode(_code);
 }
 
 
@@ -1206,11 +1262,8 @@ void ShaderProgGenerator::buildTessControlShader()
 
 
   // apply i/o modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyTessControlIO(tessControl_);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyTessControlIO(tessControl_);
 
   initGenDefines(tessControl_);
 
@@ -1292,11 +1345,8 @@ void ShaderProgGenerator::buildTessEvalShader()
     tessEval_->addLayout(itLayout);
 
   // apply i/o modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyTessControlIO(tessEval_);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyTessControlIO(tessEval_);
 
   initGenDefines(tessEval_);
 
@@ -1483,11 +1533,8 @@ void ShaderProgGenerator::buildGeometryShader()
 
 
   // apply i/o modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyGeometryIO(geometry_);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyGeometryIO(geometry_);
 
   initGenDefines(geometry_);
 
@@ -1601,11 +1648,8 @@ void ShaderProgGenerator::buildFragmentShader()
   }
 
   // apply i/o modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyFragmentIO(fragment_);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyFragmentIO(fragment_);
 
 
   initGenDefines(fragment_);
@@ -1725,11 +1769,8 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
   
   // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyFragmentBeginCode(_code);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyFragmentBeginCode(_code);
 }
 
 void ShaderProgGenerator::addFragmentEndCode(QStringList* _code)
@@ -1737,11 +1778,8 @@ void ShaderProgGenerator::addFragmentEndCode(QStringList* _code)
   _code->push_back("outFragment = sg_cColor;");
 
   // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyFragmentEndCode(_code);
-  }
+  for (size_t i = 0; i < activeMods_.size(); ++i)
+    activeMods_[i]->modifyFragmentEndCode(_code);
 }
 
 
@@ -1752,11 +1790,10 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
   ShaderModifier* lightingModifier = 0;
 
   // check if any modifier replaces the default lighting function
-  for (int i = 0; i < numModifiers_ && !lightingModifier; ++i)
+  for (size_t i = 0; i < activeMods_.size() && !lightingModifier; ++i)
   {
-    if (usage_ & (1 << i))
-      if (modifiers_[i]->replaceDefaultLightingCode())
-        lightingModifier = modifiers_[i];
+    if (activeMods_[i]->replaceDefaultLightingCode())
+        lightingModifier = activeMods_[i];
   }
 
   if (!lightingModifier)
@@ -1791,11 +1828,8 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
 
     // modify lighting color afterwards
 
-    for (int i = 0; i < numModifiers_; ++i)
-    {
-      if (usage_ & (1 << i))
-        modifyLightingCode(_code, modifiers_[i]);
-    }
+    for (size_t i = 0; i < activeMods_.size(); ++i)
+      modifyLightingCode(_code, activeMods_[i]);
   }
   else
   {
@@ -1805,10 +1839,10 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
 
     // apply remaining modifiers that do not replace the complete lighting code
 
-    for (int i = 0; i < numModifiers_; ++i)
+    for (size_t i = 0; i < activeMods_.size(); ++i)
     {
-      if (usage_ & (1 << i) && lightingModifier != modifiers_[i])
-        modifyLightingCode(_code, modifiers_[i]);
+      if (lightingModifier != activeMods_[i])
+        modifyLightingCode(_code, activeMods_[i]);
     }
   }
 
@@ -1867,18 +1901,15 @@ void ShaderProgGenerator::generateShaders()
   // done by adding modifier io to an empty dummy
   ShaderGenerator dummy;
 
-  for (int i = 0; i < numModifiers_; ++i)
+  for (size_t i = 0; i < activeMods_.size(); ++i)
   {
-    if (usage_ & (1 << i))
-    {
-      ShaderModifier* mod = modifiers_[i];
+    ShaderModifier* mod = activeMods_[i];
 
-      mod->modifyVertexIO(&dummy);
-      mod->modifyTessControlIO(&dummy);
-      mod->modifyTessEvalIO(&dummy);
-      mod->modifyGeometryIO(&dummy);
-      mod->modifyFragmentIO(&dummy);
-    }
+    mod->modifyVertexIO(&dummy);
+    mod->modifyTessControlIO(&dummy);
+    mod->modifyTessEvalIO(&dummy);
+    mod->modifyGeometryIO(&dummy);
+    mod->modifyFragmentIO(&dummy);
   }
   // scan requested inputs from modifiers
 
@@ -2137,36 +2168,25 @@ unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
   if (!_modifier) return 0;
 
   // redundancy check
-  for (unsigned int i = 0; i < 32; ++i)
+  for (int i = 0; i < numRegisteredModifiers_; ++i)
   {
-    if (modifiers_[i] == _modifier) 
-      return i;
+    if (registeredModifiers_[i] == _modifier) 
+    {
+//      std::cout << "warning: trying to re-register shader modifier " << _modifier->getID() << std::endl;
+      return registeredModifiers_[i]->getID();
+    }
   }
 
-  if (numModifiers_ == 32) 
-  {
-    std::cout << "warning: exceeded maximal ShaderModifier count!" << std::endl;
-    return 0;
-  }
+  _modifier->modifierID_ = (unsigned int)(numRegisteredModifiers_++);
 
-  _modifier->modifierID_ = (unsigned int)(1 << numModifiers_);
-
-  modifiers_[numModifiers_++] = _modifier;
+  registeredModifiers_.push_back(_modifier);
   return _modifier->modifierID_;
 }
 
 ShaderModifier* ShaderProgGenerator::getActiveModifier( int _i )
 {
-  // search active modifiers
-  int counter = 0;
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-    {
-      if (counter++ == _i)
-        return modifiers_[i];
-    }
-  }
+  if (_i >= 0 && _i <= int(activeMods_.size()))
+    return activeMods_[_i];
 
   // invalid _i
   return 0;
@@ -2174,14 +2194,7 @@ ShaderModifier* ShaderProgGenerator::getActiveModifier( int _i )
 
 int ShaderProgGenerator::getNumActiveModifiers() const
 {
-  // count modifiers
-  int numActive = 0;
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      ++numActive;
-  }
-  return numActive;
+  return int(activeMods_.size());
 }
 
 
