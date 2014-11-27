@@ -60,6 +60,11 @@ public:
   /// get number of samples
   GLsizei getMultisamplingCount() const {return samples_;}
 
+  /// attach a texture of arbitrary dimension (requires OpenGL 3.2)
+  void attachTexture( GLenum _attachment,
+    GLuint _texture,
+    GLuint _level = 0);
+
   /// function to attach a texture to fbo
   void attachTexture2D( GLenum _attachment,
     GLsizei _width, GLsizei _height, 
@@ -77,6 +82,15 @@ public:
 
   /// function to attach a stencil-buffer texture to fbo (texformat = GL_STENCIL_INDEX8)
   void attachTexture2DStencil(GLsizei _width, GLsizei _height);
+
+  /// attach a 3D texture for render to volume  (requires OpenGL 3.2)
+  /// binds all slices at once, target slice has to be chosen via gl_Layer in geometry shader
+  void attachTexture3D( GLenum _attachment,
+    GLsizei _width, GLsizei _height, GLsizei _depth,
+    GLuint _internalFmt, GLenum _format,
+    GLint _wrapMode = GL_CLAMP,
+    GLint _minFilter = GL_NEAREST,
+    GLint _magFilter = GL_NEAREST);
 
   /// function to add a depth renderbuffer to the fbo
   void addDepthBuffer( GLuint _width, GLuint _height );

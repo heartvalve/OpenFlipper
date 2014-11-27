@@ -66,6 +66,35 @@ init()
 
 //-----------------------------------------------------------------------------
 
+void FBO::attachTexture( GLenum _attachment, GLuint _texture, GLuint _level )
+{
+#ifdef GL_VERSION_3_2
+  // bind fbo
+  bind();
+
+  // add texture to frame buffer object
+  glFramebufferTexture( GL_FRAMEBUFFER_EXT, _attachment, _texture, _level );
+
+//   GLint layered = 0;
+//   glGetFramebufferAttachmentParameteriv( GL_FRAMEBUFFER_EXT, _attachment, GL_FRAMEBUFFER_ATTACHMENT_LAYERED, &layered);
+
+  checkGLError();
+
+  // check status
+  checkFramebufferStatus();
+
+  // unbind fbo
+  unbind();
+
+  // track texture id
+  attachments_[_attachment] = std::pair<GLuint, GLenum>(_texture, GL_NONE);
+#else
+  std::cerr << "error: FBO::attachTexture unsupported - update glew headers and rebuild" << std::endl;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void
 FBO::
 attachTexture2D( GLenum _attachment, GLuint _texture, GLenum _target )
@@ -145,6 +174,46 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
 
   // attach
   attachTexture2D(_attachment, texID, target);
+}
+
+//-----------------------------------------------------------------------------
+
+void FBO::attachTexture3D( GLenum _attachment, GLsizei _width, GLsizei _height, GLsizei _depth, GLuint _internalFmt, GLenum _format, GLint _wrapMode , GLint _minFilter , GLint _magFilter  )
+{
+  // gen texture id
+  GLuint texID;
+  glGenTextures(1, &texID);
+
+  GLenum target = GL_TEXTURE_3D;
+
+  // store texture id in internal array
+  RenderTexture intID;
+  intID.id = texID;
+  intID.internalFormat = _internalFmt;
+  intID.format = _format;
+  intID.target = target;
+  internalTextures_.push_back(intID);
+
+
+  // specify texture
+  glBindTexture(target, texID);
+
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
+  glTexParameteri(target, GL_TEXTURE_WRAP_R, _wrapMode);
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, _magFilter);
+  glTexImage3D(target, 0, _internalFmt, _width, _height, _depth, 0, _format, GL_FLOAT, 0);
+
+  checkGLError();
+
+  width_ = _width;
+  height_ = _height;
+
+  glBindTexture(target, 0);
+
+  // attach
+  attachTexture(_attachment, texID, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -443,7 +512,7 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       }
 
       // check if we have to convert to multisampling
-      if (rt->target != GL_TEXTURE_2D_MULTISAMPLE && samples_ > 0)
+      if (rt->target == GL_TEXTURE_2D && samples_ > 0)
       {
         rt->target = GL_TEXTURE_2D_MULTISAMPLE;
         reattachTextures = true;
