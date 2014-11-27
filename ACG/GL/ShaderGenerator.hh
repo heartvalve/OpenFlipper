@@ -47,6 +47,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 #include <ACG/GL/gl.hh>
 #include <ACG/Config/ACGDefines.hh>
@@ -844,7 +845,16 @@ public:
   */
   unsigned int getID() {return modifierID_;}
 
-  operator unsigned int() const {return modifierID_;}
+//  operator unsigned int() const {return modifierID_;}
+  operator std::vector<unsigned int>() const {return std::vector<unsigned int>(1,modifierID_);}
+
+  std::vector<unsigned int> operator | (const std::vector<unsigned int>& _v) const
+  {
+    std::vector<unsigned int> r(1 + _v.size(), modifierID_);
+    for (size_t i = 0; i < _v.size(); ++i)
+      r[i + 1] = _v[i];
+    return r;
+  }
 
 private:
   unsigned int modifierID_;
@@ -871,9 +881,47 @@ public:
 
   /** 
   @param _desc description-set of shader properties.
-  @param _modifierFlags bitflag of modifier-IDs that should be used for the generation.
   */
-  ShaderProgGenerator(const ShaderGenDesc* _desc, unsigned int _modifierFlags = 0);
+  ShaderProgGenerator(const ShaderGenDesc* _desc);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifierIDs array of modifier-IDs that should be used for the generation.
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<unsigned int>& _modifierIDs);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifierIDs array of modifier-IDs that should be used for the generation.
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<unsigned int>* _modifierIDs);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifierIDs array of modifier-IDs that should be used for the generation.
+  @param _numModifiers number of modifiers in _modifierIDs
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, const unsigned int* _modifierIDs, unsigned int _numModifiers);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifiers array of modifiers that should be used for the generation.
+  @param _numModifiers number of modifiers in _modifierIDs
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, ShaderModifier* const* _modifiers, unsigned int _numModifiers);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifiers array of modifiers that should be used for the generation.
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<ShaderModifier*>& _modifiers);
+
+  /** 
+  @param _desc description-set of shader properties.
+  @param _modifiers array of modifiers that should be used for the generation.
+  */
+  ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<ShaderModifier*>* _modifiers);
+
   virtual ~ShaderProgGenerator(void);
 
 
@@ -945,6 +993,10 @@ private:
   */
   void scanShaderTemplate(QStringList& _templateSrc, QString _templateFilename, QStringList* _outLayoutDirectives = 0);
 
+  /** \brief Called in constructor
+  */
+  void init(const ShaderGenDesc* _desc, ShaderModifier* const* _modifiers, unsigned int _numActiveMods);
+  void init(const ShaderGenDesc* _desc, const unsigned int* _modifiers, unsigned int _numActiveMods);
 
   void buildVertexShader();
   void buildTessControlShader();
@@ -1007,12 +1059,12 @@ private:
   QStringList fragmentTemplate_;
 
   ShaderGenDesc   desc_;
-  unsigned int usage_;
+  std::vector<ShaderModifier*> activeMods_;
 
 
   /// registered shader modifier
-  static int numModifiers_;
-  static ShaderModifier* modifiers_[32];
+  static int numRegisteredModifiers_;
+  static std::vector<ShaderModifier*> registeredModifiers_;
 
   /// path + filename to shader templates
   QString vertexShaderFile_;

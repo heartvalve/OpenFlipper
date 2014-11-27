@@ -86,10 +86,30 @@ public:
   /** \brief Query a dynamically generated program from cache
    *
    * @param _desc  Shader description
-   * @param _usage Additional usage identifier (combination of shader modifier ids)
+   * @param _mods  Combination of active shader modifier ids
    * @return The program (Either from cache or newly compiled and linked)
    */
-  GLSL::Program* getProgram(const ShaderGenDesc* _desc, unsigned int _usage = 0);
+  GLSL::Program* getProgram(const ShaderGenDesc* _desc, const std::vector<unsigned int>& _mods);
+
+    /** \brief Query a dynamically generated program from cache
+   *
+   * @param _desc  Shader description
+   * @param _mods  Combination of active shader modifier ids
+   * @return The program (Either from cache or newly compiled and linked)
+   */
+  GLSL::Program* getProgram(const ShaderGenDesc* _desc, const std::vector<unsigned int>* _mods)
+  {
+    return _mods ? getProgram(_desc, *_mods) : getProgram(_desc);
+  }
+
+  /** \brief Query a dynamically generated program from cache
+   *
+   * @param _desc  Shader description
+   * @param _mods  Combination of active shader modifier ids
+   * @return The program (Either from cache or newly compiled and linked)
+   */
+  GLSL::Program* getProgram(const ShaderGenDesc* _desc);
+
 
   /** \brief Query a static shader program from cache
    *
@@ -161,7 +181,7 @@ protected:
   struct CacheEntry
   {
     ShaderGenDesc desc;
-    unsigned int  usage;
+    std::vector<unsigned int> mods;
 
     // string-pointer in ShaderGenDesc may not be permanent,
     // so copy string data here

@@ -193,6 +193,13 @@ struct ACGDLLEXPORT RenderObject
    */
   GLenum indexType;
 
+  /**\ brief Instancing
+   *
+   * Number of instances to render.
+   * numinstances <= 0, disables instancing.
+   */
+  GLsizei numInstances;
+
 
   /// Defines the vertex buffer layout,  ignored if VAO is provided
   const VertexDeclaration* vertexDecl;
@@ -336,7 +343,7 @@ public:
   // opengl style helper function interface: 
   // provided for easier setup of RenderObjects,
   //  usage is not necessary
-  void glBindBuffer(GLenum target, GLuint buffer)
+  inline void glBindBuffer(GLenum target, GLuint buffer)
   {
     switch (target)
     {
@@ -345,19 +352,28 @@ public:
     }
   }
 
-  void glDrawArrays(GLenum mode, GLint first, GLsizei count)
+  inline void glDrawArrays(GLenum mode, GLint first, GLsizei count)
+  {
+    this->glDrawArraysInstanced(mode, first, count, 0);
+  }
+
+  inline void glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
   {
     indexBuffer = 0;
     sysmemIndexBuffer = 0;
 
-
     primitiveMode = mode;
     indexOffset = first;
     numIndices = count;
-
+    numInstances = primcount;
   }
 
-  void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
+  inline void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
+  {
+    this->glDrawElementsInstanced(mode, count, type, indices, 0);
+  }
+
+  inline void glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount)
   {
     primitiveMode = mode;
     numIndices = count;
@@ -366,12 +382,12 @@ public:
     sysmemIndexBuffer = indices;
   }
 
-  void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
+  inline void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
   {
     colorWriteMask[0] = r; colorWriteMask[1] = g; colorWriteMask[2] = b; colorWriteMask[3] = a;
   }
 
-  void glAlphaFunc(GLenum func, float ref)
+  inline void glAlphaFunc(GLenum func, float ref)
   {
     alphaFunc = func;
     alphaRef = ref;

@@ -200,7 +200,7 @@ protected:
    *
    * Shader modifiers can be combined and applied to this pass.
    */
-  virtual void renderObject(ACG::RenderObject* _obj, GLSL::Program* _prog = 0, bool _constRenderStates = false, unsigned int _shaderModifiers = 0);
+  virtual void renderObject(ACG::RenderObject* _obj, GLSL::Program* _prog = 0, bool _constRenderStates = false, const std::vector<unsigned int>* _shaderModifiers = 0);
 
   /** \brief Binding VBOs (First state function)
    *

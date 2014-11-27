@@ -884,7 +884,10 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
     glPolygonMode(GL_FRONT_AND_BACK, _obj->fillMode);
 
     if (noIndices) {
-      glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+      if (_obj->numInstances <= 0)
+        glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+      else
+        glDrawArraysInstanced(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices, _obj->numInstances);
     }
     else
     {
@@ -898,8 +901,12 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
       default: indexSize = 1; break;
       }
 
-      glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
-        ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
+      if (_obj->numInstances <= 0)
+        glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
+          ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
+      else
+        glDrawElementsInstanced(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
+          ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize, _obj->numInstances);
     }
   }
 }
@@ -907,7 +914,7 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
 void IRenderer::renderObject(ACG::RenderObject* _obj, 
                                       GLSL::Program* _prog,
                                       bool _constRenderStates,
-                                      unsigned int _shaderModifiers)
+                                      const std::vector<unsigned int>* _shaderModifiers)
 {
   // select shader from cache
   GLSL::Program* prog = _prog ? _prog : ACG::ShaderCache::getInstance()->getProgram(&_obj->shaderDesc, _shaderModifiers);
@@ -1059,11 +1066,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
   QTextStream outStrm(&objectString);
   std::vector<ACG::ShaderModifier*>::iterator it;
-  unsigned int usage = 0;
-  if (_modifiers) {
-    for (it = _modifiers->begin(); it != _modifiers->end(); ++it)
-      usage |= (*it)->getID();
-  }
+
   for (int i = 0; i < getNumRenderObjects(); ++i)
   {
     const RenderObject* obj = _list ? _list[i] : &renderObjects_[i];
@@ -1077,10 +1080,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
         outStrm << obj->shaderDesc.toString();
 
-        ShaderProgGenerator progGen(&(obj->shaderDesc), usage);
-
-        if (!usage)
-          progGen.generateShaders();
+        ShaderProgGenerator progGen(&(obj->shaderDesc), _modifiers);
 
         outStrm << "\n---------------------vertex-shader--------------------\n\n";
         for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)

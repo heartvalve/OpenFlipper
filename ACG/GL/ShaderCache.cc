@@ -91,16 +91,22 @@ ShaderCache* ACG::ShaderCache::getInstance()
 }
 
 
+GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc )
+{
+  std::vector<unsigned int> dummy;
+  return getProgram(_desc, dummy);
+}
+
 //***********************************************************************
 // TODO implement binary search eventually (if cache access is getting too slow)
 // - modify compareShaderGenDescs s.t. it defines an order
 // or generate a hash key from ShaderGenDesc
 
-GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigned int _usage )
+GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, const std::vector<unsigned int>& _mods )
 {
   CacheEntry newEntry;
   newEntry.desc = *_desc;
-  newEntry.usage = _usage;
+  newEntry.mods = _mods;
 
   if (!_desc->fragmentTemplateFile.isEmpty())
   {
@@ -147,7 +153,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   }
 
   // glsl program not in cache, generate shaders
-  ShaderProgGenerator progGen(_desc, _usage);
+  ShaderProgGenerator progGen(_desc, _mods);
 
   if (!dbgOutputDir_.isEmpty())
   {
@@ -163,7 +169,11 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
       QTextStream outStrm(&fileOut);
 
       outStrm << _desc->toString();
-      outStrm << "\nusage: " << _usage << "\n";
+      outStrm << "\nmods: ";
+
+      for (size_t i = 0; i < _mods.size(); ++i)
+        outStrm << _mods[i] << (i+1 < _mods.size() ? ", " : "");
+      outStrm << "\n";
 
 
       outStrm << "\n---------------------vertex-shader--------------------\n\n";
@@ -280,7 +290,6 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile,
   QStringList* _macros, bool _verbose )
 {
   CacheEntry newEntry;
-  newEntry.usage = 0;
 
 
   // store filenames and timestamps in new entry
@@ -435,7 +444,6 @@ GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, cons
 GLSL::Program* ACG::ShaderCache::getComputeProgram(const char* _computeShaderFile, QStringList* _macros /* = 0 */, bool _verbose /* = true */)
 {
   CacheEntry newEntry;
-  newEntry.usage = 0;
 
   // store filenames and timestamps in new entry
   // use vertex shader filename as compute shader
@@ -560,7 +568,7 @@ bool ACG::ShaderCache::compareTimeStamp(const CacheEntry* _a, const CacheEntry* 
 
 int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEntry* _b)
 {
-  if (_a->usage != _b->usage)
+  if (_a->mods != _b->mods)
     return -1;
 
   const ShaderGenDesc* a = &_a->desc;
