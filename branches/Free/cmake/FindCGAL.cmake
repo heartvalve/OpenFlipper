@@ -52,10 +52,19 @@ IF(CGAL_INCLUDE_DIR )
   IF(WIN32)
     include(CGAL_GeneratorSpecificSettings)
     find_path(CGAL_LIBRARY_DIR 
-                NAMES "CGAL-${CGAL_TOOLSET}-mt.lib" "CGAL-${CGAL_TOOLSET}-mt-gd.lib"
+                NAMES "CGAL-${CGAL_TOOLSET}-mt.lib" "CGAL-${CGAL_TOOLSET}-mt-gd.lib" "CGAL-${CGAL_TOOLSET}-mt-4.5.lib"
                 PATHS "${CGAL_INCLUDE_DIR}/../lib"
                 DOC "Directory containing the CGAL library"
                ) 
+			
+    # Binary dir for DLLs			
+	find_path(CGAL_BIN_DIR 
+                NAMES "CGAL-${CGAL_TOOLSET}-mt-4.5.dll" "CGAL-${CGAL_TOOLSET}-mt-gd.dll"
+                PATHS "${CGAL_INCLUDE_DIR}/../bin"
+                DOC "Directory containing the CGAL DLLs"
+               ) 
+			   
+	MARK_AS_ADVANCED(CGAL_BIN_DIR )
     #add_definitions (-DCGAL_AUTOLINK)
   ELSEIF( APPLE)
     find_path(CGAL_LIBRARY_DIR 
