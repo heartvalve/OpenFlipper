@@ -448,6 +448,8 @@ else()
   else()
     set(BLAS_FOUND FALSE)
   endif()
+  
+  
 
   if(NOT BLAS_FIND_QUIETLY)
     if(BLAS_FOUND)
@@ -461,6 +463,11 @@ else()
     endif(BLAS_FOUND)
   endif(NOT BLAS_FIND_QUIETLY)
 
+  # Extract path from libraries
+  if ( NOT BLAS_LIBRARY_DIR AND BLAS_LIBRARIES)
+	get_filename_component(BLAS_LIBRARY_DIR ${BLAS_LIBRARIES} DIRECTORY)
+  endif()
+  
   # Add variables to cache
   set( BLAS_INCLUDE_DIR   "${BLAS_INCLUDE_DIR}" 
                           CACHE PATH "Directories containing the BLAS header files" FORCE )

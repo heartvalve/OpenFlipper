@@ -53,7 +53,7 @@ if( WIN32 )
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIRS )
      if ( EXISTS "${SUITESPARSE_LIBRARY_DIRS}/libamd.lib" )
-	   list ( APPEND SUITESPARSE_LIBRARIES optimized;libamd;optimized;libcamd;optimized;libccolamd;optimized;libcholmod;optimized;libcolamd;optimized;metis;optimized;libspqr;optimized;libumfpack;debug;libamdd;debug;libcamdd;debug;libccolamdd;debug;libcholmodd;debug;libspqrd;debug;libumfpackd;debug;libcolamdd;debug;metisd;optimized;libblas;optimized;liblapack;debug;libblas;debug;liblapackd )
+	   list ( APPEND SUITESPARSE_LIBRARIES optimized;libamd;optimized;libcamd;optimized;libccolamd;optimized;libcholmod;optimized;libcolamd;optimized;metis;optimized;libspqr;optimized;libumfpack;debug;libamdd;debug;libcamdd;debug;libccolamdd;debug;libcholmodd;debug;libspqrd;debug;libumfpackd;debug;libcolamdd;debug;metisd;optimized;liblapack;debug;liblapackd )
      else()   
 	   list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;optimized;spqr;optimized;umfpack;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;spqrd;debug;umfpackd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
 	 endif()  
