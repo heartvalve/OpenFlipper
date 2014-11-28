@@ -178,6 +178,7 @@ class StatusNodeT :
 {
 public:
   typedef StatusNodeBaseT<Mesh, Mod, ::StatusNodes_ModTraits<Mod>::StaticUsage> BaseClass;
+  typedef Mod ModType;
 
   /// constructor
   StatusNodeT( const Mesh&         _mesh,
