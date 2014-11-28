@@ -3,7 +3,7 @@ include (plugin)
 if (EXISTS ${CMAKE_SOURCE_DIR}/libs/PhySim)
   add_definitions (-DUSE_PHYSIM)
 
-  openflipper_plugin ( DEPS PhySim CGAL Boost GMP CoMISo
+  openflipper_plugin ( DEPS PhySim CGAL Boost GMP CoMISo BLAS
     		       INSTALLDATA Icons
  		      )
 
