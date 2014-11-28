@@ -49,10 +49,15 @@ if( WIN32 )
                      "${VS_SEARCH_PATH}"
                PATH_SUFFIXES suitesparse-4.2.1/lib64
                              suitesparse-metis-for-windows-1.2.2-install/lib64			   )
-
+				
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIRS )
-	list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;optimized;spqr;optimized;umfpack;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;spqrd;debug;umfpackd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
+     if ( EXISTS "${SUITESPARSE_LIBRARY_DIRS}/libamd.lib" )
+	   list ( APPEND SUITESPARSE_LIBRARIES optimized;libamd;optimized;libcamd;optimized;libccolamd;optimized;libcholmod;optimized;libcolamd;optimized;metis;optimized;libspqr;optimized;libumfpack;debug;libamdd;debug;libcamdd;debug;libccolamdd;debug;libcholmodd;debug;libspqrd;debug;libumfpackd;debug;libcolamdd;debug;metisd;optimized;libblas;optimized;liblapack;debug;libblas;debug;liblapackd )
+     else()   
+	   list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;optimized;spqr;optimized;umfpack;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;spqrd;debug;umfpackd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
+	 endif()  
+	 
    ENDIF( SUITESPARSE_LIBRARY_DIRS )  
 
 else( WIN32 )
