@@ -58,6 +58,22 @@ if( WIN32 )
 	   list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;optimized;spqr;optimized;umfpack;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;spqrd;debug;umfpackd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
 	 endif()  
 	 
+     if(EXISTS  "${CHOLMOD_INCLUDE_DIR}/SuiteSparseQR.hpp")
+	   SET(SUITESPARSE_SPQR_VALID TRUE CACHE BOOL "SuiteSparseSPQR valid")
+     else()
+	   SET(SUITESPARSE_SPQR_VALID FALSE CACHE BOOL "SuiteSparseSPQR valid")
+     endif()
+
+     if(SUITESPARSE_SPQR_VALID)
+	   FIND_LIBRARY( SUITESPARSE_SPQR_LIBRARY
+		             NAMES libspqr
+		             PATHS ${SUITESPARSE_LIBRARY_DIRS} )
+	   IF (SUITESPARSE_SPQR_LIBRARY)			
+	     list ( APPEND SUITESPARSE_LIBRARIES optimized;libspqr;debug;libspqrd)
+	   ENDIF (SUITESPARSE_SPQR_LIBRARY)
+     endif()
+	 
+	 
    ENDIF( SUITESPARSE_LIBRARY_DIRS )  
 
 else( WIN32 )
