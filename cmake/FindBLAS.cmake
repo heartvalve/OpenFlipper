@@ -213,6 +213,19 @@ else()
       "${VS_SEARCH_PATH}OpenBLAS-v0.2.9.rc2/lib"
       )
     endif()
+	
+	# BLAS in OPENBLAS library? 
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "libblas"
+      "${VS_SEARCH_PATH}suitesparse-metis-for-windows-1.2.2-install/lib64/lapack_blas_windows"	
+	)
+    endif()
 
     # BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
     if(NOT BLAS_LIBRARIES)
