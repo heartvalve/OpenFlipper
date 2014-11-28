@@ -12,21 +12,48 @@ if (IPOPT_INCLUDE_DIR)
 endif (IPOPT_INCLUDE_DIR)
 
 if (WIN32)
+
+  if ( CMAKE_GENERATOR MATCHES ".*Win64" )
+    SET( DIRSUFFIX "lib64" )
+  else ()
+    SET( DIRSUFFIX "lib" )
+  endif()
+
+   if ( CMAKE_GENERATOR MATCHES "^Visual Studio 10.*" )
+     SET(VS_SEARCH_PATH "c:/libs/vs2010/x32/")
+   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+     SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+     SET(VS_SEARCH_PATH "c:/libs/vs2012/x32/")
+   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*Win64" )
+     SET(VS_SEARCH_PATH "c:/libs/vs2013/x64/")
+   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )
+     SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
+   endif()
+  
    find_path(IPOPT_INCLUDE_DIR NAMES IpNLP.hpp
      PATHS
+	 "${VS_SEARCH_PATH}Ipopt-3.11.9/Ipopt/MSVisualStudio/v8-ifort/installed/include/coin"
      "C:\\libs\\Ipopt-3.8.2\\include\\coin"
      ${IPOPT_DIR}/include
    )
 
    IF(IPOPT_INCLUDE_DIR)
       find_library( IPOPT_LIBRARY_RELEASE 
-                    Ipopt
-                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\release" )
+                    Ipopt ipopt libipopt IpOpt-vc10
+                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\release" 
+					"${VS_SEARCH_PATH}Ipopt-3.11.9/Ipopt/MSVisualStudio/v8-ifort/installed/lib"
+				   )
       find_library( IPOPT_LIBRARY_DEBUG
-                    Ipopt
-                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\debug" )
+                    Ipopt ipopt libipopt IpOpt-vc10
+                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\debug" 
+					      "${VS_SEARCH_PATH}Ipopt-3.11.9/Ipopt/MSVisualStudio/v8-ifort/installed/lib"
+				   )
 
       set ( IPOPT_LIBRARY "optimized;${IPOPT_LIBRARY_RELEASE};debug;${IPOPT_LIBRARY_DEBUG}" CACHE  STRING "IPOPT Libraries" )
+	  
+	  GET_FILENAME_COMPONENT(IPOPT_LIBRARY_DIR ${IPOPT_LIBRARY_RELEASE} PATH )
+	  MARK_AS_ADVANCED(IPOPT_LIBRARY_DIR)
 
       SET(IPOPT_FOUND TRUE)
       SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
