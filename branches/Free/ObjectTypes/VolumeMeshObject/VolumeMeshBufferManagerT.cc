@@ -1905,7 +1905,10 @@ template <class VolumeMesh>
 GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, unsigned int _offset)
 {
     if (_offset != mCurrentPickOffset || _state.pick_current_index() != mGlobalPickOffset)
+    {
         invalidateColors();
+        mGlobalPickOffset = _state.pick_current_index();
+    }
 
     if ((mBuffer == 0) || optionsChanged() || mInvalidated)
     {
