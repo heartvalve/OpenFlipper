@@ -438,7 +438,11 @@ private:
 
     GLuint mBuffer;
 
+    // local picking offset ?
     unsigned int mCurrentPickOffset;
+
+    // global picking offset
+    unsigned int mGlobalPickOffset;
 
     bool mInvalidated;
     bool mGeometryChanged;
