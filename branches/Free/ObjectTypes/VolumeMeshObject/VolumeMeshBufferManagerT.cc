@@ -65,6 +65,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mScale(0.8),
       mBuffer(0),
       mCurrentPickOffset(-1),
+      mGlobalPickOffset(0),
       mInvalidated(true),
       mGeometryChanged(true),
       mNormalsChanged(true),
@@ -1903,7 +1904,7 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
 template <class VolumeMesh>
 GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, unsigned int _offset)
 {
-    if (_offset != mCurrentPickOffset)
+    if (_offset != mCurrentPickOffset || _state.pick_current_index() != mGlobalPickOffset)
         invalidateColors();
 
     if ((mBuffer == 0) || optionsChanged() || mInvalidated)
