@@ -50,6 +50,8 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#include <QDateTime>
+#include <QHash>
 
 namespace ACG
 {
@@ -495,6 +497,15 @@ bool ShaderGenerator::hasDefine(QString _define) const
       return true;
   }
 
+  // also check raw io blocks
+  for (QStringList::const_iterator it = rawIO_.constBegin(); it != rawIO_.constEnd(); ++it)
+  {
+    QString trimmedRef = it->trimmed();
+
+    if (trimmedRef.startsWith(trimmedDef))
+      return true;
+  }
+
   return false;
 }
 
@@ -589,6 +600,10 @@ void ShaderGenerator::buildShaderCode(QStringList* _pMainCode, const QStringList
         code_.push_back(it);
     }
   }
+
+
+  // add raw IO code block
+  code_.append(rawIO_);
 
 
   // main function
@@ -917,8 +932,10 @@ ShaderProgGenerator::~ShaderProgGenerator(void)
 
 
 
-void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList* _out)
+bool ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList* _out)
 {
+  bool success = false;
+
   QString absFilename = getAbsFilePath(_fileName);
 
 
@@ -937,6 +954,8 @@ void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList*
         QString szLine = filestream.readLine();
         _out->push_back(szLine.trimmed());
       }
+
+      success = true;
     }
 
     file.close();
@@ -944,6 +963,7 @@ void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList*
   else
     std::cout << "error: " << file.errorString().toStdString() << " -> \"" << absFilename.toStdString() << "\"" << std::endl;
 
+  return success;
 }
 
 
@@ -2222,6 +2242,219 @@ ShaderModifier::ShaderModifier( void )
 
 ShaderModifier::~ShaderModifier( void )
 {}
+
+
+class ShaderModifierFile : public ShaderModifier
+{
+public:
+
+  ShaderModifierFile()
+    : version_(0) 
+  {}
+
+  virtual ~ShaderModifierFile() 
+  {}
+
+  void modifyVertexIO(ShaderGenerator* _shader) { modifyIO(0, _shader); }
+  void modifyTessControlIO(ShaderGenerator* _shader) { modifyIO(1, _shader); }
+  void modifyTessEvalIO(ShaderGenerator* _shader) { modifyIO(2, _shader); }
+  void modifyGeometryIO(ShaderGenerator* _shader) { modifyIO(3, _shader); }
+  void modifyFragmentIO(ShaderGenerator* _shader) { modifyIO(4, _shader); }
+
+
+  void modifyVertexBeginCode(QStringList* _code) { _code->append(vertexBeginCode_); }
+  void modifyVertexEndCode(QStringList* _code) { _code->append(vertexEndCode_); }
+  void modifyFragmentBeginCode(QStringList* _code) { _code->append(fragmentBeginCode_); }
+  void modifyFragmentEndCode(QStringList* _code) { _code->append(fragmentEndCode_); }
+
+  const QString& filename() const {return filename_;}
+  const QDateTime& filetime() const {return filetime_;}
+  void filetime(const QDateTime& _newtime) {filetime_ = _newtime;}
+
+  void clear()
+  {
+    version_ = 0;
+
+    for (int i = 0; i < 5; ++i)
+      io_[i].clear();
+
+    vertexBeginCode_.clear();
+    vertexEndCode_.clear();
+    fragmentBeginCode_.clear();
+    fragmentEndCode_.clear();
+  }
+
+  static ShaderModifierFile* loadFromFile(QString _filename)
+  {
+    ShaderModifierFile* res = 0;
+
+    // get timestamp
+    QString absFilename = ShaderProgGenerator::getAbsFilePath(_filename);
+    QDateTime lastmod = QFileInfo(absFilename).lastModified();
+
+    // check cache
+    QHash<QString, ShaderModifierFile>::iterator cacheEntry = fileCache_.find(_filename);
+
+    bool reload = false;
+    bool firstLoad = false;
+
+    if (cacheEntry != fileCache_.end())
+    {
+      // fetch from cache
+      res = &cacheEntry.value();
+
+      if (lastmod != res->filetime())
+      {
+        res->clear();
+        reload = true;
+      }
+    }
+    else
+    {
+      // load new modifier
+      reload = true;
+      firstLoad = true;
+    }
+
+    if (reload)
+    {
+      QStringList lines;
+      if (ShaderProgGenerator::loadStringListFromFile(_filename, &lines))
+      {
+        // new cache entry
+        if (firstLoad)
+          res = &fileCache_[_filename];
+
+        res->loadBlocks(lines);
+        res->filetime(lastmod);
+
+        // also register to generator
+        if (firstLoad)
+          ShaderProgGenerator::registerModifier(res);
+      }
+    }
+
+    return res;
+  }
+
+private:
+
+
+  void loadBlocks(const QStringList& _lines)
+  {
+    static const char* markers [] = 
+    {
+      "VertexIO:",
+      "TessControlIO:",
+      "TessEvalIO:",
+      "GeometryIO:",
+      "FragmentIO:",
+      "VertexBeginCode:",
+      "VertexEndCode:",
+      "FragmentBeginCode:",
+      "FragmentEndCode:"
+    };
+    const int numMarkers = sizeof(markers) / sizeof(markers[0]);
+
+    QStringList* blockTargets [] = 
+    {
+      io_ + 0,
+      io_ + 1,
+      io_ + 2,
+      io_ + 3,
+      io_ + 4,
+      &vertexBeginCode_,
+      &vertexEndCode_,
+      &fragmentBeginCode_,
+      &fragmentEndCode_
+    };
+
+    assert(sizeof(blockTargets) / sizeof(blockTargets[0]) == numMarkers);
+
+
+    // current block in file, points to one of io_[idx], vertexBeginCode_, ...
+    QStringList* curBlock_ = 0;
+
+
+    int curLine = 0;
+
+    for (QStringList::const_iterator it = _lines.begin(); it != _lines.end(); ++it, ++curLine)
+    {
+      if (it->isEmpty())
+        continue;
+
+      // read glsl version
+      if (version_ <= 0 && it->startsWith("#version "))
+      {
+        const int offset = strlen("#version ");
+        version_ = atoi(it->toLatin1().data() + offset);
+      }
+      else
+      {
+        // read code blocks
+
+        bool blockMarker = false;
+
+        for (int i = 0; i < numMarkers && !blockMarker; ++i)
+        {
+          if ( it->startsWith(markers[i]) ) 
+          {
+            // new block start
+            curBlock_ = blockTargets[i];
+            blockMarker = true;
+          }
+        }
+
+        if (!blockMarker)
+        {
+          if (curBlock_) // code belongs to some block
+            curBlock_->push_back(*it);
+          else // wrong file structure
+            std::cerr << "ShaderModifierFile::loadBlocks - line belongs to unknown block in file " << filename_.toLatin1().data() << " at line " << curLine << std::endl;
+        }
+      }
+    }
+  }
+
+  void modifyIO(int _stage, ShaderGenerator* _shader)
+  {
+    if (version_ > 0)
+      _shader->setGLSLVersion(version_);
+
+    _shader->addRawIOBlock(io_[_stage]);
+  }
+
+private:
+
+  QString filename_;
+
+  QDateTime filetime_; 
+
+  // glsl version
+  int version_;
+
+  // io mods
+  QStringList io_[5];
+
+  // code mods
+  QStringList vertexBeginCode_,
+    vertexEndCode_,
+    fragmentBeginCode_,
+    fragmentEndCode_;
+
+
+  // loaded modifiers
+  static QHash<QString, ShaderModifierFile> fileCache_;
+};
+
+QHash<QString, ShaderModifierFile> ShaderModifierFile::fileCache_;
+
+
+ShaderModifier* ShaderModifier::loadFromFile(QString _filename)
+{
+  return ShaderModifierFile::loadFromFile(_filename);
+}
+
 
 //=============================================================================
 

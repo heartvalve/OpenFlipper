@@ -508,6 +508,23 @@ public:
    */
   void addLayout(QString _layout);
 
+
+  /** \brief Add a raw glsl IO code block
+   *
+   * This code block is inserted between the generated IO block and the main function.
+   *
+   * Example:
+   * \code
+   *  in vec3 someInput; 
+   *  out vec3 outSomeOutput;
+   *  uniform vec3 paramA;
+   *  #define USE_METHOD_X
+   *  #include "imports.h"
+   *  ..
+   * \endcode
+   */
+  void addRawIOBlock(QStringList _codeBlock) {rawIO_.append(_codeBlock);}
+
   /** \brief Add a light description to shader:
   */
   void addLight(int lightIndex_, ShaderGenLightType _light);
@@ -609,6 +626,9 @@ private:
   QStringList uniforms_;
   QStringList genDefines_;
   QStringList layouts_;
+
+  /// io block as glsl code
+  QStringList rawIO_;
 
   /// inputs of shader are arrays (tess-control, tess-eval, geometry)
   bool inputArrays_;
@@ -845,6 +865,16 @@ public:
   */
   unsigned int getID() {return modifierID_;}
 
+
+  /** \brief Load a modifier from file
+   *
+   * The returned modifier should not be deleted manually.
+   * @param _filename absolute or relative (from shaderdir) file name
+   * @return pointer to shader modifier, 0 if loading failed
+  */
+  static ShaderModifier* loadFromFile(QString _filename);
+
+
 //  operator unsigned int() const {return modifierID_;}
   operator std::vector<unsigned int>() const {return std::vector<unsigned int>(1,modifierID_);}
 
@@ -983,6 +1013,18 @@ public:
   */
   void generateShaders();
 
+  /** \brief Load a text file as string list
+  @param _fileName relative (from shader dir) or absolute file name
+  @param _out lines from text file
+  @return true on success, false otherwise
+  */
+  static bool loadStringListFromFile(QString _fileName, QStringList* _out);
+
+  /** \brief Convert a filename to an absolute filename
+  @param _fileName relative (from shader dir) or absolute file name
+  */
+  static QString getAbsFilePath(QString _fileName);
+
 private:
 
   /** \brief Loads external shader templates
@@ -1027,9 +1069,6 @@ private:
   /// returns path to _strFileName without last slash
   static QString getPathName(QString _strFileName);
 
-  /// returns clean absolute file path to _strFileName including filename
-  static QString getAbsFilePath(QString _strFileName);
-
   /// checks if _str is an include directive
   /// eventually imports the included file to the specified generator
   int checkForIncludes(QString _str, ShaderGenerator* _gen, QString _includePath);
@@ -1043,8 +1082,6 @@ private:
   void initGenDefines(ShaderGenerator* _gen);
 
   static void loadLightingFunctions();
-
-  static void loadStringListFromFile(QString _fileName, QStringList* _out);
 
   ShaderGenerator* vertex_;
   ShaderGenerator* tessControl_;
