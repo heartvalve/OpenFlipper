@@ -868,7 +868,33 @@ public:
 
   /** \brief Load a modifier from file
    *
+   * Shader Mod text file format:
+   *
+   * The file can begin with a glsl version directive (optionally):
+   * #version glsl_version
+   *
+   * The rest of the file contains glsl code blocks, which are separated by keywords.
+   * Each keyword must be at the beginning of a line. Furthermore they end on a colon ':'.
+   * The keyword defines the meaning of the following code block.
+   *
+   * IO code blocks are specified by the keywords:
+   *  VertexIO:, TessControlIO:, TessEvalIO:, GeometryIO: and FragmentIO:
+   *
+   * example
+   *
+   * VertexIO:
+   * in vec3 customInputName;
+   * out vec3 custumOutputName;
+   * uniform vec4 param0;
+   *
+   *
+   * Shader code modifications are done via the keywords:
+   *  VertexBeginCode:, VertexEndCode:, FragmentBeginCode: and FragmentEndCode:
+   *
+   *
+   *
    * The returned modifier should not be deleted manually.
+   *
    * @param _filename absolute or relative (from shaderdir) file name
    * @return pointer to shader modifier, 0 if loading failed
   */
