@@ -446,8 +446,8 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   float minD = FLT_MAX;
   float sumD = 0.0;
   int numD = 0;
-  unsigned int maxFValence = -std::numeric_limits<float>::infinity();
-  unsigned int minFValence = std::numeric_limits<float>::infinity();
+  unsigned int maxFValence = std::numeric_limits<unsigned int>::min();
+  unsigned int minFValence = std::numeric_limits<unsigned int>::max();
   size_t sumFValence = 0;
 
   //iterate over all faces
