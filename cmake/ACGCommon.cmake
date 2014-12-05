@@ -957,3 +957,26 @@ function (generate_qhp_file files_loc plugin_name)
         endif()
     endforeach()
 endfunction()
+
+function(acg_test_glew_definition _def _out)
+  include(CheckCXXSourceRuns)
+  set(CMAKE_REQUIRED_INCLUDES ${GLEW_INCLUDE_DIRS})
+  set(CMAKE_REQUIRED_LIBRARIES ${GLEW_LIBRARIES})
+  set(CMAKE_REQUIRED_DEFINITIONS -DCHECKING=${_def})
+  if(GLEW_FOUND)
+    if(NOT ${_out})
+      unset(${_out} CACHE) #clear cache, if previous test failed and try again
+    endif()
+    CHECK_CXX_SOURCE_RUNS("
+      #include <GL/glew.h>
+      int main()
+      {
+      #ifdef ${_def}
+      return 0;
+      #else
+      return 1;
+      #endif
+      }"
+      ${_out})
+  endif()
+endfunction()
