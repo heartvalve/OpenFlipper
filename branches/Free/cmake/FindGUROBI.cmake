@@ -67,7 +67,7 @@ find_library( GUROBI_CXX_LIBRARY
 # Binary dir for DLLs			
 find_path(GUROBI_BIN_DIR 
                 NAMES "gurobi60.dll" 
-                PATHS "${GUROBI_INCLUDE_DIR }/../bin"
+                PATHS "${GUROBI_INCLUDE_DIR}/../bin"
 				      "${GUROBI_BASE}/bin"
                 DOC "Directory containing the GUROBI DLLs"
                ) 		  
