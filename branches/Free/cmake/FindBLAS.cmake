@@ -449,8 +449,6 @@ else()
     set(BLAS_FOUND FALSE)
   endif()
   
-  
-
   if(NOT BLAS_FIND_QUIETLY)
     if(BLAS_FOUND)
       message(STATUS "A library with BLAS API found.")
@@ -465,7 +463,8 @@ else()
 
   # Extract path from libraries
   if ( NOT BLAS_LIBRARY_DIR AND BLAS_LIBRARIES)
-	get_filename_component(BLAS_LIBRARY_DIR ${BLAS_LIBRARIES} DIRECTORY)
+        list (GET BLAS_LIBRARIES 1 FIRST_LIB)
+	get_filename_component(BLAS_LIBRARY_DIR ${FIRST_LIB} DIRECTORY)
   endif()
   
   # Add variables to cache
