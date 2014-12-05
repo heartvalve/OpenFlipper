@@ -689,7 +689,7 @@ void TypeSplatCloudPlugin::addClusterObjects( SplatCloudObject *_splatCloudObjec
               }
               while( sqrBrightness < MIN_SQR_BRIGHTNESS );
 
-              color = PolyMesh::Color( r, g, b );
+              color = PolyMesh::Color( r, g, b, 1.f );
             }
 
             // get quad vertices
