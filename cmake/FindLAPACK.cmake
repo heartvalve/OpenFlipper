@@ -222,8 +222,8 @@ else()
       "${BLAS_LIBRARIES}"
       "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
       )
-    endif()
-
+    endif()	
+	
 
     # BLAS in OPENBLAS library? 
     if(NOT BLAS_LIBRARIES)
@@ -265,6 +265,21 @@ else()
       )
     endif ( NOT LAPACK_LIBRARIES )
 
+	# Generic LAPACK library?
+    # This configuration *must* be the last try as this library is notably slow.
+    if ( NOT LAPACK_LIBRARIES )
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "liblapack"
+      "${BLAS_LIBRARIES}"
+      "${VS_SEARCH_PATH}/suitesparse-metis-for-windows-1.2.2-install/lib64/lapack_blas_windows"
+      )
+    endif()
+	
     # Generic LAPACK library?
     # This configuration *must* be the last try as this library is notably slow.
     if ( NOT LAPACK_LIBRARIES )
@@ -280,6 +295,11 @@ else()
       )
     endif()
 
+	if (NOT LAPACK_LIBRARY_DIR AND LAPACK_LIBRARIES)
+	  get_filename_component(LAPACK_LIBRARY_DIR ${LAPACK_LIBRARIES} DIRECTORY)
+	endif()
+	
+	
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
   if(LAPACK_LIBRARY_DIR OR LAPACK_LIBRARIES)
