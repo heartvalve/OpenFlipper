@@ -463,7 +463,7 @@ else()
 
   # Extract path from libraries
   if ( NOT BLAS_LIBRARY_DIR AND BLAS_LIBRARIES)
-        list (GET BLAS_LIBRARIES 1 FIRST_LIB)
+        list (GET BLAS_LIBRARIES 0 FIRST_LIB)
 	get_filename_component(BLAS_LIBRARY_DIR ${FIRST_LIB} DIRECTORY)
   endif()
   
