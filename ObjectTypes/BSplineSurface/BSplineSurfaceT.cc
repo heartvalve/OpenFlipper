@@ -83,31 +83,6 @@ BSplineSurfaceT( unsigned int _degm, unsigned int _degn )
 //-----------------------------------------------------------------------------
 
 template <class PointT>
-BSplineSurfaceT<PointT>::
-BSplineSurfaceT( const BSplineSurfaceT& _surface )
-{
-  //copy control points
-  control_net_ = _surface.control_net_;
-
-  //copy knotvectors
-  knotvector_m_ = _surface.knotvector_m_;
-  knotvector_n_ = _surface.knotvector_n_;
-
-  degree_m_     = _surface.degree_m_;
-  degree_n_     = _surface.degree_n_;
-
-  // copy properties
-  cpselections_ = _surface.cpselections_;
-  eselections_  = _surface.eselections_;
-
-  // copy property reference counter
-  ref_count_cpselections_ = _surface.ref_count_cpselections_;
-  ref_count_eselections_  = _surface.ref_count_eselections_;
-}
-
-//-----------------------------------------------------------------------------
-
-template <class PointT>
 template <class PropT>
 void
 BSplineSurfaceT<PointT>::

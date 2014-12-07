@@ -93,16 +93,7 @@ public:
    * @param _degm Degree in m direction
    * @param _degn Degree in n direction
    */
-  BSplineSurfaceT(unsigned int _degm = 3, unsigned int _degn = 3);
-
-  /** \brief Copy Constructor
-   *
-   * @param _surface Original Survare
-   */
-  BSplineSurfaceT(const BSplineSurfaceT& _surface);
-
-  /// Destructor
-  ~BSplineSurfaceT() {};
+  explicit BSplineSurfaceT(unsigned int _degm = 3, unsigned int _degn = 3);
 
   /** \brief Resizes the spline struct.
    *
