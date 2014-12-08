@@ -1058,7 +1058,7 @@ void VolumeMeshBufferManager<VolumeMesh>::buildVertexBuffer(unsigned char* _buff
             for (OpenVolumeMesh::VertexCellIter vc_it = OpenVolumeMesh::VertexCellIter(VertexHandle(i),&mMesh); vc_it; ++vc_it)
             {
                 ACG::Vec3d cog = getCOG(*vc_it);
-                ACG::Vec3d newPos = p*mScale + cog*(1-mScale);
+                //ACG::Vec3d newPos = p*mScale + cog*(1-mScale);
                 if (is_inside(*vc_it))
                     addPositionToBuffer(p*mScale + cog*(1-mScale), _buffer, pos++);
             }

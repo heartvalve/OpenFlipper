@@ -1097,9 +1097,6 @@ pick_vertices(GLState& _state, bool _front)
 {  
   GLenum prev_depth = _state.depthFunc();
   
-  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
-  v_end(mesh_.vertices_end());
-  
   if (!_state.pick_set_maximum (static_cast<unsigned int>(mesh_.n_vertices()))) {
     omerr() << "MeshNode::pick_vertices: color range too small, " << "picking failed\n";
     return;
@@ -1292,9 +1289,6 @@ void
 MeshNodeT<Mesh>::
 pick_faces(GLState& _state)
 {
-  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
-  f_end(mesh_.faces_end());
-  typename Mesh::ConstFaceVertexIter  fv_it;
   
   if ( mesh_.n_vertices() == 0 ) {
     std::cerr << "pick_faces: No vertices in Mesh!" << std::endl;
@@ -1523,8 +1517,7 @@ update_geometry() {
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
   bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()),
-  v_end(mesh_.vertices_end());
+  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
   
   for (; v_it!=v_end; ++v_it)
   {
