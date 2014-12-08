@@ -164,7 +164,7 @@ void BoundingBoxNode::getRenderObjects(IRenderer* _renderer, GLState& _state , c
     ro.modelview.translate(bbcenter);
     ro.modelview.scale(bbsize[0], bbsize[1], bbsize[2]);
 
-    box_->addToRenderer(_renderer, &ro);
+    box_->addToRenderer_primitive(_renderer, &ro);
   }
 }
 
