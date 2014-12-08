@@ -101,7 +101,7 @@ void MeshRepairPlugin::flipOrientation(MeshT& _mesh)
       for (unsigned int j = 1; j <= valence[i]; ++j)
         faceVertices.push_back(_mesh.property(vmap,vhandles[pos - j]) );
 
-      typename MeshT::FaceHandle fh = _mesh.add_face(faceVertices);
+      _mesh.add_face(faceVertices);
     }
 
     _mesh.remove_property(vmap);
@@ -149,7 +149,7 @@ void MeshRepairPlugin::flipOrientation(MeshT& _mesh)
       for (unsigned int j = 1; j <= valence[i]; ++j)
         faceVertices.push_back(vhandles[pos - j]);
 
-      typename MeshT::FaceHandle fh = _mesh.add_face(faceVertices);
+      _mesh.add_face(faceVertices);
     }
 
   }
