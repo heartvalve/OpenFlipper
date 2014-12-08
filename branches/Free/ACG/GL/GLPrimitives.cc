@@ -175,7 +175,7 @@ bool GLPrimitive::checkVBO()
   // update vbo data and upload to gpu if needed
   // return false iff vbo empty
 
-  int bufSize = numTris_ ? numTris_ * 3 * 8 * 4 : numLines_ * 2 * 8 * 4;
+  const int bufSize = numTris_ ? numTris_ * 3 * 8 * 4 : numLines_ * 2 * 8 * 4;
 
   if (!vbo_) {
     if (!vboData_ || (!numTris_ && !numLines_) || (numTris_ && numLines_))
@@ -210,7 +210,7 @@ void GLPrimitive::unBindVBO()
 
 //------------------------------------------------------------------------
 
-void GLPrimitive::draw()
+void GLPrimitive::draw_primitive()
 {
   bindVBO();
 
@@ -224,7 +224,7 @@ void GLPrimitive::draw()
 
 //------------------------------------------------------------------------
 
-void GLPrimitive::addToRenderer( class IRenderer* _renderer, RenderObject* _ro )
+void GLPrimitive::addToRenderer_primitive( class IRenderer* _renderer, RenderObject* _ro )
 {
   if (checkVBO())
   {
@@ -294,7 +294,7 @@ void GLSphere::draw(GLState& _state, float _radius, const ACG::Vec3f& _center)
   _state.translate(ACG::Vec3d(_center));
   _state.scale(_radius, _radius, _radius);
 
-  GLPrimitive::draw();
+  GLPrimitive::draw_primitive();
 
   _state.pop_modelview_matrix();
 }
@@ -308,7 +308,7 @@ void GLSphere::addToRenderer( IRenderer* _renderer, const RenderObject* _base, f
   ro.modelview.translate(ACG::Vec3d(_center));
   ro.modelview.scale((double)_radius, (double)_radius, (double)_radius);
 
-  GLPrimitive::addToRenderer(_renderer, &ro);
+  GLPrimitive::addToRenderer_primitive(_renderer, &ro);
 }
 
 
@@ -482,7 +482,7 @@ void GLCone::draw(GLState& _state, float _height, const ACG::Vec3f& _center, ACG
 
   _state.mult_matrix(mAlign, mAlignInv);
 
-  GLPrimitive::draw();
+  GLPrimitive::draw_primitive();
 
   _state.pop_modelview_matrix();
 }
@@ -532,7 +532,7 @@ void GLCone::addToRenderer(IRenderer* _renderer,
 
   ro.modelview *= mAlign;
 
-  GLPrimitive::addToRenderer(_renderer, &ro);
+  GLPrimitive::addToRenderer_primitive(_renderer, &ro);
 }
 
 //------------------------------------------------------------------------
@@ -876,7 +876,7 @@ void GLPartialDisk::draw( GLState& _state, const ACG::Vec3f& _center, ACG::Vec3f
 
   _state.mult_matrix(mAlign, mAlignInv);
 
-  GLPrimitive::draw();
+  GLPrimitive::draw_primitive();
 
   _state.pop_modelview_matrix();
 }

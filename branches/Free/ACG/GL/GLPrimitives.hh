@@ -74,10 +74,10 @@ public:
   virtual ~GLPrimitive();
 
   // bind vbo + gl draw call
-  virtual void draw();
+  void draw_primitive();
 
   // add to deferred draw call to renderer
-  virtual void addToRenderer(class IRenderer* _renderer, struct RenderObject* _ro);
+  void addToRenderer_primitive(class IRenderer* _renderer, struct RenderObject* _ro);
 
   // Triangle or line count must be known before updateVBO.
   // A GLPrimitive can consist of either only lines or only triangles.
