@@ -911,7 +911,7 @@ void TranslationManipulatorNode::addManipulatorToRenderer (IRenderer* _renderer,
     for (int i = 0; i < 3; ++i)
       _baseRO->emissive[i] = _active ? (element_[XRing].active_current_color_[i]) : (element_[XRing].inactive_current_color_[i]);
 
-    circle_->addToRenderer(_renderer, _baseRO);
+    circle_->addToRenderer_primitive(_renderer, _baseRO);
   }
 
 
@@ -920,7 +920,7 @@ void TranslationManipulatorNode::addManipulatorToRenderer (IRenderer* _renderer,
   {
     for (int i = 0; i < 3; ++i)
       _baseRO->emissive[i] = _active ? (element_[YRing].active_current_color_[i]) : (element_[YRing].inactive_current_color_[i]);
-    circle_->addToRenderer(_renderer, _baseRO);
+    circle_->addToRenderer_primitive(_renderer, _baseRO);
   }
 
   _baseRO->modelview.rotate(90, 1.0, 0.0, 0.0);
@@ -928,7 +928,7 @@ void TranslationManipulatorNode::addManipulatorToRenderer (IRenderer* _renderer,
   {
     for (int i = 0; i < 3; ++i)
       _baseRO->emissive[i] = _active ? (element_[ZRing].active_current_color_[i]) : (element_[ZRing].inactive_current_color_[i]);
-    circle_->addToRenderer(_renderer, _baseRO);
+    circle_->addToRenderer_primitive(_renderer, _baseRO);
   }
 
   _baseRO->modelview = oldModelview;

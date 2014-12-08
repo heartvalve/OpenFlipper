@@ -132,7 +132,7 @@ draw(GLState&  _state  , const DrawModes::DrawMode& _drawMode)
 
     glColor4f(0.0f,1.0f,0.0f,1.0f);
 
-    box_->draw();
+    box_->draw_primitive();
 
     _state.pop_modelview_matrix();
     glPopAttrib ();
