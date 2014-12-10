@@ -79,8 +79,8 @@ class Point {
 };
 
 template<class OSTREAM>
-OSTREAM &operator<< (OSTREAM &stream, const Point &point) {
-    return stream << "(" << point.x << ", " << point.y << ", " << point.weight << ", " << "'" << point.classifier << "'" << ")";
+OSTREAM &operator<< (OSTREAM &stream, Point* point) {
+    return stream << "(" << point->x << ", " << point->y << ", " << point->weight << ", " << "'" << point->classifier << "'" << ")";
 }
 
 template<class OUTPUT_ITERATOR>
@@ -109,15 +109,15 @@ testing::AssertionResult checkClusterConsistency(const std::vector<Point> &point
             cluster_2_classifier[*cluster_it] = point_it->classifier;
 
             if (point_it->classifier == '.' && *cluster_it != 0) {
-                return testing::AssertionFailure() << "Noise point " << *point_it << " was mapped to non-noise cluster " << *cluster_it << ".";
+                return testing::AssertionFailure() << "Noise point " << &(*point_it) << " was mapped to non-noise cluster " << *cluster_it << ".";
             }
 
             if (*cluster_it == 0 && point_it->classifier != '.') {
-                return testing::AssertionFailure() << "Non-noise point " << *point_it << " was mapped to noise cluster (0).";
+                return testing::AssertionFailure() << "Non-noise point " << &(*point_it) << " was mapped to noise cluster (0).";
             }
         } else {
             if (map_it->second != point_it->classifier) {
-                return testing::AssertionFailure() << "Point " << *point_it << " was mapped to cluster '" << map_it->second << "'.";
+                return testing::AssertionFailure() << "Point " << &(*point_it) << " was mapped to cluster '" << map_it->second << "'.";
             }
         }
     }
