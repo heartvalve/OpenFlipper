@@ -29,7 +29,7 @@ public:
   float* getNormals() {return m_Normals.empty() ? 0 : &m_Normals[0];}
   float* getTexCoords() {return m_TexCoords.empty() ? 0 : &m_TexCoords[0];}
 
-  virtual int getVertexAdjCount(const int vertexID) const 
+  virtual int getVertexAdjCount(const int _vertexID) const
   {
     if (m_AdjVertexCount.size()) return m_AdjVertexCount[_vertexID];
     else return -1;
