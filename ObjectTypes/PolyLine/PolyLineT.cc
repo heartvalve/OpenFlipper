@@ -2202,7 +2202,7 @@ typename PolyLineT<PointT>::CustomPropertyHandle PolyLineT<PointT>::
 }
 
 template <class PointT>
-const std::string& PolyLineT<PointT>::
+const std::string PolyLineT<PointT>::
   get_custom_property_name(CustomPropertyHandle _property_handle) const {
 
   CustomProperty* p = custom_prop(_property_handle);
@@ -2211,7 +2211,8 @@ const std::string& PolyLineT<PointT>::
     return p->name;
 
   std::cerr << "PolyLineT::get_custom_property_name - invalid handle" << std::endl;
-  return 0;
+
+  return "";
 }
 
 

@@ -533,7 +533,7 @@ public:
   CustomPropertyHandle get_custom_property_handle(const std::string& _name) const;
 
   // get name of property by handle
-  const std::string& get_custom_property_name(CustomPropertyHandle _property_handle) const;
+  const std::string get_custom_property_name(CustomPropertyHandle _property_handle) const;
 
   // get number of custom properties
   unsigned int get_num_custom_properties() const;
