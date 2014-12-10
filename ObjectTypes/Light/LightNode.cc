@@ -459,7 +459,6 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
                                        light_.realPosition_[1],
                                        light_.realPosition_[2]);
              ACG::Vec3d spotDir = light_.realSpotDirection_;          
-             ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
           
              // Origin
              _state.push_modelview_matrix();
