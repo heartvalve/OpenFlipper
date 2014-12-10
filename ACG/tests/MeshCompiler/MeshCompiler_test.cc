@@ -29,12 +29,12 @@ public:
   float* getNormals() {return m_Normals.empty() ? 0 : &m_Normals[0];}
   float* getTexCoords() {return m_TexCoords.empty() ? 0 : &m_TexCoords[0];}
 
-  virtual int getVertexAdjCount(int _vertexID)
+  virtual int getVertexAdjCount(const int vertexID) const 
   {
     if (m_AdjVertexCount.size()) return m_AdjVertexCount[_vertexID];
     else return -1;
   }
-  virtual int getVertexAdjFace(int _vertexID, int _k)
+  virtual int getVertexAdjFace(const int _vertexID, const int _k) const
   {
     if (m_AdjVertexOffset.size()) return m_AdjVertexBuf[m_AdjVertexOffset[_vertexID] + _k];
     else return -1;
