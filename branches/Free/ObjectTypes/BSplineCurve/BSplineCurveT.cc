@@ -514,8 +514,6 @@ insertKnot(double _u)
 //   std::cout << "Lower: " << lower() << ", upper: " << upper() << std::endl;
   assert(_u >= lower() && _u <= upper());
 
-  Vec3d point = Vec3d(0.0, 0.0, 0.0);
-
   ACG::Vec2i span_u = span(_u);
 
   std::vector<Point> updateControlPoints;
