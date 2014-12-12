@@ -188,7 +188,7 @@ GLFormatInfo::GLFormatInfo( GLenum _intfmt, GLenum _fmt, GLenum _type, int _r, i
           strfmt += "A";
 
         QString bitCount;
-        bitCount.sprintf("%i", bpp_);
+        bitCount.sprintf("%i", channelBits_[0]);
 
         strfmt += bitCount;
 
