@@ -272,6 +272,46 @@ void modifyFragmentEndCode(QStringList* _code)
 
 
 
+\section ShaderTemplates Shader Templates
+
+A shader template is glsl code with additional keywords that are interpreted by the shader generator.
+
+Apart from the previously mentioned default defines, additional keywords are:
+
+\code
+
+SG_VERTEX_BEGIN
+SG_VERTEX_END
+SG_FRAGMENT_BEGIN
+SG_FRAGMENT_END
+
+\endcode
+
+These keywords are location markers, where generated begin- or endcode of the vertex/fragment shader should be generated.
+However, it is not necessary to use them if the user wants to perform manual lighting and texturing etc.
+Templates for the tessellation and geometry stage do not have any exclusive keywords, 
+but they can make use of defines, IO keywords and the mapping functions as described in the "Shader Attribute IO" section.
+
+The vertex shader template without any user defined behaviour is:
+
+\code
+void main()
+{
+  SG_VERTEX_BEGIN;
+  SG_VERTEX_END;
+}
+\endcode
+
+Likewise, the fragment shader without special behaviour is:
+
+\code
+void main()
+{
+  SG_FRAGMENT_BEGIN;
+  SG_FRAGMENT_END;
+}
+\endcode
+
 
 \section vertShaderGen Vertex shader code generation
 
@@ -460,4 +500,7 @@ sg_cColor = vec4(g_cEmissive, SG_ALPHA);
 SG_FRAGMENT_LIGHTING;
 SG_FRAGMENT_END;
 \endcode
+
+
+
 */
