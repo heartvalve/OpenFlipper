@@ -286,16 +286,30 @@ QFrame* PostProcessorDialog::createFrame(const PostProcessorInfo& _pPI)
   font.setPointSize(10);
   name->setFont(font);
   QLabel* version = new QLabel( _pPI.version );
+  QPushButton* optionsButton = new QPushButton("Options");
   hlayout->addWidget(name);
   hlayout->addStretch();
   hlayout->addWidget(version);
+
+  optionsButton->setEnabled(false);
+  if (_pPI.optionsAction != 0)
+  {
+    optionsButton->setEnabled(true);
+    connect(optionsButton,SIGNAL(clicked()),_pPI.optionsAction,SLOT(trigger()));
+  }
 
   QVBoxLayout* vlayout = new QVBoxLayout;
 
   QLabel* description = new QLabel( _pPI.description );
 
   vlayout->addLayout(hlayout,20);
-  vlayout->addWidget(description);
+
+  QHBoxLayout* optionsLayout = new QHBoxLayout();
+  vlayout->addLayout(optionsLayout);
+  optionsLayout->addWidget(description);
+  optionsLayout->addStretch();
+  optionsLayout->addWidget(optionsButton);
+
   frame->setLayout(vlayout);
   frame->adjustSize();
 
