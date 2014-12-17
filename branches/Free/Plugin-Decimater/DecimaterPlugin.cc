@@ -166,7 +166,18 @@ void DecimaterPlugin::pluginsInitialized() {
 
   emit setSlotDescription("decimate(int,QVariantMap)",tr("Decimate a given object"),
                           QString(tr("objectId,constraints")).split(","),
-                          QString(tr("ID of an object; Object that can has one or more constraint properties (decimation_order,distance,edge_length,normal_deviation,roundness,aspect_ratio,independent_sets,vertices,triangles)")).split(";"));
+                          QString(tr("ID of an object; Object that can has one or more constraint properties ("
+                              "decimater_type [0 (Incremental), 1 (MC), 2 (Mixed)], "
+                              "random_samples [For MC/Mixed], "
+                              "incremental_percentage [For Mixed], "
+                              "decimation_order [0 (by distance), 1 (by normal deviation), 2 (by edge length)], "
+                              "distance, "
+                              "edge_length, "
+                              "normal_deviation, "
+                              "roundness, "
+                              "aspect_ratio,independent_sets, "
+                              "vertices, "
+                              "triangles)")).split(";"));
 
   if ( OpenFlipper::Options::gui()) {
     tool_->decTypeOps->setVisible(false);
@@ -541,36 +552,55 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     ModRoundnessH       hModRoundness;
 
     // Create decimater
-    DecimaterType decimater_object( *mesh );
+    ptr::shared_ptr<BaseDecimaterType> decimater_object;
+    if (_constraints.contains("decimater_type"))
+    {
+      bool ok;
+      int value = _constraints["decimater_type"].toInt(&ok);
+      if (ok)
+      {
+        std::cout << "value: " << value << std::endl;
+        if (value == 0)
+          decimater_object = ptr::shared_ptr<DecimaterType>(new DecimaterType(*mesh));
+        else if (value == 1)
+          decimater_object = ptr::shared_ptr<McDecimaterType>(new McDecimaterType(*mesh));
+        else if (value == 2)
+          decimater_object = ptr::shared_ptr<MixedDecimaterType>(new MixedDecimaterType(*mesh));
+      }
+
+    }
+
+    if (!decimater_object)
+      decimater_object = ptr::shared_ptr<DecimaterType>(new DecimaterType(*mesh));
 
     // Remove old constraints
     if(decimater->distance()) {
       decimater->removeDistanceConstraint();
-      decimater_object.remove(hModHausdorff);
+      decimater_object->remove(hModHausdorff);
     }
     if(decimater->normalDeviation()) {
       decimater->removeNormalDeviationConstraint();
-      decimater_object.remove(hModNormalDeviation);
+      decimater_object->remove(hModNormalDeviation);
     }
     if(decimater->normalFlipping()) {
       decimater->removeNormalFlippingConstraint();
-      decimater_object.remove(hModNormalFlipping);
+      decimater_object->remove(hModNormalFlipping);
     }
     if(decimater->roundness()) {
       decimater->removeRoundnessConstraint();
-      decimater_object.remove(hModRoundness);
+      decimater_object->remove(hModRoundness);
     }
     if(decimater->aspectRatio()) {
       decimater->removeAspectRatioConstraint();
-      decimater_object.remove(hModAspectRatio);
+      decimater_object->remove(hModAspectRatio);
     }
     if(decimater->edgeLength()) {
       decimater->removeEdgeLengthConstraint();
-      decimater_object.remove(hModEdgeLength);
+      decimater_object->remove(hModEdgeLength);
     }
     if(decimater->independentSets()) {
       decimater->removeIndependentSetsConstraint();
-      decimater_object.remove(hModIndependent);
+      decimater_object->remove(hModIndependent);
     }
 
     // set priority module: quadric, normal deviation or edge length
@@ -583,18 +613,18 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
         switch (value) {
         case 0:
           decimater->setDecimationOrder(DecimaterInfo::DISTANCE);
-          decimater_object.add( hModQuadric );
-          decimater_object.module( hModQuadric ).unset_max_err();
+          decimater_object->add( hModQuadric );
+          decimater_object->module( hModQuadric ).unset_max_err();
           break;
         case 1:
           decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
-          decimater_object.add(hModNormalDeviation);
-          decimater_object.module(hModNormalDeviation).set_binary(false);
+          decimater_object->add(hModNormalDeviation);
+          decimater_object->module(hModNormalDeviation).set_binary(false);
           break;
         case 2:
           decimater->setDecimationOrder(DecimaterInfo::EDGELENGTH);
-          decimater_object.add(hModEdgeLength);
-          decimater_object.module(hModEdgeLength).set_binary(false);
+          decimater_object->add(hModEdgeLength);
+          decimater_object->module(hModEdgeLength).set_binary(false);
           break;
         default:
           emit log(LOGERR,tr("Invalid Decimation Order"));
@@ -642,9 +672,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["distance"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModHausdorff ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModHausdorff ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setDistanceConstraint( value );
-            decimater_object.module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
+            decimater_object->module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
         }
       }
     }
@@ -657,15 +687,15 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       int value = _constraints["normal_deviation"].toInt(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModNormalDeviation ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModNormalDeviation ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setNormalDeviationConstraint( value );
-            decimater_object.module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
+            decimater_object->module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
         }
       }
     } else { // flipping constraint
-      if (  decimater_object.add( hModNormalFlipping ) || (!verticesCount && !trianglesCount)  ) {
+      if (  decimater_object->add( hModNormalFlipping ) || (!verticesCount && !trianglesCount)  ) {
         decimater->setNormalFlippingConstraint();
-        // decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() ); ?
+        // decimater_object->module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() ); ?
       }
     }
 
@@ -677,9 +707,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["roundness"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModRoundness ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModRoundness ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setRoundnessConstraint( value );
-            decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+            decimater_object->module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
         }
       }
     }
@@ -692,9 +722,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["aspect_ratio"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModAspectRatio ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModAspectRatio ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setAspectRatioConstraint( value );
-            decimater_object.module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
+            decimater_object->module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
         }
       }
     }
@@ -707,9 +737,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["edge_length"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModEdgeLength ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModEdgeLength ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setEdgeLengthConstraint( value );
-            decimater_object.module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
+            decimater_object->module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
         }
       }
     }
@@ -720,25 +750,74 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       bool value = _constraints["independent_sets"].toBool();
 
       if (value) {
-        if (  decimater_object.add( hModIndependent ) || (!verticesCount && !trianglesCount)  ) {
+        if (  decimater_object->add( hModIndependent ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setIndependentSetsConstraint();
         }
       }
     }
 
     //init the decimater
-    if( ! decimater_object.initialize() ){
+    if( ! decimater_object->initialize() ){
       emit log(LOGWARN, tr("Decimater could not be initialized"));
       return;
     }
 
+    float mc_factor = 0.5;
+    size_t randomSamples = 8;
+
+    if (_constraints.contains("random_samples"))
+    {
+      bool ok;
+      unsigned value =_constraints["random_samples"].toUInt(&ok);
+      if (ok)
+        randomSamples = value;
+    }
+
+    if (_constraints.contains("incremental_percentage"))
+    {
+      bool ok;
+      unsigned value =_constraints["incremental_percentage"].toUInt(&ok);
+      if (ok)
+        mc_factor = 1.f - (value*0.01f);
+    }
+
     //decimate
-    if ( verticesCount )
-      decimater_object.decimate_to( vertices ); // do decimation (vertices)
-    else if (trianglesCount )
-      decimater_object.decimate_to_faces(0, triangles); // do decimation (triangles)
-    else
-      decimater_object.decimate_to_faces(0, 1); // do decimation
+    DecimaterType* dec = dynamic_cast<DecimaterType*>(decimater_object.get());
+    McDecimaterType* mcDec = dynamic_cast<McDecimaterType*>(decimater_object.get());
+    MixedDecimaterType* mixedDec = dynamic_cast<MixedDecimaterType*>(decimater_object.get());
+
+    if(dec && !mixedDec)
+    {
+      if ( verticesCount )
+        dec->decimate_to(vertices);
+      else if (trianglesCount )
+        dec->decimate_to_faces(0, triangles);
+      else // constraints only
+        dec->decimate_to_faces(0, 1);
+    }
+    else if (mcDec && !mixedDec)
+    {
+      mcDec->set_samples(randomSamples);
+      if ( verticesCount )
+        mcDec->decimate_to(vertices);
+      else if (trianglesCount)
+        mcDec->decimate_to_faces(0, triangles);
+      else // constraints only
+        mcDec->decimate_to_faces(0, 1);
+    }
+    else if (mixedDec)
+    {
+      mixedDec->set_samples(randomSamples);
+      if ( verticesCount )
+        mixedDec->decimate_to(vertices,mc_factor);
+      else if (trianglesCount)
+        mixedDec->decimate_to_faces(0, triangles,mc_factor);
+      else // constraints only
+        mixedDec->decimate_to_faces(0, 1,mc_factor);
+    }else
+    {
+      emit log(LOGERR,tr("Could not find Decimater Type"));
+    }
 
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();
