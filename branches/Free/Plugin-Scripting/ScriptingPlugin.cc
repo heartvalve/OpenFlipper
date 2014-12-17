@@ -188,7 +188,7 @@ void ScriptingPlugin::pluginsInitialized() {
 
   connect (scriptWidget_->currentScript, SIGNAL( textChanged() ), this, SLOT( slotScriptChanged() ) );
 
-  connect (scriptWidget_->functionList, SIGNAL( itemClicked(QListWidgetItem*) ),
+  connect (scriptWidget_->functionList, SIGNAL( currentItemChanged  (QListWidgetItem*, QListWidgetItem*) ),
            this,                          SLOT( slotFunctionClicked(QListWidgetItem*) ));
   connect (scriptWidget_->functionList, SIGNAL( itemDoubleClicked(QListWidgetItem*) ),
            this,                          SLOT( slotFunctionDoubleClicked(QListWidgetItem*) ));
