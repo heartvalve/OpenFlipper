@@ -819,9 +819,6 @@ public:
     /// Setup and update the global renderer menu
     void slotUpdateRendererMenu();
 
-    /// Setup and update the global postprocessor menu
-    void slotUpdatePostProcessorMenu();
-
     /// Change viewer layout that was selected in the combo box
     void setViewerLayout(int _idx);
 
@@ -848,16 +845,10 @@ public:
     /// This variable holds the global renderer menu
     QMenu* rendererMenu_;
 
-    /// This variable holds the global postprocessor menu
-    QMenu* postprocessorMenu_;
-
     QActionGroup * drawGroup_;
 
     /// Group for all renderers
     QActionGroup * rendererGroup_;
-
-    /// Group for all postprocessors
-    QActionGroup *  postProcessorGroup_;
 
     /// Group for all menu items
     QActionGroup* viewGroup_;
