@@ -9,6 +9,25 @@
         <short>ID of an Object</short>
         <long>ID of an Object</long>
       </input>
+      <input name="decimater_type" type="Number" optional="false">
+        <short>Decimater Type</short>
+        <long> Select the Type of the Decimater, 0 (incremental), 1(MC), 2(Mixed)</long>
+        <min>0</min>
+        <max>2</max>
+        <default>0</default>
+      </input>
+      <input name="random_samples" type="Number" optional="true">
+        <short>Number of samples for the MC Decimater.</short>
+        <long>Specifies the number of samples for the MC decimater. This parameter is used by the MC and Mixed Decimater.</long>
+        <default>8</default>
+      </input>
+      <input name="incremental_percentage" type="Number" optional="true">
+        <short>Percentage of the workload. (Only Mixed)</short>
+        <long>Percentage of the workload for the Incremental Decimater. Only used by the Mixed Decimater</long>
+        <min>0</min>
+        <max>100</max>
+        <default>20</default>
+      </input>
       <input name="decimation_order" type="Number" optional="false">
         <short>Decimation Order</short>
         <long>Decimation Order: 0 (by Distance), 1 (by Normal Deviation), and 2 (by Edge Length)</long>
@@ -67,6 +86,12 @@
       decimater_constraints = new Object ();
       if ([is_set="decimation_order"])
         decimater_constraints["decimation_order"] = [input="decimation_order"];
+      if ([is_set="decimater_type"])
+        decimater_constraints["decimater_type"] = [input="decimater_type"];
+      if ([is_set="random_samples"])
+        decimater_constraints["random_samples"] = [input="random_samples"];
+      if ([is_set="incremental_percentage"])
+        decimater_constraints["incremental_percentage"] = [input="incremental_percentage"];
       if ([is_set="vertices"])
         decimater_constraints["vertices"] = [input="vertices"];
       if ([is_set="triangles"])
