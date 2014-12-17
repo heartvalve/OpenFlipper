@@ -505,7 +505,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
  */
 void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) {
 
-  QAction* typeEntry = new QAction( typeName(_object->dataType()) ,_menu);
+  QAction* typeEntry = new QAction( typeName(_object->dataType())+QString(": ")+_object->name() ,_menu);
   typeEntry->setIcon(typeIcon(_object->dataType()));
   _menu->addAction( typeEntry );
 
