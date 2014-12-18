@@ -237,9 +237,7 @@ class ACGDLLEXPORT Texture
 {
 public:
 
-  Texture(GLenum tgt, GLenum _unit=GL_NONE)
-    : target(tgt), unit(_unit), valid(false), texture(0u)
-  {}
+  Texture(GLenum tgt, GLenum _unit=GL_NONE);
 
   virtual ~Texture() { del(); }
 
@@ -312,28 +310,77 @@ public:
   GLenum getUnit() const { return unit; }
   GLenum getTarget() const {return target;}
 
+  // note: might bind the texture in order to find the format
+  GLint getInternalFormat();
+
+
+  // check supportsClearTexture to find out whether clear is supported (ARB_clear_texture)
+  // clear does not work for buffer textures!
+
+  // clear normalized / floating point texture
+  bool clear(const ACG::Vec4f& _color);
+
+  // clear integer texture
+  bool clear(const ACG::Vec4i& _color);
+  bool clear(const ACG::Vec4ui& _color);
+
+
+  // use texture as image load/store    (equivalent of unordered access buffers in dx11)
+  //  allows data scattering operations in shader ie. random read/write access
+  //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
+  // _index zero-based image unit
+  // _access access operations in shader: GL_READ_WRITE, GL_READ_ONLY, GL_WRITE_ONLY
+  // requires opengl 4.2
+  void bindAsImage(GLuint _index, GLenum _access);
+
   // test for shader_image_load_store support
   static bool supportsImageLoadStore();
 
-
   // test for texture buffer support
   static bool supportsTextureBuffer();
+
+  // test for clear_texture support
+  static bool supportsClearTexture();
 
 private:
 
   GLenum target, unit;
   bool valid;
   GLuint texture;
+
+protected:
+  GLint internalFormat_;
 };
 
 
 //-----------------------------------------------------------------------------
 
 
-class Texture1D : public Texture
+class ACGDLLEXPORT Texture1D : public Texture
 {
 public:
-  Texture1D(GLenum unit=GL_NONE) : Texture(GL_TEXTURE_1D, unit) {}
+  Texture1D(GLenum unit=GL_NONE);
+
+  // initialize and set texture data via glTexImage1D
+  void setData(GLint _level, GLint _internalFormat, GLsizei _width, GLenum _format, GLenum _type, const GLvoid* _data);
+
+  // specify storage of texture  (OpenGL 4.2)
+  //  use setData with a nullptr instead if 4.2 is not available
+  void setStorage(GLsizei _levels, GLenum _internalFormat, GLsizei _width);
+
+  // get params from glTexImage1D
+  GLsizei getWidth() const {return width_;}
+  GLenum getFormat() const {return format_;}
+  GLenum getType() const {return type_;}
+
+  // read data back to sysmem
+  bool getData(GLint _level, void* _dst);
+  bool getData(GLint _level, std::vector<char>& _dst);
+
+private:
+
+  GLsizei width_;
+  GLenum format_, type_;
 };
 
 
@@ -357,18 +404,12 @@ public:
   //  additionally supports dds if the gli library is available while building ACG
   bool loadFromFile(const std::string& _filename, GLenum _minFilter = GL_NEAREST_MIPMAP_LINEAR, GLenum _magFilter = GL_LINEAR);
 
-  // use texture as image load/store    (equivalent of unordered access buffers in dx11)
-  //  allows data scattering operations in shader ie. random read/write access
-  //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
-  // _index zero-based image unit
-  // _access access operations in shader: GL_READ_WRITE, GL_READ_ONLY, GL_WRITE_ONLY
-  // requires opengl 4.2
-  void bindAsImage(GLuint _index, GLenum _access);
+  // initialize and fill with uniform random data in [0,1] (or [-1,1] for signed formats)
+  void loadRandom(GLint _internalFormat, GLsizei _width, GLsizei _height);
 
   // get params from glTexImage2D
   GLsizei getWidth() const {return width_;}
   GLsizei getHeight() const {return height_;}
-  GLint getInternalFormat() const {return internalFormat_;}
   GLenum getFormat() const {return format_;}
   GLenum getType() const {return type_;}
 
@@ -379,7 +420,6 @@ public:
 private:
 
   GLsizei width_, height_;
-  GLint internalFormat_;
   GLenum format_, type_;
 };
 
@@ -456,14 +496,6 @@ public:
   // _internalFormat format of buffer - http://www.opengl.org/sdk/docs/man3/xhtml/glTexBuffer.xml
   // _usage buffer usage hint - https://www.opengl.org/sdk/docs/man3/xhtml/glBufferData.xml
   void setBufferData(int _size, const void* _data, GLenum _internalFormat, GLenum _usage = GL_STATIC_DRAW);
-
-  // use buffer as image load/store    (equivalent of unordered access buffers in dx11)
-  //  allows data scattering operations in shader
-  //  ref: https://www.opengl.org/registry/specs/ARB/shader_image_load_store.txt
-  // _index image unit
-  // _access access operations in shader: GL_READ_WRITE, GL_READ_ONLY, GL_WRITE_ONLY
-  // requires opengl 4.2
-  void bindAsImage(GLuint _index, GLenum _access);
 
   int getBufferSize() const {return bufferSize_;}
 
