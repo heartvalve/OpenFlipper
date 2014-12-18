@@ -86,7 +86,7 @@ namespace ACG {
     the class ACG::TimedTracing.
 **/
 
-class ACGDLLEXPORT StopWatch
+class StopWatch
 {
 public:
 
