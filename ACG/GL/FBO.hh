@@ -53,6 +53,9 @@ public:
   /// function to generate the framebuffer object
   void init();
 
+  /// delete fbo and all internally created render textures
+  void del();
+
   /// enable/disable multisampling
   /// returns the MSAA sample count of the fbo, which might not be equal to the requested _samples count but you'll get something close
   GLsizei setMultisampling(GLsizei _samples, GLboolean _fixedsamplelocations = GL_TRUE);
@@ -112,6 +115,9 @@ public:
 
   /// get height of fbo texture
   GLsizei height() const {return height_;}
+
+  /// get width and height of fbo texture
+  ACG::Vec2i size() const {return ACG::Vec2i(width_, height_);}
   
   /// bind the fbo and sets it as rendertarget
   bool bind();
@@ -134,21 +140,33 @@ private:
   GLuint stencilbuffer_;
 
   /// attached textures
-  typedef std::map<GLenum, std::pair<GLuint, GLenum> > AttachmentList;
-  AttachmentList attachments_; // key: attachment index,  value: <tex_id, target>
-
   struct RenderTexture
   {
+    RenderTexture();
+
     // opengl buf id
     GLuint id;
 
     // GL_TEXTURE_2D, GL_TEXTURE_2D_MULTISAMPLE..
     GLenum target;
 
-    GLenum internalFormat, format;
+    GLenum internalFormat, format, gltype;
+
+    // tex dimension
+    ACG::Vec3i dim;
+
+    // common sampler params
+    GLint wrapMode,
+      minFilter,
+      magFilter;
+
+    // created by FBO class
+    bool owner;
   };
-  /// textures created by this class
-  std::vector<RenderTexture> internalTextures_;
+
+  typedef std::map<GLenum, RenderTexture> AttachmentList;
+  AttachmentList attachments_; // key: attachment index,  value: RenderTexture
+
 
   /// width and height of render textures
   GLsizei width_, height_;
