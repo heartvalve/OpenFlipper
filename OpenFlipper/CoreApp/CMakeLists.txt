@@ -341,8 +341,8 @@ if (NOT APPLE)
 
   if ( WIN32 )
     # create qt config file and install it
-	file(WRITE "@CMAKE_BINARY_DIR@/Build/qt.conf" "[Paths]\nPlugins = QtPlugins")
-	install( FILES "@CMAKE_BINARY_DIR@/Build/qt.conf" DESTINATION "${ACG_PROJECT_DATADIR}/" )
+	file(WRITE "${CMAKE_BINARY_DIR}/Build/qt.conf" "[Paths]\nPlugins = QtPlugins")
+	install( FILES "${CMAKE_BINARY_DIR}/Build/qt.conf" DESTINATION "${ACG_PROJECT_DATADIR}/" )
 	acg_install_dir ("${CMAKE_BINARY_DIR}/Build/QtPlugins/" "${ACG_PROJECT_DATADIR}/QtPlugins")
   endif(WIN32)
   
