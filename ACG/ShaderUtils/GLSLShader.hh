@@ -271,6 +271,8 @@ namespace GLSL {
 
        void setUniform(const char *_name, const GLint *_values, int _count);
        void setUniform(const char *_name, const GLfloat *_values, int _count);
+       void setUniform(const char *_name, const ACG::Vec2f *_values, int _count);
+       void setUniform(const char *_name, const ACG::Vec3f *_values, int _count);
        void setUniform(const char *_name, const ACG::Vec4f *_values, int _count);
        void setUniform(const char *_name, int _index, bool _value);
 
@@ -340,7 +342,7 @@ namespace GLSL {
 
   //--------------------------------------------------------------------------
 
-  GLSL::StringList ACGDLLEXPORT loadShader(const char *filename, const GLSL::StringList *macros = 0);
+  GLSL::StringList ACGDLLEXPORT loadShader(const char *filename, const GLSL::StringList *macros = 0, bool appendNewLineChar = true, GLSL::StringList *outIncludes = 0);
 
   GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
   GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name, const GLSL::StringList *macros = 0, bool verbose = true);
