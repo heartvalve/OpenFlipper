@@ -57,7 +57,106 @@ namespace ACG {
 
 //-----------------------------------------------------------------------------
 
+Texture::Texture( GLenum tgt, GLenum _unit )
+  : target(tgt), unit(_unit), valid(false), texture(0u), internalFormat_(0)
+{
+}
 
+void Texture::bindAsImage(GLuint _index, GLenum _access)
+{
+#if defined(GL_ARB_shader_image_load_store)
+  if (is_valid())
+    glBindImageTexture(_index, id(), 0, GL_FALSE, 0, _access, getInternalFormat());
+  else
+    std::cerr << "Texture::bindAsImage - error: texture not initialized!" << std::endl;
+#else
+  std::cerr << "Texture::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
+#endif
+}
+
+
+GLint Texture::getInternalFormat()
+{
+  if (!internalFormat_)
+  {
+    bind();
+    glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat_);
+  }
+
+  return internalFormat_;
+}
+// 
+// bool Texture::clear( float _color )
+// {
+// #ifdef GL_ARB_clear_texture
+//   if (supportsClearTexture() && texture)
+//   {
+//     glClearTexImage(texture, 0, GL_R32F, GL_FLOAT, &_color);
+//     return true;
+//   }
+// #endif
+//   return false;
+// }
+// 
+// bool Texture::clear( const ACG::Vec2f& _color )
+// {
+// #ifdef GL_ARB_clear_texture
+//   if (supportsClearTexture() && texture)
+//   {
+//     glClearTexImage(texture, 0, GL_RG32F, GL_FLOAT, _color.data());
+//     return true;
+//   }
+// #endif
+//   return false;
+// }
+// 
+// bool Texture::clear( const ACG::Vec3f& _color )
+// {
+// #ifdef GL_ARB_clear_texture
+//   if (supportsClearTexture() && texture)
+//   {
+//     glClearTexImage(texture, 0, GL_RGB32F, GL_FLOAT, _color.data());
+//     return true;
+//   }
+// #endif
+//   return false;
+// }
+
+bool Texture::clear( const ACG::Vec4f& _color )
+{
+#ifdef GL_ARB_clear_texture
+  if (supportsClearTexture() && texture)
+  {
+    glClearTexImage(texture, 0, GL_RGBA, GL_FLOAT, _color.data());
+    return true;
+  }
+#endif
+  return false;
+}
+
+bool Texture::clear( const ACG::Vec4ui& _color )
+{
+#ifdef GL_ARB_clear_texture
+  if (supportsClearTexture() && texture)
+  {
+    glClearTexImage(texture, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT, _color.data());
+    return true;
+  }
+#endif
+  return false;
+}
+
+bool Texture::clear( const ACG::Vec4i& _color )
+{
+#ifdef GL_ARB_clear_texture
+  if (supportsClearTexture() && texture)
+  {
+    glClearTexImage(texture, 0, GL_RGBA_INTEGER, GL_INT, _color.data());
+    return true;
+  }
+#endif
+  return false;
+}
 
 bool Texture::supportsImageLoadStore()
 {
@@ -97,12 +196,106 @@ bool Texture::supportsTextureBuffer()
 }
 
 
+bool Texture::supportsClearTexture()
+{
+  static int status = -1;
+
+  if (status < 0)
+  {
+#if defined(GL_ARB_clear_texture)
+    status = checkExtensionSupported("ARB_clear_texture");
+#else
+    // symbol missing, install latest glew version
+    status = 0;
+#endif
+  }
+
+  return status > 0;
+}
+
+//-----------------------------------------------------------------------------
+
+
+Texture1D::Texture1D( GLenum unit ) : Texture(GL_TEXTURE_1D, unit),
+  width_(0),
+  format_(0), type_(0)
+{}
+
+void Texture1D::setData(GLint _level, 
+  GLint _internalFormat, 
+  GLsizei _width, 
+  GLenum _format,
+  GLenum _type,
+  const GLvoid* _data) {
+
+    bind();
+
+    glTexImage1D(GL_TEXTURE_1D, _level, _internalFormat, _width, 0, _format, _type, _data);
+
+    width_ = _width;
+    internalFormat_ = _internalFormat;
+    format_ = _format;
+    type_ = _type;
+}
+
+
+void Texture1D::setStorage( GLsizei _levels, GLenum _internalFormat, GLsizei _width ) {
+#ifdef GL_ARB_texture_storage
+  bind();
+  glTexStorage1D(GL_TEXTURE_1D, _levels, _internalFormat, _width);
+
+  width_ = _width;
+  internalFormat_ = _internalFormat;
+
+  GLFormatInfo finfo(_internalFormat);
+  format_ = finfo.format();
+  type_ = finfo.type();
+#endif // GL_ARB_texture_storage
+}
+
+
+bool Texture1D::getData( GLint _level, void* _dst ) {
+  if (is_valid()) {
+    GLint curTex = 0;
+    glGetIntegerv(GL_TEXTURE_BINDING_1D, &curTex);
+
+    bind();
+    glGetTexImage(GL_TEXTURE_1D, _level, format_, type_, _dst);
+
+    glBindTexture(GL_TEXTURE_1D, curTex);
+
+    return true;
+  }
+  return false;
+}
+
+bool Texture1D::getData( GLint _level, std::vector<char>& _dst ) {
+  if (is_valid()) {
+
+    GLFormatInfo finfo(internalFormat_);
+
+    if (finfo.isValid()) {
+      size_t bufSize = finfo.elemSize() * width_;
+
+      if (_dst.size() < bufSize)
+        _dst.resize(bufSize);
+
+      if (!_dst.empty())
+        return getData(_level, &_dst[0]);
+    }
+  }
+  return false;
+}
+
+
+
+
+
 //-----------------------------------------------------------------------------
 
 Texture2D::Texture2D(GLenum unit)
   : Texture(GL_TEXTURE_2D, unit),
   width_(0), height_(0),
-  internalFormat_(0),
   format_(0), type_(0)
 {}
 
@@ -180,18 +373,6 @@ bool Texture2D::getData( GLint _level, std::vector<char>& _dst ) {
 }
 
 
-
-void Texture2D::bindAsImage(GLuint _index, GLenum _access){
-
-#if defined(GL_ARB_shader_image_load_store)
-  if (is_valid())
-    glBindImageTexture(_index, id(), 0, GL_FALSE, 0, _access, internalFormat_);
-  else
-    std::cerr << "Texture2D::bindAsImage - error: texture not initialized!" << std::endl;
-#else
-  std::cerr << "Texture2D::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
-#endif
-}
 
 bool Texture2D::loadFromFile( const std::string& _filename, GLenum _minFilter, GLenum _magFilter )
 {
@@ -293,6 +474,57 @@ bool Texture2D::loadFromFile( const std::string& _filename, GLenum _minFilter, G
   }
 
   return success;
+}
+
+
+void Texture2D::loadRandom( GLint _internalFormat, GLsizei _width, GLsizei _height )
+{
+  ACG::GLFormatInfo finfo(_internalFormat);
+
+  if (finfo.isValid() && _width && _height)
+  {
+    int n = _width * _height * finfo.channelCount();
+
+    GLvoid* dataPtr = 0;
+
+    std::vector<float> randF;
+    std::vector<int> randI;
+
+    GLenum gltype = 0;
+
+    if (finfo.isFloat() || finfo.isNormalized())
+    {
+      randF.resize(n);
+
+      bool isSigned = finfo.isInt();
+
+      for (int i = 0; i < n; ++i)
+      {
+        float r = float(rand()) / float(RAND_MAX);
+
+        if (isSigned)
+          r = r * 2.0f - 1.0f;
+
+        randF[i] = r;
+      }
+
+      dataPtr = &randF[0];
+      gltype = GL_FLOAT;
+    }
+    else
+    {
+      randI.resize(n);
+
+      for (int i = 0; i < n; ++i)
+        randI[i] = rand();
+
+      dataPtr = &randI[0];
+      gltype = GL_INT;
+    }
+    
+    bind();
+    setData(0, _internalFormat, _width, _height, finfo.format(), gltype, dataPtr);
+  }
 }
 
 
@@ -409,22 +641,6 @@ bool TextureBuffer::getBufferData(std::vector<char>& _dst) {
     return getBufferData(&_dst[0]);
 
   return false;
-}
-
-void TextureBuffer::bindAsImage(GLuint _index, GLenum _access){
-
-#if defined(GL_ARB_texture_buffer_object)
-
-#if defined(GL_ARB_shader_image_load_store)
-  if (id())
-    glBindImageTexture(_index, id(), 0, GL_FALSE, 0, _access, fmt_);
-  else
-    std::cerr << "TextureBuffer::bindAsImage - error: texture not initialized!" << std::endl;
-#else
-  std::cerr << "TextureBuffer::bindAsImage - glBindImageTexture symbol not loaded!" << std::endl;
-#endif
-
-#endif
 }
 
 
