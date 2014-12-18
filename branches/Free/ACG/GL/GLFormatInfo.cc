@@ -72,7 +72,7 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
     registerFmt(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
     registerFmt(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 0, 0, 0, UnsignedInt, false);
     registerFmt(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 24, 8, 0, 0, UnsignedInt, false);
-
+    registerFmt(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 24, 8, 0, 0, UnsignedInt, false);
 
 #ifdef GL_VERSION_3_0
     // single channel formats
@@ -109,6 +109,8 @@ GLFormatInfo::GLFormatInfo( GLenum _internalFormat )
     // triple channel
     registerFmt(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, 8, 8, 8, 0, UnsignedInt, true);
     registerFmt(GL_RGB8_SNORM, GL_RGB, GL_BYTE, 8, 8, 8, 0, SignedInt, true);
+    registerFmt(GL_RGB16F, GL_RGB, GL_HALF_FLOAT, 16, 16, 16, 0, FloatingPt, false);
+    registerFmt(GL_RGB32F, GL_RGB, GL_FLOAT, 32, 32, 32, 0, FloatingPt, false);
 
     // quad channel
     registerFmt(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 8, 8, 8, 8, UnsignedInt, true);
