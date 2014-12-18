@@ -564,6 +564,34 @@ namespace GLSL {
     glUniform1fv(location, _count, _values);
     checkGLError();
   }
+
+  /** \brief Set Vec2f array uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _values Pointer to an array with the new values
+   * @param _count Number of values in the given array
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec2f* _values, int _count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform2fv(location, _count, (GLfloat*)_values);
+    checkGLError();
+  }
+
+  /** \brief Set Vec3f array uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _values Pointer to an array with the new values
+   * @param _count Number of values in the given array
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec3f* _values, int _count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform3fv(location, _count, (GLfloat*)_values);
+    checkGLError();
+  }
   
   /** \brief Set Vec4f array uniform to specified value
    *
@@ -819,102 +847,124 @@ namespace GLSL {
   }
 
 
-  /** \brief Loads the shader source
+  /** \brief Loads the shader source and all recursive includes
   *
   * The shader is assumed to be placed in ../shader relative to the
   * executable's installation directory, if the path is a relativ
   * one. If it is determined that the path is absolute, the path is
   * taken as is.
-  * Macros are inserted directly after the #version directive.
-  * According to glsl spec, only comments and white space are allowed before #version.
+  * Included files via the #include directive are recursively resolved.
+  * The include-map prevents getting stuck in an include loop.
   */
-  GLSL::StringList loadShader(const char *filename, const GLSL::StringList *macros) {
+  void loadShaderRec(const char *filename, bool appendNewLineChar, std::map<QString, int>& includeMap, GLSL::StringList& shaderSource){
     QString path_file;
     if (QDir(filename).isRelative()) {
       path_file = qApp->applicationDirPath() + QString("/../shader/")
-                    + QString(filename);
+        + QString(filename);
     } else {
       path_file = QString::fromLatin1(filename);
     }
-    std::ifstream iShader(path_file.toLatin1());
-    if (!iShader) {
-      std::cout << "ERROR: Could not open file " << path_file.toStdString() << std::endl;
-      return GLSL::StringList();
-    }
 
-    GLSL::StringList shaderSource;
+    // avoid include loop
+    std::map<QString, int>::iterator includeIter = includeMap.find(path_file);
 
-    bool foundVersionDirective = false;
+    if (includeIter == includeMap.end()){
+      includeMap[path_file] = 1;
 
-    while (!iShader.eof()) {
-      std::string strLine;
-      std::getline(iShader, strLine);
+      std::ifstream iShader(path_file.toLatin1());
+      if (!iShader) {
+        std::cout << "ERROR: Could not open file " << path_file.toStdString() << std::endl;
+        return;
+      }
 
-      // check for includes
-      QString qstrLine = strLine.c_str();
-      if (qstrLine.contains("#include")) {
+      while (!iShader.eof()) {
+        std::string strLine;
+        std::getline(iShader, strLine);
 
-        // try to load included file
-        QString strIncludeFile = qstrLine.remove("#include ").remove('\"').remove('<').remove('>').trimmed();
-        QFileInfo loadedShaderFile(path_file);
-        QString includePath = loadedShaderFile.absolutePath();
+        // check for includes
+        QString qstrLine = strLine.c_str();
+        if (qstrLine.trimmed().startsWith("#include")) {
 
-        if (strIncludeFile.isEmpty())
-          std::cout << "wrong include syntax: " << strLine.c_str() << std::endl;
-        else {
-          QString fullPathToIncludeFile = includePath + QDir::separator() + strIncludeFile;
+          // try to load included file
+          QString strIncludeFile = qstrLine.remove("#include ").remove('\"').remove('<').remove('>').trimmed();
+          QFileInfo loadedShaderFile(path_file);
+          QString includePath = loadedShaderFile.absolutePath();
 
-          std::ifstream iInclude(fullPathToIncludeFile.toLatin1());
-          if (!iInclude) {
-            std::cout << "ERROR: Could not open file " << fullPathToIncludeFile.toStdString() << std::endl;
-          }  else {
-            // append included file
-            while (!iInclude.eof()) {
-              std::getline(iInclude, strLine);
-              strLine += "\n";
-              shaderSource.push_back(strLine);
-            }
+          if (strIncludeFile.isEmpty())
+            std::cout << "wrong include syntax: " << strLine.c_str() << std::endl;
+          else {
+            QString fullPathToIncludeFile = includePath + QDir::separator() + strIncludeFile;
+
+            loadShaderRec(fullPathToIncludeFile.toLatin1(), appendNewLineChar, includeMap, shaderSource);
           }
         }
-
-        strLine = "";
+        else {
+          if (appendNewLineChar)
+            strLine += "\n";
+          shaderSource.push_back(strLine);
+        }
       }
-      else
+      iShader.close();
+    }
+  }
+
+  /** \brief Loads the shader source
+  *
+  * The shader is assumed to be placed in ../shader relative to the
+  * executable's installation directory, if the path is a relative
+  * one. If it is determined that the path is absolute, the path is
+  * taken as is.
+  * Macros are inserted directly after the #version directive.
+  * According to glsl spec, only comments and white space are allowed before #version.
+  *
+  * @param filename filename of shader
+  * @param macros  [in] preprocessor macros (optional)
+  * @param appendNewLineChar should each string in the StringList end on a '\n'
+  * @param outIncludes [out] additional files that were loaded to resolve #include directives.
+  */
+  GLSL::StringList loadShader(const char *filename, const GLSL::StringList *macros, bool appendNewLineChar, GLSL::StringList* outIncludes) {
+
+    GLSL::StringList src;
+
+    std::map<QString, int> includeMap;
+    loadShaderRec(filename, appendNewLineChar, includeMap, src);
+
+
+    // add preprocesor macros
+    if (macros)
+    {
+      bool foundVersionDirective = false;
+
+      for (GLSL::StringList::iterator it = src.begin(); it != src.end(); ++it)
       {
-        if (macros && !foundVersionDirective && qstrLine.trimmed().startsWith("#version"))
+        QString qstr = it->c_str();
+        if (qstr.trimmed().startsWith("#version "))
         {
           foundVersionDirective = true;
 
-          // add #version line to shader
-          strLine += "\n";
-          shaderSource.push_back(strLine);
-
           // insert preprocessor macros in the next line
-          for (GLSL::StringList::const_iterator it = macros->begin(); it != macros->end(); ++it)
-            shaderSource.push_back(*it + "\n");
+          for (GLSL::StringList::const_iterator itMacro = macros->begin(); itMacro != macros->end(); ++itMacro)
+            src.insert(it, *itMacro + "\n");
 
-          // prevent writing empty line
-          continue;
+          break;
         }
       }
 
-
-      strLine += "\n";
-      shaderSource.push_back(strLine);
+      if (!foundVersionDirective)
+      {
+        // shader did not contain a #version directive
+        // add preprocessor macros to beginning of shader
+        for (GLSL::StringList::const_reverse_iterator it = macros->rbegin(); it != macros->rend(); ++it)
+          src.push_front(*it + "\n");
+      }
     }
-    iShader.close();
 
-
-    if (macros && !foundVersionDirective)
+    if (outIncludes)
     {
-      // shader did not contain a #version directive
-      // add preprocessor macros to beginning of shader
-      for (GLSL::StringList::const_reverse_iterator it = macros->rbegin(); it != macros->rend(); ++it)
-        shaderSource.push_front(*it + "\n");
+      for (std::map<QString, int>::iterator it = includeMap.begin(); it != includeMap.end(); ++it)
+        outIncludes->push_back(it->first.toStdString());
     }
-
-
-    return shaderSource;
+    return src;
   }
 
   /** \brief Loads, compiles and installs a new vertex shader.
