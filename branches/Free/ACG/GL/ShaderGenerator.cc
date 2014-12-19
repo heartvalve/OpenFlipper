@@ -834,7 +834,8 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<unsigned int>* _modifierIDs)
   : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
 {
-  init(_desc, !_modifierIDs || _modifierIDs->empty() ? 0 : &((*_modifierIDs)[0]), (unsigned int)_modifierIDs->size());
+  unsigned int numMods = !_modifierIDs || _modifierIDs->empty() ? 0 : (unsigned int)_modifierIDs->size();
+  init(_desc, numMods ? &((*_modifierIDs)[0]) : 0, numMods);
 }
 
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, ShaderModifier* const* _modifiers, unsigned int _numActiveMods)
@@ -852,7 +853,8 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc, const std::vector<ShaderModifier*>* _modifierIDs)
   : vertex_(0), tessControl_(0), tessEval_(0), geometry_(0), fragment_(0), renormalizeLighting_(false)
 {
-  init(_desc, !_modifierIDs || _modifierIDs->empty() ? 0 : &((*_modifierIDs)[0]), (unsigned int)_modifierIDs->size());
+  unsigned int numMods = !_modifierIDs || _modifierIDs->empty() ? 0 : (unsigned int)_modifierIDs->size();
+  init(_desc, numMods ? &((*_modifierIDs)[0]) : 0, numMods);
 }
 
 
