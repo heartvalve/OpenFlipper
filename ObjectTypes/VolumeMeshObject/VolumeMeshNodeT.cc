@@ -723,7 +723,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getCellRenderObjects(IRenderer* _renderer, GL
     RenderObject ro;
     ro.initFromState(&_state);
 
-    ro.debugName = "VolumeMeshNode";
+    ro.debugName = "VolumeMeshNodeCells";
 
     //Todo: use DrawModeProperties
 
@@ -787,7 +787,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getFaceRenderObjects(IRenderer* _renderer, GL
     RenderObject ro;
     ro.initFromState(&_state);
 
-    ro.debugName = "VolumeMeshNode";
+    ro.debugName = "VolumeMeshNodeFaces";
 
     //Todo: use DrawModeProperties
 
@@ -849,7 +849,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getEdgeRenderObjects(IRenderer* _renderer, GL
     RenderObject ro;
     ro.initFromState(&_state);
 
-    ro.debugName = "VolumeMeshNode";
+    ro.debugName = "VolumeMeshNodeEdges";
 
     //Todo: use DrawModeProperties
 
@@ -862,7 +862,12 @@ void VolumeMeshNodeT<VolumeMeshT>::getEdgeRenderObjects(IRenderer* _renderer, GL
 
     ro.shaderDesc.clearTextures();
 
-    ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+    // no lighting, as there are no normals anyway
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+    // thick lines
+    if (_mat && _mat->lineWidth() > 1.0f)
+      ro.setupLineRendering(_mat->lineWidth(), ACG::Vec2f(_state.viewport_width(), _state.viewport_height()));
 
     edgesBufferManager_.setDefaultColor(_state.specular_color());
     edgesBufferManager_.setOptionsFromDrawMode(_drawMode);
@@ -871,18 +876,10 @@ void VolumeMeshNodeT<VolumeMeshT>::getEdgeRenderObjects(IRenderer* _renderer, GL
                       drawModes_.irregularInnerEdges | drawModes_.irregularOuterEdges ))
     {
         ro.shaderDesc.vertexColors = true;
-        ro.shaderDesc.numLights = -1;
-        ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
     }
     else
     {
-        ro.diffuse = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-        ro.ambient = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-        ro.specular = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
         ro.emissive = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-
-        ro.shaderDesc.numLights = -1;
-        ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
     }
 
     ro.vertexBuffer = edgesBufferManager_.getBuffer();
@@ -898,7 +895,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getVertexRenderObjects(IRenderer* _renderer, 
     RenderObject ro;
     ro.initFromState(&_state);
 
-    ro.debugName = "VolumeMeshNode";
+    ro.debugName = "VolumeMeshNodeVertices";
 
 
     //Todo: use DrawModeProperties
@@ -912,28 +909,21 @@ void VolumeMeshNodeT<VolumeMeshT>::getVertexRenderObjects(IRenderer* _renderer, 
 
     ro.shaderDesc.clearTextures();
 
-    ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+    // no lighting, as there are no normals anyway
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+    // draw with point size
+    if (_mat && _mat->pointSize() > 1.0f)
+      ro.setupPointRendering(_mat->pointSize(), ACG::Vec2f(_state.viewport_width(), _state.viewport_height()));
 
     verticesBufferManager_.setDefaultColor(_state.specular_color());
     verticesBufferManager_.setOptionsFromDrawMode(_drawMode);
 
 
     if (_drawMode & ( drawModes_.verticesColored ))
-    {
-        ro.shaderDesc.vertexColors = true;
-        ro.shaderDesc.numLights = -1;
-        ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
-    }
+      ro.shaderDesc.vertexColors = true;
     else
-    {
-        ro.diffuse = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-        ro.ambient = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-        ro.specular = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-        ro.emissive = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
-
-        ro.shaderDesc.numLights = -1;
-        ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
-    }
+      ro.emissive = ACG::Vec3f(_state.specular_color()[0],_state.specular_color()[1],_state.specular_color()[2]);
 
     ro.vertexBuffer = verticesBufferManager_.getBuffer();
     ro.vertexDecl = verticesBufferManager_.getVertexDeclaration();
@@ -950,7 +940,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     RenderObject ro;
     ro.initFromState(&_state);
 
-    ro.debugName = "VolumeMeshNode";
+    ro.debugName = "VolumeMeshNodeSelections";
 
     ro.setMaterial(_mat);
 
@@ -989,24 +979,28 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     ro.vertexBuffer = vertexSelectionBufferManager_.getBuffer();
     ro.vertexDecl = vertexSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_POINTS, 0, vertexSelectionBufferManager_.getNumOfVertices());
-    _renderer->addRenderObject(&ro);
+    if (vertexSelectionBufferManager_.getNumOfVertices())
+      _renderer->addRenderObject(&ro);
 
     ro.vertexBuffer = edgeSelectionBufferManager_.getBuffer();
     ro.vertexDecl = edgeSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_LINES, 0, edgeSelectionBufferManager_.getNumOfVertices());
-    _renderer->addRenderObject(&ro);
+    if (edgeSelectionBufferManager_.getNumOfVertices())
+      _renderer->addRenderObject(&ro);
 
     ro.depthRange = Vec2f(0.01f, 1.0f);
 
     ro.vertexBuffer = faceSelectionBufferManager_.getBuffer();
     ro.vertexDecl = faceSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_TRIANGLES, 0, faceSelectionBufferManager_.getNumOfVertices());
-    _renderer->addRenderObject(&ro);
+    if (faceSelectionBufferManager_.getNumOfVertices())
+      _renderer->addRenderObject(&ro);
 
     ro.vertexBuffer = cellSelectionBufferManager_.getBuffer();
     ro.vertexDecl = cellSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_TRIANGLES, 0, cellSelectionBufferManager_.getNumOfVertices());
-    _renderer->addRenderObject(&ro);
+    if (cellSelectionBufferManager_.getNumOfVertices())
+      _renderer->addRenderObject(&ro);
 
 
 }
