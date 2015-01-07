@@ -82,7 +82,7 @@ void OVMPropertyVisualizerInteger<MeshT, T>::visualizeProp(PropType prop, Entity
     std::map< int, ACG::Vec4f> randomColor;
 
     if ( integerWidget->intRandom->isChecked() && integerWidget->intMapBlack->isChecked() )
-        randomColor[ integerWidget->intMapBlackValue->value() ] = ACG::Vec4f(0.0, 0.0, 0.0,  1.0);
+        randomColor[ integerWidget->intMapBlackValue->value() ] = ACG::Vec4f(0.0, 0.0, 0.0, 0.0);
 
     T min = mNumericLimitMax;
     T max = mNumericLimitMin;
