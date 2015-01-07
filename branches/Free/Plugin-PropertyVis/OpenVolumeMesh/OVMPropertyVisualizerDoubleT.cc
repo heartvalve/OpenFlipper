@@ -134,6 +134,11 @@ void OVMPropertyVisualizerDouble<MeshT>::visualizeProp(PropType prop, EntityIter
                 color = (colorMin)*(1.0-t) + (colorMax)*t;
             }
 
+            if (doubleWidget->doubleMapOutsideRange->isChecked()) {
+              if (prop[*e_it] < min || prop[*e_it] > max)
+                color[3] = 0.f;
+            }
+
             // set color
             object->colors()[*e_it] = color;
         }
