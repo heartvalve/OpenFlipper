@@ -55,6 +55,11 @@
 namespace ACG
 {
 
+VertexElement::VertexElement()
+  : type_(0), numElements_(0), usage_(VERTEX_USAGE_SHADER_INPUT), shaderInputName_(0), pointer_(0), divisor_(0), vbo_(0)
+{
+}
+
 
 void VertexElement::setByteOffset(unsigned int _offset)
 {
@@ -106,7 +111,9 @@ void VertexDeclaration::addElement(unsigned int _type,
                                    unsigned int _numElements,
                                    VERTEX_USAGE _usage,
                                    const void* _pointer,
-                                   const char* _shaderInputName)
+                                   const char* _shaderInputName,
+                                   unsigned int _divisor,
+                                   unsigned int _vbo)
 {
   VertexElement* ve = new VertexElement();
 
@@ -115,6 +122,8 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
   ve->pointer_ = _pointer;
+  ve->divisor_ = _divisor;
+  ve->vbo_ = _vbo;
   addElement(ve);
 
   delete ve;
@@ -124,7 +133,9 @@ void VertexDeclaration::addElement(unsigned int _type,
                                    unsigned int _numElements,
                                    VERTEX_USAGE _usage, 
                                    size_t _byteOffset,
-                                   const char* _shaderInputName)
+                                   const char* _shaderInputName,
+                                   unsigned int _divisor,
+                                   unsigned int _vbo)
 {
   VertexElement* ve = new VertexElement();
 
@@ -133,6 +144,8 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
   ve->pointer_ = (void*)_byteOffset;
+  ve->divisor_ = _divisor;
+  ve->vbo_ = _vbo;
 
   addElement(ve);
 
@@ -170,18 +183,42 @@ void VertexDeclaration::addElements(unsigned int _numElements, const VertexEleme
         const void* p;
       } lastOffset, firstOffset;
 
-      firstOffset.p = getElement(0)->pointer_;
-      
-      const VertexElement* pLastElement = getElement(n-1);
-      lastOffset.p = pLastElement->pointer_;
 
-      vertexStride_ = static_cast<unsigned int>(lastOffset.u + getElementSize( pLastElement ) - firstOffset.u);
+
+      std::map<unsigned int, VertexElement*> vboFirstElements;
+      std::map<unsigned int, VertexElement*> vboLastElements;
+
+      for (unsigned int i = 0; i < n; ++i)
+      {
+        if (vboFirstElements.find(elements_[i].vbo_) == vboFirstElements.end())
+          vboFirstElements[elements_[i].vbo_] = &elements_[i];
+
+        vboLastElements[elements_[i].vbo_] = &elements_[i];
+      }
+
+
+      for (std::map<unsigned int, VertexElement*>::iterator it = vboFirstElements.begin(); it != vboFirstElements.end(); ++it)
+      {
+        VertexElement* lastElement = vboLastElements[it->first];
+        firstOffset.p = it->second->pointer_;
+        lastOffset.p = lastElement->pointer_;
+
+        vertexStridesVBO_[it->first] = static_cast<unsigned int>(lastOffset.u + getElementSize( lastElement ) - firstOffset.u);
+      }
+
+      vertexStride_ = vertexStridesVBO_.begin()->second;
     }
   }
 
 }
 
 
+// union instead of reinterpret_cast for cross-platform compatibility, must be global for use in std::map
+union VertexDeclaration_ptr2uint
+{
+  unsigned long u;
+  const void* p;
+};
 
 void VertexDeclaration::updateOffsets()
 {
@@ -190,25 +227,44 @@ void VertexDeclaration::updateOffsets()
   if (!numElements) return;
 
 
-  // union instead of reinterpret_cast for cross-platform compatibility
-  union ptr2uint
+  // separate offsets for each vbo
+
+  std::map<unsigned int, VertexDeclaration_ptr2uint> vboOffsets;
+  std::map<unsigned int, VertexElement*> vboPrevElements;
+
+  for (unsigned int i = 0; i < numElements; ++i)
   {
-    unsigned long u;
-    const void* p;
-  };
+    if (vboOffsets.find(elements_[i].vbo_) == vboOffsets.end())
+    {
+      vboOffsets[elements_[i].vbo_].p = elements_[i].pointer_;
+      vboPrevElements[elements_[i].vbo_] = &elements_[i];
+    }
+  }
 
-  ptr2uint curOffset;
-  curOffset.p = elements_[0].pointer_;
-
-  for (unsigned int i = 1; i < numElements; ++i)
+  for (unsigned int i = 0; i < numElements; ++i)
   {
-    if (elements_[i].pointer_)
-      curOffset.p = elements_[i].pointer_;
+    VertexElement* el = &elements_[i];
 
+    bool updateOffset = false;
+
+    if (el->pointer_)
+    {
+      vboOffsets[el->vbo_].p = el->pointer_;
+      vboPrevElements[el->vbo_] = el;
+    }
     else
-      curOffset.u += getElementSize(&elements_[i-1]);
+    {
+      VertexElement* prevEl = vboPrevElements[el->vbo_];
+      if (prevEl != el)
+      {
+        updateOffset = true;
+        vboOffsets[el->vbo_].u += getElementSize(prevEl);
+      }
+      vboPrevElements[el->vbo_] = el;
+    }
 
-    elements_[i].pointer_ = curOffset.p;
+    if (updateOffset)
+      el->pointer_ = vboOffsets[el->vbo_].p;
   }
 }
 
@@ -282,7 +338,7 @@ unsigned int VertexDeclaration::getGLTypeSize(unsigned int _type)
 
 unsigned int VertexDeclaration::getElementSize(const VertexElement* _pElement)
 {
-  return getGLTypeSize(_pElement->type_) * _pElement->numElements_;
+  return _pElement ? getGLTypeSize(_pElement->type_) * _pElement->numElements_ : 0;
 }
 
 
@@ -367,10 +423,11 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
   // setup correct attribute locations as specified
 
   unsigned int numElements = getNumElements();
-  unsigned int vertexStride = getVertexStride();
 
   for (unsigned int i = 0; i < numElements; ++i)
   {
+    unsigned int vertexStride = getVertexStride(i);
+
     const VertexElement* pElem = &elements_[i];
 
     int loc = _prog->getAttributeLocation(pElem->shaderInputName_);
@@ -384,9 +441,28 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
       if (pElem->usage_ == VERTEX_USAGE_BLENDINDICES)
         normalizeElem = GL_FALSE;
 
+      GLint curVBO = 0;
+      if (pElem->vbo_)
+      {
+        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &curVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pElem->vbo_);
+      }
+
       glVertexAttribPointer(loc, pElem->numElements_,  pElem->type_, normalizeElem, vertexStride, pElem->pointer_);
+
+      if (supportsInstancedArrays())
+      {
+#ifdef GL_ARB_instanced_arrays
+        glVertexAttribDivisor(loc, pElem->divisor_);
+#endif
+      }
+      else if (pElem->divisor_)
+        std::cerr << "error: VertexDeclaration::activateShaderPipeline - instanced arrays not supported by gpu!" << std::endl;
+
       glEnableVertexAttribArray(loc);
 
+      if (curVBO)
+        glBindBuffer(GL_ARRAY_BUFFER, curVBO);
     }
   }
 }
@@ -438,9 +514,13 @@ const VertexElement* VertexDeclaration::findElementByUsage(VERTEX_USAGE _usage) 
 }
 
 
-unsigned int VertexDeclaration::getVertexStride() const
+unsigned int VertexDeclaration::getVertexStride(unsigned int i) const
 {
-  return vertexStride_;
+  unsigned int vbo = getElement(i)->vbo_;
+  std::map<unsigned int, unsigned int>::const_iterator it = vertexStridesVBO_.find(vbo);
+
+  return (it != vertexStridesVBO_.end()) ? it->second : vertexStride_;
+//  return vertexStride_;
 }
 
 
@@ -509,10 +589,26 @@ QString VertexDeclaration::toString() const
                << ", count: " << el->numElements_
                << ", usage: " << usage
                << ", shader-input: " << el->shaderInputName_
-               << ", offset: " << el->pointer_ << "]\n";
+               << ", offset: " << el->pointer_ 
+               << ", divisor: " << el->divisor_ 
+               << ", vbo: " << el->vbo_
+               << ", stride: " << getVertexStride(i)
+               << "]\n";
   }
 
   return result;
+}
+
+bool VertexDeclaration::supportsInstancedArrays()
+{
+  static int status_ = -1;
+
+#ifdef GL_ARB_instanced_arrays
+  if (status_ < 0) // core in 3.3
+    status_ = (checkExtensionSupported("GL_ARB_instanced_arrays") || openGLVersion(3,3)) ? 1 : 0;
+#endif
+
+  return status_ > 0;
 }
 
 //=============================================================================

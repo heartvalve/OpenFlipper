@@ -1637,7 +1637,7 @@ bool ACG::DrawMeshT<Mesh>::supportsPickingVertices_opt()
 //     else
 //       pickVertexShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
 //   }
-
+  
   // load from cache
   if (pickVertexMethod_ == 0)
     pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl", 0, false);
@@ -2040,10 +2040,9 @@ void DrawMeshT<Mesh>::updatePickingFaces_opt(ACG::GLState& _state )
 template <class Mesh>
 bool ACG::DrawMeshT<Mesh>::supportsPickingFaces_opt()
 {
-#ifndef GL_ARB_texture_buffer_object
-  return 0;
-#endif
-
+  if (!ACG::Texture::supportsTextureBuffer())
+    return false;
+    
   // fetch picking shader from cache
   pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl", 0, false);
 
@@ -2390,27 +2389,16 @@ void ACG::DrawMeshT<Mesh>::createVertexDeclaration()
 template <class Mesh>
 void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
 {
-  VertexElement elemArrayEC[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0 } };
-
-  elemArrayEC[0].pointer_ = perEdgeVertexBuffer();
-  elemArrayEC[1].pointer_ = perEdgeColorBuffer();
-
-  VertexElement elemArrayH =  {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 };
-  elemArrayH.pointer_ = perHalfedgeVertexBuffer();
-
-  VertexElement elemArrayHC[] =  { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0 } };
-  elemArrayHC[0].pointer_ = perHalfedgeVertexBuffer();
-  elemArrayHC[1].pointer_ = perHalfedgeColorBuffer();
-
   vertexDeclEdgeCol_->clear();
-  vertexDeclHalfedgeCol_->clear();
-  vertexDeclHalfedgePos_->clear();
+  vertexDeclEdgeCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION, perEdgeVertexBuffer());
+  vertexDeclEdgeCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, perEdgeColorBuffer());
 
-  vertexDeclEdgeCol_->addElements(2, elemArrayEC);
-  vertexDeclHalfedgeCol_->addElements(2, elemArrayHC);
-  vertexDeclHalfedgePos_->addElement(&elemArrayH);
+  vertexDeclHalfedgeCol_->clear();
+  vertexDeclHalfedgeCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION, perHalfedgeVertexBuffer());
+  vertexDeclHalfedgeCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, perHalfedgeColorBuffer());
+  
+  vertexDeclHalfedgePos_->clear();
+  vertexDeclHalfedgePos_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION, perHalfedgeVertexBuffer());
 
   vertexDeclEdgeCol_->setVertexStride(0);
   vertexDeclHalfedgeCol_->setVertexStride(0);
