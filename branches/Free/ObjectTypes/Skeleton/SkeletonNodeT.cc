@@ -599,39 +599,20 @@ void SkeletonNodeT<SkeletonType>::pick_edges(GLState &_state)
 template <class SkeletonType>
 void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode _drawMode, const Point& _parent, const Point& _axis)
 {
- 
   _state.push_modelview_matrix();
 
-  Point midPoint = _parent + 0.1 * _axis;
-  
-  _state.translate(midPoint[0], midPoint[1], midPoint[2]);
+  // compute modelview matrix of each cone
+  GLMatrixf mv0, mv1;
+  mv0 = mv1 = _state.modelview();
 
-  Point  direction = _axis;
-  Point  z_axis(0,0,1);
-  Point  rot_normal;
-  double rot_angle;
+  computeConeMatrices(_state.modelview(), _parent, _axis, &mv0, &mv1);
 
-  direction.normalize();
-  rot_angle  = acos((z_axis | direction))*180/M_PI;
-  rot_normal = ((z_axis % direction).normalize());
+  // draw cones
+  _state.set_modelview(mv0);
+  cone_->draw_primitive();
 
-
-  if(fabs(rot_angle) > 0.0001 && fabs(180-rot_angle) > 0.0001)
-    _state.rotate(rot_angle, rot_normal[0], rot_normal[1], rot_normal[2]);
-  else
-    _state.rotate(rot_angle, 1, 0, 0);
-
-  double boneLength = _axis.norm();
-  double radius     = boneLength * 0.07;
-  
-  //draw the large cone from midPoint to the end of the bone
-  cone_->setBottomRadius(radius);
-  cone_->setTopRadius(0.0f);
-  cone_->draw(_state,boneLength*0.9);
-
-  //rotate 180.0 and draw the the small cone from midPoint to the start
-  _state.rotate(180.0, 1, 0, 0);  
-  cone_->draw(_state,boneLength*0.1);
+  _state.set_modelview(mv1);
+  cone_->draw_primitive();
   
   _state.pop_modelview_matrix();
 }
@@ -646,12 +627,38 @@ void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode
 template <class SkeletonType>
 void SkeletonNodeT<SkeletonType>::addBoneToRenderer(IRenderer* _renderer, RenderObject& _base, const Point& _parent, const Point& _axis)
 {
+  // define cone mesh data
+  _base.vertexDecl = cone_->getVertexDecl();
+  _base.vertexBuffer = cone_->getVBO();
+  _base.glDrawArrays(GL_TRIANGLES, 0, cone_->getNumTriangles() * 3);
+
   // save previous modelview transform
   GLMatrixf prevTransform = _base.modelview;
 
+  // build modelview matrix for each cone
+  GLMatrixf mv0, mv1;
+  computeConeMatrices(prevTransform, _parent, _axis, &mv0, &mv1);
+
+  // add cone objects
+  _base.modelview = mv0;
+  _renderer->addRenderObject(&_base);
+
+  _base.modelview = mv1;
+  _renderer->addRenderObject(&_base);
+
+  // restore previous modelview matrix
+  _base.modelview = prevTransform;
+}
+
+
+template <class SkeletonType>
+void ACG::SceneGraph::SkeletonNodeT<SkeletonType>::computeConeMatrices( const GLMatrixf& _modelView, const Point& _parent, const Point& _axis, GLMatrixf* _outCone0, GLMatrixf* _outCone1 )
+{
   Point midPoint = _parent + 0.1 * _axis;
-  
-  _base.modelview.translate(midPoint[0], midPoint[1], midPoint[2]);
+
+  *_outCone0 = _modelView;
+
+  _outCone0->translate(midPoint[0], midPoint[1], midPoint[2]);
 
   Point  direction = _axis;
   Point  z_axis(0,0,1);
@@ -664,27 +671,23 @@ void SkeletonNodeT<SkeletonType>::addBoneToRenderer(IRenderer* _renderer, Render
 
 
   if(fabs(rot_angle) > 0.0001 && fabs(180-rot_angle) > 0.0001)
-    _base.modelview.rotate(rot_angle, rot_normal[0], rot_normal[1], rot_normal[2]);
+    _outCone0->rotate(rot_angle, rot_normal[0], rot_normal[1], rot_normal[2]);
   else
-    _base.modelview.rotate(rot_angle, 1, 0, 0);
+    _outCone0->rotate(rot_angle, 1, 0, 0);
 
   double boneLength = _axis.norm();
   double radius     = boneLength * 0.07;
-  
-  //draw the large cone from midPoint to the end of the bone
-  cone_->setBottomRadius(1.0f);
-  cone_->setTopRadius(0.0f);
 
-  _base.modelview.scale(radius, radius, 1.0f);
-  cone_->addToRenderer(_renderer, &_base, boneLength*0.9);
+  *_outCone1 = *_outCone0;
+
+  //draw the large cone from midPoint to the end of the bone
+  _outCone0->scale(radius, radius, boneLength*0.9);
 
   //rotate 180.0 and draw the the small cone from midPoint to the start
-  _base.modelview.rotate(180.0, 1, 0, 0);  
-  cone_->addToRenderer(_renderer, &_base, boneLength*0.1);
-
-
-  _base.modelview = prevTransform;
+  _outCone1->scale(radius, radius, boneLength*0.1);
+  _outCone1->rotateX(180.0f);
 }
+
 
 
 //----------------------------------------------------------------------------
@@ -792,6 +795,8 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
   getJointColor(_mat->diffuseColor(), jointColor);
 
 
+  const int numJoints = skeleton_.jointCount();
+
   // draw points
   for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
   {
@@ -805,30 +810,127 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         ro.debugName = "SkeletonNode.point";
         ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
-        for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+        if (VertexDeclaration::supportsInstancedArrays())
         {
-          // If the vertex is selected, it will be always red
-          // If it is not selected,
-          if ( (*it)->selected() )
-            ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
-          else {
-            // If it is the root joint, it will get some kind of orange color
-            // Otherwise the the Base color is used
-            if ( (*it)->isRoot() )
-              ro.emissive = Vec3f(1.0f,0.66f, 0.0f);
-            else
-              ro.emissive = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+          /*
+          per instance data:
+
+          combined modelview matrix: 3x float4 rows
+          vertex color = emissive as rgba8_unorm
+          */
+
+          const int instanceDataSize = 4*3*4 + 4; // float4x3 + uint
+          const int instanceBufSize = numJoints * instanceDataSize;
+          if (numJoints)
+          {
+            const int numFloats = instanceBufSize/4;
+            std::vector<float> instanceData(numFloats);
+
+            // compute per instance data
+            int instanceDataOffset = 0;
+
+            for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+            {
+              Vec4f vcolor = Vec4f(0.0f, 0.0f, 0.0f, 1.0f);
+
+              // If the vertex is selected, it will be always red
+              // If it is not selected,
+              if ( (*it)->selected() )
+                vcolor = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+              else {
+                // If it is the root joint, it will get some kind of orange color
+                // Otherwise the the Base color is used
+                if ( (*it)->isRoot() )
+                  vcolor = Vec4f(1.0f,0.66f, 0.0f, 1.0f);
+                else
+                  vcolor = jointColor;
+              }
+
+              Vec3d globalPosD = pose->globalTranslation( (*it)->id() );
+
+              float sphereSize = float(unprojectPointSize((double)_state.point_size(), 
+                globalPosD,
+                _state));
+
+              GLMatrixf modelview = ro.modelview;
+              modelview.translate(globalPosD[0], globalPosD[1], globalPosD[2]);
+              modelview.scale(sphereSize, sphereSize, sphereSize);
+
+              // store matrix
+              for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 4; ++c)
+                  instanceData[instanceDataOffset++] = modelview(r,c);
+
+              // store color
+              unsigned int uicolor = 0xff000000;
+              uicolor |= (unsigned int)(vcolor[0] * 255.0f) & 0x000000ff;
+              uicolor |= ((unsigned int)(vcolor[1] * 255.0f) << 8)  & 0x0000ff00;
+              uicolor |= ((unsigned int)(vcolor[2] * 255.0f) << 16) & 0x00ff0000;
+
+              instanceData[instanceDataOffset++] = *(float*)&uicolor;
+            }
+
+            // store instance data in vbo
+            pointInstanceData_.bind();
+            pointInstanceData_.upload(instanceBufSize, &instanceData[0], GL_DYNAMIC_DRAW);
+            pointInstanceData_.unbind();
+
+
+            // init declaration
+            if (!pointInstanceDecl_.getNumElements())
+            {
+              pointInstanceDecl_ = *sphere_->getVertexDecl();
+
+              pointInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, size_t(0), "inModelView0", 1, pointInstanceData_.id());
+              pointInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, size_t(0), "inModelView1", 1, pointInstanceData_.id());
+              pointInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, size_t(0), "inModelView2", 1, pointInstanceData_.id());
+              pointInstanceDecl_.addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, size_t(0), 0, 1, pointInstanceData_.id());
+            }
+
+            ro.shaderDesc.vertexColors = true;
+            ro.shaderDesc.vertexTemplateFile = "Skeleton/instanced_vs.glsl";
+
+            ro.vertexDecl = &pointInstanceDecl_;
+            ro.vertexBuffer = sphere_->getVBO();
+            ro.glDrawArraysInstanced(GL_TRIANGLES, 0, sphere_->getNumTriangles() * 3, numJoints);
+
+            _renderer->addRenderObject(&ro);
+
+            ro.shaderDesc.vertexColors = false;
+            ro.numInstances = 0;
+            ro.shaderDesc.vertexTemplateFile = "";
           }
-
-
-          // simulate glPointSize( ) with sphere
-
-          const double sphereSize = unprojectPointSize((double)_state.point_size(), 
-            pose->globalTranslation( (*it)->id() ),
-            _state);
-
-          sphere_->addToRenderer(_renderer, &ro, sphereSize, ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
         }
+        else
+        {
+          // create a separate renderobject for each joint
+
+          for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+          {
+            // If the vertex is selected, it will be always red
+            // If it is not selected,
+            if ( (*it)->selected() )
+              ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
+            else {
+              // If it is the root joint, it will get some kind of orange color
+              // Otherwise the the Base color is used
+              if ( (*it)->isRoot() )
+                ro.emissive = Vec3f(1.0f,0.66f, 0.0f);
+              else
+                ro.emissive = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+            }
+
+
+            // simulate glPointSize( ) with sphere
+
+            const double sphereSize = unprojectPointSize((double)_state.point_size(), 
+              pose->globalTranslation( (*it)->id() ),
+              _state);
+
+            sphere_->addToRenderer(_renderer, &ro, sphereSize, ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
+          }
+        }
+
 
       } break;
 
@@ -843,25 +945,130 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         ACG::Vec4f baseColor = _state.ambient_color();
         ro.emissive = ACG::Vec3f(baseColor[0],baseColor[1],baseColor[2]);
 
-        // draw the bones
-        for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
 
-          //joint is the (unique) tail joint of the bone
-          Joint* joint  = *it;
-          Joint* parent = joint->parent();
 
-          // root can be ignored
-          // we only want to draw bones from (parent -> joint)
-          if (parent == 0)
-            continue;
+        if (VertexDeclaration::supportsInstancedArrays())
+        {
+          /*
+          per instance data:
 
-          Vec3d parentPos = pose->globalTranslation(parent->id());
-          Vec3d jointPos  = pose->globalTranslation(joint->id());
+          combined modelview matrix: 3x float4 rows
+          inverse transpose of modelview: 3x float3 rows
+          */
 
-          Vec3d boneVector = (jointPos - parentPos);
+          const int instanceDataFloats = 3*4 + 3*3;
+          const int instanceDataSize = instanceDataFloats * 4;
+          const int instanceBufSize = 2 * numJoints * instanceDataSize; // 2 cones per bone
+          if (numJoints)
+          {
+            const int numFloats = instanceBufSize/4;
+            std::vector<float> instanceData(numFloats);
 
-          addBoneToRenderer(_renderer, ro, parentPos, boneVector);
+            // compute per instance data
+            int instanceDataOffset = 0;
+            GLMatrixf cone0, cone1, cone0IT, cone1IT;
+
+            for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+            {
+              //joint is the (unique) tail joint of the bone
+              Joint* joint  = *it;
+              Joint* parent = joint->parent();
+
+              // root can be ignored
+              // we only want to draw bones from (parent -> joint)
+              if (parent == 0)
+                continue;
+
+              Vec3d parentPos = pose->globalTranslation(parent->id());
+              Vec3d jointPos  = pose->globalTranslation(joint->id());
+
+              Vec3d boneVector = (jointPos - parentPos);
+
+              // compute cone modelview matrices
+              computeConeMatrices(ro.modelview, parentPos, boneVector, &cone0, &cone1);
+
+              // compute inverse transpose for normal transform
+              cone0IT = cone0;
+              cone1IT = cone1;
+              cone0IT.invert();
+              cone1IT.invert();
+            
+              // store matrices
+              for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 4; ++c)
+                  instanceData[instanceDataOffset++] = cone0(r,c);
+
+              for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 3; ++c)
+                  instanceData[instanceDataOffset++] = cone0IT(c,r);
+
+              for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 4; ++c)
+                  instanceData[instanceDataOffset++] = cone1(r,c);
+
+              for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 3; ++c)
+                  instanceData[instanceDataOffset++] = cone1IT(c,r);
+            }
+
+            const int numBones = instanceDataOffset / instanceDataFloats;
+
+            // store instance data in vbo
+            boneInstanceData_.bind();
+            boneInstanceData_.upload(instanceDataOffset * 4, &instanceData[0], GL_DYNAMIC_DRAW);
+            boneInstanceData_.unbind();
+
+
+            // init declaration
+
+            if (!boneInstanceDecl_.getNumElements())
+            {
+              boneInstanceDecl_ = *cone_->getVertexDecl();
+
+              boneInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelView0", 1, boneInstanceData_.id());
+              boneInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelView1", 1, boneInstanceData_.id());
+              boneInstanceDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelView2", 1, boneInstanceData_.id());
+              boneInstanceDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelViewIT0", 1, boneInstanceData_.id());
+              boneInstanceDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelViewIT1", 1, boneInstanceData_.id());
+              boneInstanceDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_SHADER_INPUT, (size_t)0, "inModelViewIT2", 1, boneInstanceData_.id());
+            }
+
+            ro.vertexDecl = &boneInstanceDecl_;
+            ro.vertexBuffer = cone_->getVBO();
+            ro.glDrawArraysInstanced(GL_TRIANGLES, 0, cone_->getNumTriangles() * 3, numBones);
+
+            ro.shaderDesc.vertexTemplateFile = "Skeleton/instanced_wvit_vs.glsl";
+
+            _renderer->addRenderObject(&ro);
+
+            ro.numInstances = 0;
+            ro.shaderDesc.vertexTemplateFile = "";
+          }
         }
+        else
+        {
+          // create separate renderobject for each bone
+
+          for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
+
+            //joint is the (unique) tail joint of the bone
+            Joint* joint  = *it;
+            Joint* parent = joint->parent();
+
+            // root can be ignored
+            // we only want to draw bones from (parent -> joint)
+            if (parent == 0)
+              continue;
+
+            Vec3d parentPos = pose->globalTranslation(parent->id());
+            Vec3d jointPos  = pose->globalTranslation(joint->id());
+
+            Vec3d boneVector = (jointPos - parentPos);
+
+            addBoneToRenderer(_renderer, ro, parentPos, boneVector);
+          }
+        }
+
       } break;
 
     default: break;
