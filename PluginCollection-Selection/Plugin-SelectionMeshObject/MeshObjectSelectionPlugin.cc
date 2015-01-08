@@ -355,6 +355,27 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
     emit setSlotDescription("createMeshFromFaceSelection(int)", tr("Take face selection and create a new mesh from it"),
                             QString("objectId").split(","), QString("Id of an object where the selection should be used to create a new mesh").split(","));
 
+
+    QString conversionStrings = tr(" Possible strings:\n"
+        "- Vertex/Edge/Halfedge/Face Selection\n"
+        "- Model/Handle Region\n"
+        "- Feature Vertices/Edges/Faces");
+
+    emit setSlotDescription("convertSelection(int,QString,QString,bool)", tr("Convert the selection on given object. Conversion must be given as strings.")+conversionStrings ,
+                            QString("objectId,from,to,deselect").split(","), QString("Id of an object,string of selection which will be converted,resulting selection or area,deselect selection after conversion").split(","));
+
+    emit setSlotDescription("conversion(QString,QString,bool)", tr("Convert selection on all target Objects.")+conversionStrings,
+                            QString("from,to,deselect").split(","), QString("string of selection which will be converted,resulting selection region or feature,deselect selection after conversion").split(","));
+
+    emit setSlotDescription("convertEdgesToVertexPairs(int,IdList)", tr("Convert edge ids to vertex pair ids. Returns vertex Idlist."),
+                            QString("objectId, edgeIds").split(","), QString("Id of an object, Ids of edges").split(","));
+    emit setSlotDescription("convertHalfedgesToVertexPairs(int,IdList)", tr("Convert halfedge ids to vertex pair ids. Returns vertex Idlist."),
+                            QString("objectId, halfedgeIds").split(","), QString("Id of an object, Ids of halfedges").split(","));
+
+    emit setSlotDescription("convertVertexPairsToHalfedges(int,IdList)", tr("Convert vertex pair ids to halfedge ids. Returns halfedge Idlist."),
+                            QString("objectId, vertexIds").split(","), QString("Id of an object, Ids of paired vertices").split(","));
+    emit setSlotDescription("convertVertexPairsToEdges(int,IdList)", tr("Convert vertex pair ids to edge ids. Returns edge Idlist."),
+                            QString("objectId, vertexIds").split(","), QString("Id of an object, Ids of paired vertices").split(","));
 }
 
 void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
