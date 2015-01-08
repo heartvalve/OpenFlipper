@@ -1159,15 +1159,6 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   if (ioDesc_.inputColor_)
     _code->push_back("sg_cColor = inColor;");
 
-  if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-    desc_.shadeMode == SG_SHADE_FLAT)
-  {
-    // add lighting code here
-
-    addLightingCode(_code);
-  }
-
-
 
   // apply modifiers
   for (size_t i = 0; i < activeMods_.size(); ++i)
@@ -1177,6 +1168,14 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
 
 void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
 {
+  if (desc_.shadeMode == SG_SHADE_GOURAUD ||
+    desc_.shadeMode == SG_SHADE_FLAT)
+  {
+    // add lighting code here
+
+    addLightingCode(_code);
+  }
+
   _code->push_back("gl_Position = sg_vPosPS;");
   _code->push_back("outVertexPosCS = sg_vPosPS;");
 
