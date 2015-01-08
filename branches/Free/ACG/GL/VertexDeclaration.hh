@@ -46,6 +46,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 #include <QString>
 #include <ACG/Config/ACGDefines.hh>
 
@@ -75,11 +76,15 @@ enum VERTEX_USAGE
  */
 struct ACGDLLEXPORT VertexElement
 {
+  VertexElement();
+
   unsigned int type_;           //!< GL_FLOAT, GL_UNSIGNED_BYTE, GL_INT, ...
   unsigned int numElements_;    //!< how many elements of type_
   VERTEX_USAGE usage_;          //!< position, normal, shader input ..
   const char* shaderInputName_; //!< set shader input name, if usage_ = VERTEX_USAGE_USER_DEFINED otherwise this is set automatically, if usage_ != VERTEX_USAGE_USER_DEFINED
-  const void* pointer_;         //!< Offset in bytes to the first instance of this element in vertex buffer; Or address to vertex data in system memory
+  const void* pointer_;         //!< Offset in bytes to the first occurrence of this element in vertex buffer; Or address to vertex data in system memory
+  unsigned int divisor_;        //!< For instanced rendering: Step rate describing how many instances are drawn before advancing to the next element. Must be 0 if this element is not per instance data.
+  unsigned int vbo_;            //!< Explicit vbo source of this element, set to 0 if the buffer bound at the time of activating the declaration should be used instead.
 
   /*! interpret pointer_ as byte offset
   */
@@ -90,21 +95,24 @@ struct ACGDLLEXPORT VertexElement
   unsigned int getByteOffset() const;
 };
 
-/** \brief Class to define the layout of a vertex element
+/** \brief Class to define the vertex input layout
  *
- * This class is used to specify how the elements (normals,positions,...) of a vertex element are setup.
+ * This class is used to specify vertex data layout (normals,positions,...).
  *
- * A vertex declaration is needed to describe the data layout of a vertex buffer:
+ * The layout of a vertex buffer typically includes:
  * - number of vertex elements
  * - element usage (position, normal, ... )
  * - element types (float, int, ...)
  * - memory alignment
  * - data pointers (only in case of system memory buffers)
+ * - source vertex buffers
+ * - divisor (step rate) for instance data
+ * - vertex stride
+ * 
  *
+ * Example usage: Interleaved vertex data
  *
- * Example usage:
- *
- * Suppose you have an interleaved vertex buffer without memory alignment:
+ * Create a vertex declaration given the following vertex data:
  * \code
  * Vertex
  * {
@@ -117,28 +125,21 @@ struct ACGDLLEXPORT VertexElement
  * }
  * \endcode
  *
- * You would create the following VertexElements:
+ * The accompanying vertex declaration is created as follows:
  * \code
- * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, {0} },
- *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
- *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
- *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} },
- *                               {GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, "inTangent", {0} },
- *                               {GL_FLOAT, 2, VERTEX_USAGE_SHADER_INPUT, "inTexcoord2", {0}}
- *                             };
+ * VertexDeclaration decl;
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_POSITION);
+ * decl.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+ * decl.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
+ * decl.addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR);
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, 0U, "inTangent");
+ * decl.addElement(GL_FLOAT, 2, VERTEX_USAGE_SHADER_INPUT, 0U, "inTexcoord2");
+ *
  * \endcode
  *
- * equivalent to
- * \code
- * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, {0} },
- *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {4*4} },
- *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {4*4 + 4*3} },
- *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {4*4 + 4*3 + 4*2} },
- *                               ..
- *                              };
- * \endcode
+ * Note that the element offsets are automatically computed, but it is possible to provide them manually of course.
  *
- * in the vertex shader:
+ * These elements are then available in a vertex shader with the following input semantics:
  * \code
  * in vec4 inPosition;
  * ...
@@ -151,38 +152,110 @@ struct ACGDLLEXPORT VertexElement
  *
  * ---------------------------------------------------------------------------------
  *
- * Example use:  multiple buffer source in system memory
+ * Example usage:  Multiple source buffers in system memory
  *
- * Suppose you have the following arrays in system memory
- *
+ * Given are system memory buffers as vertex data source for drawing:
  * \code
  *  float4* pVertexPositions;
  *  ubyte4* pVertexColors;
  *  float3* pVertexNormals;
  * \endcode
  *
- * important is, that you define a vertex stride of 0 and define the data pointer in the vertex elements instead
- *
- * The correct vertex declaration to use is:
+ * It is important that the vertex stride is manually set to 0!! and that the element data pointers are set accordingly:
  *
  * \code
- * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, pVertexPositions},
- *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, pVertexNormals},
- *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, pVertexColors}
- *                             };
- *
- * VertexDeclaration* pDecl = new VertexDeclaration();
- *
- * pDecl->addElements(3, elemArray);
- * pDecl->setVertexStride(0);
+ * VertexDeclaration decl;
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_POSITION, pVertexPositions);
+ * decl.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL, pVertexNormals);
+ * decl.addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, pVertexColors);
+ * decl.setVertexStride(0);
  * \endcode
+ *
  *
  * Note:
  * - vertex stride = 0
  * - assign data address in vertex elements and don't change the data location later
  * - order of elements is not important in this case
+ * - mixing interleaved vbo and system memory elements in the same declaration is forbidden
  *
+ * ---------------------------------------------------------------------------------
+ *
+ * Example usage:  Instancing from vbo
+ *
+ * Geometry instancing can be implemented in several ways:
+ * - compute instance transform procedurally from gl_InstanceID in shader
+ * - store per instance data in a texture and use vertex texture fetch via gl_InstanceID
+ * - store per instance data in a vbo and stream these as input to a vertex shader (ARB_instanced_arrays).
+ *
+ * The first two methods can be implemented without modifying the vertex declaration,
+ * so this example focuses on the last method, in which instance data is streamed from a vbo.
+ *
+ * Given a mesh with the following vertex elements:
+ * \code
+ * Vertex
+ * {
+ *   float4 pos
+ *   float3 normal
+ *   float2 texcoord
+ * }
+ * \endcode
+ *
+ * Each instance of this mesh should have a different world transform and a different color.
+ * So the per instance data is:
+ * \code
+ * InstanceData
+ * {
+ *   mat4 modelview
+ *   uint color
+ * }
+ * \endcode
+ *
+ * This per instance data is stored in a separate GL_ARRAY_BUFFER vbo.
+ *
+ * So there are two vbos involved in the draw call:
+ *   geometryVBO - stores static Vertex data of the mesh
+ *   instanceVBO - stores InstanceData for each instance
+ *
+ * The vertex declaration for the instanced draw call is initialized as follows:
+ *
+ * \code
+ * VertexDeclaration decl;
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0U, 0, 0, geometryVBO.id()); // mesh vertex data layout
+ * decl.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0U, 0, 0, geometryVBO.id());
+ * decl.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0U, 0, 0, geometryVBO.id());
+ *
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, 0U, "inModelView0", 1, instanceVBO.id()); // instance data layout
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, 0U, "inModelView1", 1, instanceVBO.id());
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, 0U, "inModelView2", 1, instanceVBO.id());
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, 0U, "inModelView3", 1, instanceVBO.id());
+ * decl.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR, 0U, 0, 1, instanceVBO.id());
+ * \endcode
+ *
+ * The 4x4 modelview matrix has to be split up into float4 elements.
+ *
+ * Using this setup, a call to decl.activateShaderPipeline() is enough to prepare an instanced draw call.
+ *
+ * Finally, instancing requires a customized vertex shader that makes use of the per instance data:
+ * \code
+ * ..
+ * in vec4 inModelView0;
+ * in vec4 inModelView1;
+ * in vec4 inModelView2;
+ * in vec4 inModelView3;
+ * ..
+ *
+ * void main()
+ * {
+ *   ..
+ *   vec4 posVS;
+ *   posVS.x = dot(inModelView0, inPosition);
+ *   posVS.y = dot(inModelView1, inPosition);
+ *   ..
+ *   gl_Position = projection * posVS;
+ * }
+ * \endcode
  */
+
 class ACGDLLEXPORT VertexDeclaration
 {
 public:
@@ -196,11 +269,11 @@ public:
 
   /*! append one element to declarations, direct method
   */
-  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, const void* _pointer, const char* _shaderInputName = 0);
+  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, const void* _pointer, const char* _shaderInputName = 0, unsigned int _divisor = 0, unsigned int _vbo = 0);
   
   /*! append one element to declarations, direct method
   */
-  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, size_t _byteOffset = 0, const char* _shaderInputName = 0);
+  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, size_t _byteOffset = 0, const char* _shaderInputName = 0, unsigned int _divisor = 0, unsigned int _vbo = 0);
 
   /*! append multiple element declarations
   */
@@ -237,9 +310,9 @@ public:
   */
   void setVertexStride(unsigned int _stride);
 
-  /*! get vertex size
+  /*! get vertex size (for element i, for multi vbo support)
   */
-  unsigned int getVertexStride() const;
+  unsigned int getVertexStride(unsigned int i = 0) const;
 
   /*! get num of vertex elements
   */
@@ -265,6 +338,9 @@ public:
   */
   static unsigned int getElementSize(const VertexElement* _pElement);
 
+  /*! Check hw support for streaming instance data from vbo
+  */
+  static bool supportsInstancedArrays();
 
   /*! Returns a string describing the vertex format for debugging purpose.
   */
@@ -288,6 +364,9 @@ private:
 
   /// Offset in bytes between each vertex
   unsigned int vertexStride_;
+
+  /// Map vbo to offset in bytes between each vertex in that vbo
+  std::map<unsigned int, unsigned int> vertexStridesVBO_;
 
   /// Flag that indicates, whether the stride was set by user or derived automatically
   int strideUserDefined_;
