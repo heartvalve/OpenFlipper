@@ -886,9 +886,15 @@ void CoreWidget::slotGlobalRendererMenu(QAction * _action) {
 
   unsigned int mode = _action->data().toUInt();
 
+  QString defaultRendererName = renderManager()[mode]->name;
+
   // Set renderer for all viewers
   for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i)
+  {
     renderManager().setActive(mode,i);
+    QString defaultRendererKey  = "Viewer" + QString::number(i)+"/DefaultRenderer";
+    OpenFlipperSettings().setValue(defaultRendererKey,defaultRendererName);
+  }
 
 }
 
