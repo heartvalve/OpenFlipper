@@ -177,6 +177,6 @@ vec3 ScreenspaceToViewspace(vec2 uv, float zVS, vec2 scale, vec2 shift)
 vec3 ReconstructViewspace(in sampler2D depthTex, in vec2 uv, in mat4 proj)
 {
   float nonlinearDepth = texture(depthTex, uv).x;
-  float linearDepthVS = ViewspaceToProjectedDepth(nonlinearDepth, proj[2][2], proj[2][3]);
+  float linearDepthVS = ProjectedToViewspaceDepth(nonlinearDepth, proj[2][2], proj[2][3]);
   return ScreenspaceToViewspace(uv, linearDepthVS, proj[0][0], proj[1][1]);
 }
