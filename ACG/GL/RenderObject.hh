@@ -380,6 +380,8 @@ public:
     indexType = type;
 
     sysmemIndexBuffer = indices;
+
+    numInstances = primcount;
   }
 
   inline void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
