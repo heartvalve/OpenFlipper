@@ -931,7 +931,7 @@ namespace GLSL {
 
 
     // add preprocesor macros
-    if (macros)
+    if (macros && !macros->empty() && !macros->front().empty())
     {
       bool foundVersionDirective = false;
 
@@ -943,6 +943,7 @@ namespace GLSL {
           foundVersionDirective = true;
 
           // insert preprocessor macros in the next line
+          ++it;
           for (GLSL::StringList::const_iterator itMacro = macros->begin(); itMacro != macros->end(); ++itMacro)
             src.insert(it, *itMacro + "\n");
 
