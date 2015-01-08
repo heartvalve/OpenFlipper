@@ -908,6 +908,10 @@ void CoreWidget::slotPostProcessorMenu( QAction * _action)  {
 void CoreWidget::slotRenderMenu( QAction * _action)  {
   unsigned int mode = _action->data().toUInt();
   renderManager().setActive(mode,PluginFunctions::activeExaminer());
+
+  QString defaultRendererKey  = "Viewer" + QString::number(PluginFunctions::activeExaminer())+"/DefaultRenderer";
+  QString defaultRendererName = renderManager()[mode]->name;
+  OpenFlipperSettings().setValue(defaultRendererKey,defaultRendererName);
 }
 
 //=============================================================================
