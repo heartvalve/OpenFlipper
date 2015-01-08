@@ -50,6 +50,7 @@
 #include <ACG/Scenegraph/MaterialNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/GLPrimitives.hh>
+#include <ACG/GL/globjects.hh>
 #include "JointT.hh"
 
 //== FORWARDDECLARATIONS ======================================================
@@ -132,6 +133,9 @@ private:
   /// Helper function to create a renderobject for bones
   void addBoneToRenderer(IRenderer* _renderer, RenderObject& _base, const Point& _parent, const Point& _axis);
 
+  /// Helper function to compute modelview matrices for the two cones composing a bone
+  void computeConeMatrices(const GLMatrixf& _modelView, const Point& _parent, const Point& _axis,
+    GLMatrixf* _outCone0, GLMatrixf* _outCone1);
 
   /// Normalizes a coordinate frame defined by the given matrix
   void NormalizeCoordinateFrame(Matrix &_mat);
@@ -166,6 +170,18 @@ private:
   ACG::GLSphere* sphere_;
   ACG::GLCone* cone_;
   ACG::GLCylinder* cylinder_;
+
+
+  // instanced rendering with render objects:
+  // store modelview and color of instances in a separate vbo
+
+  /// per instance data of joint spheres
+  GeometryBuffer  pointInstanceData_;
+  VertexDeclaration pointInstanceDecl_;
+
+  /// per instance data of bones
+  GeometryBuffer boneInstanceData_;
+  VertexDeclaration boneInstanceDecl_;
 };
 
 
