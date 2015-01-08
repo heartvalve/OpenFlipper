@@ -950,7 +950,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     ro.shaderDesc.clearTextures();
     ro.shaderDesc.vertexColors = false;
     ro.shaderDesc.numLights = -1;
-    ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
     ro.diffuse = ACG::Vec3f(selection_color_[0],selection_color_[1],selection_color_[2]);
     ro.ambient = ACG::Vec3f(selection_color_[0],selection_color_[1],selection_color_[2]);
@@ -980,13 +980,32 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     ro.vertexDecl = vertexSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_POINTS, 0, vertexSelectionBufferManager_.getNumOfVertices());
     if (vertexSelectionBufferManager_.getNumOfVertices())
+    {
+      ro.debugName = "VolumeMeshNode.VertexSelections";
+      ro.setupPointRendering(_state.point_size(), ACG::Vec2f(_state.viewport_width(), _state.viewport_height()));
       _renderer->addRenderObject(&ro);
+
+      // reset shader templates
+      ro.shaderDesc.vertexTemplateFile = "";
+      ro.shaderDesc.geometryTemplateFile = "";
+      ro.shaderDesc.fragmentTemplateFile = "";
+    }
 
     ro.vertexBuffer = edgeSelectionBufferManager_.getBuffer();
     ro.vertexDecl = edgeSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_LINES, 0, edgeSelectionBufferManager_.getNumOfVertices());
     if (edgeSelectionBufferManager_.getNumOfVertices())
+    {
+      ro.debugName = "VolumeMeshNode.EdgeSelections";
+
+      ro.setupLineRendering(_state.line_width(), ACG::Vec2f(_state.viewport_width(), _state.viewport_height()));
       _renderer->addRenderObject(&ro);
+
+      // reset shader templates
+      ro.shaderDesc.vertexTemplateFile = "";
+      ro.shaderDesc.geometryTemplateFile = "";
+      ro.shaderDesc.fragmentTemplateFile = "";
+    }
 
     ro.depthRange = Vec2f(0.01f, 1.0f);
 
@@ -994,13 +1013,20 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     ro.vertexDecl = faceSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_TRIANGLES, 0, faceSelectionBufferManager_.getNumOfVertices());
     if (faceSelectionBufferManager_.getNumOfVertices())
+    {
+      ro.debugName = "VolumeMeshNode.FaceSelections";
+
       _renderer->addRenderObject(&ro);
+    }
 
     ro.vertexBuffer = cellSelectionBufferManager_.getBuffer();
     ro.vertexDecl = cellSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_TRIANGLES, 0, cellSelectionBufferManager_.getNumOfVertices());
     if (cellSelectionBufferManager_.getNumOfVertices())
+    {
+      ro.debugName = "VolumeMeshNode.CellSelections";
       _renderer->addRenderObject(&ro);
+    }
 
 
 }
