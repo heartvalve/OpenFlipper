@@ -10,8 +10,8 @@
         <long>ID of an Object</long>
       </input>
       <input name="decimater_type" type="Number" optional="false">
-        <short>Decimater Type</short>
-        <long> Select the Type of the Decimater, 0 (incremental), 1(MC), 2(Mixed)</long>
+        <short>Decimater Type: 0 (Incremental), 1(MC), 2(Mixed)</short>
+        <long> Select the Type of the Decimater, 0 (Incremental), 1(MC), 2(Mixed)</long>
         <min>0</min>
         <max>2</max>
         <default>0</default>
@@ -29,7 +29,7 @@
         <default>20</default>
       </input>
       <input name="decimation_order" type="Number" optional="false">
-        <short>Decimation Order</short>
+        <short>Decimation Order: 0 (by Distance), 1 (by Normal Deviation), and 2 (by Edge Length)</short>
         <long>Decimation Order: 0 (by Distance), 1 (by Normal Deviation), and 2 (by Edge Length)</long>
         <min>0</min>
         <max>2</max>
