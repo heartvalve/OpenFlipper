@@ -112,6 +112,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void slotVisibilityChanged      ( int _identifier );
     void slotObjectSelectionChanged ( int _identifier );
     void slotObjectPropertiesChanged( int _identifier );
+    void slotObjectUpdated( int _identifier, const UpdateType& _type );
 
     // KeyInterface
     void slotKeyEvent( QKeyEvent* _event );

@@ -899,6 +899,17 @@ void DataControlPlugin::showReducedUi(bool reduced) {
     tool_->visibleDataBtn->setVisible(!reduced);
 }
 
+void DataControlPlugin::slotObjectUpdated( int _identifier, const UpdateType& _type )
+{
+  if ( ! OpenFlipper::Options::gui() || !_type.contains(UPDATE_GEOMETRY))
+    return;
+
+  BaseObjectData* obj = 0;
+
+  if ( PluginFunctions::getObject( _identifier, obj) )
+    updateBoundingBox (obj);
+}
+
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2( datacontrolplugin , DataControlPlugin );
 #endif
