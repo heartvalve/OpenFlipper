@@ -539,12 +539,18 @@ void ScriptingPlugin::waitContinue( QString _msg, int _x, int _y ) {
 
 
 void ScriptingPlugin::slotLoadScript(){
+
+  QString lastOpened = OpenFlipperSettings().value("Scripting/CurrentDir",OpenFlipper::Options::currentScriptDirStr()).toString();
+
   QString filename = QFileDialog::getOpenFileName(0,
-     tr("Load Script"),OpenFlipper::Options::currentScriptDirStr(), tr("Script Files (*.ofs)"));
+     tr("Load Script"),lastOpened , tr("Script Files (*.ofs)"));
 
   if (filename == "")
     return;
   
+  QFileInfo info (filename);
+  OpenFlipperSettings().setValue("Scripting/CurrentDir",info.path());
+
   slotLoadScript(filename);
 }
 
@@ -593,10 +599,16 @@ void ScriptingPlugin::slotSaveScript(){
 }
 
 void ScriptingPlugin::slotSaveScriptAs(){
+  QString lastOpened = OpenFlipperSettings().value("Scripting/CurrentDir",OpenFlipper::Options::currentScriptDirStr()).toString();
+
   QString filename = QFileDialog::getSaveFileName(scriptWidget_,
-      tr("Save Script"),OpenFlipper::Options::currentScriptDirStr(), tr("Script Files (*.ofs)"));
+      tr("Save Script"),lastOpened, tr("Script Files (*.ofs)"));
 
   if (filename == "") return;
+
+  QFileInfo info (filename);
+  OpenFlipperSettings().setValue("Scripting/CurrentDir",info.path());
+
 
   QFile data(filename);
 
