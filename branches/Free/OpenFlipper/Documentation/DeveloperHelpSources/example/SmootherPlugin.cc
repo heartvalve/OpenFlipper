@@ -118,7 +118,7 @@ void SmootherPlugin::simpleLaplace()
 
             // Check if the current Halfedge is a boundary halfedge
             // If it is, abort and keep the current vertex position
-            if (mesh->is_boundary(voh_it.handle())) {
+            if (mesh->is_boundary(*voh_it)) {
               skip = true;
               break;
             }
@@ -177,7 +177,7 @@ void SmootherPlugin::simpleLaplace()
 
             // Check if the current Halfedge is a boundary halfedge
             // If it is, abort and keep the current vertex position
-            if (mesh->is_boundary(voh_it.handle())) {
+            if (mesh->is_boundary(*voh_it)) {
               skip = true;
               break;
             }
