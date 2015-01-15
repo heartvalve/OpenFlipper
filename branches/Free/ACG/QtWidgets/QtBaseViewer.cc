@@ -1732,7 +1732,7 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   glBase_->setLayout(glBaseLayout_);
   glScene_->addItem(glBase_);
   glBase_->setGeometry (glScene_->sceneRect ());
-  QRectF r = glScene_->sceneRect ();
+  //QRectF r = glScene_->sceneRect ();
 
   connect ( glScene_, SIGNAL( sceneRectChanged( const QRectF & ) ),
             this, SLOT( sceneRectChanged( const QRectF & ) ) );
