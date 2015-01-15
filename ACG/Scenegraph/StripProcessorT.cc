@@ -667,7 +667,7 @@ updatePickingEdges(ACG::GLState& _state,  uint _offset ) {
   typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
     
-    const Vec4uc pickColor =  _state.pick_get_name_color (e_it.handle().idx() + _offset);
+    const Vec4uc pickColor =  _state.pick_get_name_color (e_it->idx() + _offset);
     
     pickEdgeColorBuf_[idx]    = pickColor;
     pickEdgeColorBuf_[idx+1]  = pickColor;
