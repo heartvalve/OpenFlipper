@@ -129,8 +129,7 @@ void MeshCompiler::AdjacencyList::init( int n )
 
 int MeshCompiler::AdjacencyList::getAdj( const int i, const int k ) const
 {
-  int cnt = count[i];
-  assert(k < cnt);
+  assert(k < count[i]);
   assert(k > -1);
 
   int st = start[i];
