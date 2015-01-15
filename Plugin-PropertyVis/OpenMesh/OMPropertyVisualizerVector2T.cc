@@ -118,7 +118,7 @@ void visualizeVectorLengthAsColorForEntity2(
 template <typename VectorType> ACG::Vec3d generateVec3AtLocation(VectorType uv, ACG::Vec3d normal)
 {
     ACG::Vec3d tan;
-    if(fabsf(normal[0]) > fabsf(normal[1]))
+    if(std::abs(normal[0]) > std::abs(normal[1]))
         tan = ACG::Vec3d(-normal[2], 0, normal[0]);
     else tan = ACG::Vec3d(0, normal[2], -normal[1]);
     ACG::Vec3d bi = normal % tan;
