@@ -73,7 +73,7 @@ opposite_halfedge(MeshT& _mesh , typename MeshT::HalfedgeHandle _he) {
    ++opp_he;
    ++opp_he;
    ++opp_he;
-   return (opp_he.handle());
+   return (*opp_he);
 }
 
 template < typename MeshT >

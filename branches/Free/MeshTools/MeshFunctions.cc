@@ -157,7 +157,7 @@ bool neighbour(const MeshT& _mesh ,
                          const typename MeshT::FaceHandle _fh2 )
 {
   for ( typename MeshT::FaceFaceIter ff_it(_mesh,_fh1) ; ff_it ; ++ff_it)
-     if (ff_it.handle() == _fh2)
+     if (*ff_it == _fh2)
          return true;
   return false;
 }
@@ -241,13 +241,13 @@ void transformMesh(ACG::Matrix4x4d _matrix , MeshT& _mesh) {
     for (; v_it != v_end; ++v_it) {
 
         // Transform the mesh vertex
-        _mesh.set_point(v_it, _matrix.transform_point(_mesh.point(v_it)));
+        _mesh.set_point(*v_it, _matrix.transform_point(_mesh.point(*v_it)));
 
         // Transform the vertex normal
         if(_mesh.has_vertex_normals()) {
-            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(v_it));
+            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(*v_it));
             n.normalize();
-            _mesh.set_normal(v_it, n);
+            _mesh.set_normal(*v_it, n);
         }
     }
 
@@ -257,9 +257,9 @@ void transformMesh(ACG::Matrix4x4d _matrix , MeshT& _mesh) {
 
         // Transform the face normal
         if(_mesh.has_face_normals()) {
-            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(f_it));
+            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(*f_it));
             n.normalize();
-            _mesh.set_normal(f_it, n);
+            _mesh.set_normal(*f_it, n);
         }
     }
 }

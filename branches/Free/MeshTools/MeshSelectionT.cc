@@ -590,7 +590,7 @@ void growEdgeSelection(MeshT* _mesh) {
             for (typename MeshT::VertexEdgeIter ve_it = _mesh->ve_begin(vhs[i]), ve_end = _mesh->ve_end(vhs[i]);
                     ve_it != ve_end; ++ve_it) {
 
-                selectedEhs.insert(ve_it.handle());
+                selectedEhs.insert(*ve_it);
             }
         }
 
