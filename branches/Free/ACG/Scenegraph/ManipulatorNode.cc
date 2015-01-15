@@ -527,7 +527,7 @@ ManipulatorNode::mapToCylinder(GLState&       _state,
   Vec3d vd = ((origin2 - origin) % direction);
   _axis_hit = (normal | vd);
 
-  double orthodistance = fabsf( ( origin2 - origin ) | normal);
+  double orthodistance = std::abs( ( origin2 - origin ) | normal);
 
 
   // hit cylinder ?

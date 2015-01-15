@@ -370,7 +370,7 @@ updateFont() {
   // since metric.maxWidth() returns 0 for Mac we calculate it here
   QFontMetricsF metric(qfont_);
   for (char c = ' '; c < '~'; ++c) {
-    qreal width = metric.width(c) + abs(metric.leftBearing(c)) + abs(metric.rightBearing(c));
+    qreal width = metric.width(c) + std::abs(metric.leftBearing(c)) + std::abs(metric.rightBearing(c));
     if (width > maxFontWidth_)
       maxFontWidth_ = width;
   }
@@ -454,8 +454,8 @@ updateVBO() {
     lastCharRight = right;
 
     // left and right texture coordinates
-    qreal leftBearing = abs(metric.leftBearing(text_[i]));
-    qreal rightBearing = abs(metric.rightBearing(text_[i]));
+    qreal leftBearing = std::abs(metric.leftBearing(text_[i]));
+    qreal rightBearing = std::abs(metric.rightBearing(text_[i]));
     qreal metricWidth = metric.width(text_[i]);
 
 #ifdef WIN32
