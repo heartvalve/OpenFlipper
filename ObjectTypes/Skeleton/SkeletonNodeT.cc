@@ -867,7 +867,16 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
               uicolor |= ((unsigned int)(vcolor[1] * 255.0f) << 8)  & 0x0000ff00;
               uicolor |= ((unsigned int)(vcolor[2] * 255.0f) << 16) & 0x00ff0000;
 
-              instanceData[instanceDataOffset++] = *(float*)&uicolor;
+              // union instead of pointer casting
+              union ufunion
+              {
+                unsigned int u;
+                float f;
+              } uitofloat;
+
+              uitofloat.u = uicolor;
+
+              instanceData[instanceDataOffset++] = uitofloat.f;
             }
 
             // store instance data in vbo
