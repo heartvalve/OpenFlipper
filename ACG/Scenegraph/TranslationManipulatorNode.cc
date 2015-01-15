@@ -1161,8 +1161,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         // Snap back to origin position if mouse cursor
         // is near enough
-        if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
-            && abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+        if (std::abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
+            && std::abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
             && (_event->modifiers() & Qt::AltModifier) ) {
           newPoint2D = oldPoint2D_;
           Vec3d backtrans = draggingOrigin3D_ - center();
@@ -1213,8 +1213,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         // Snap back to origin position if mouse cursor
         // is near enough
-        if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
-            && abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+        if (std::abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
+            && std::abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
             && (_event->modifiers() & Qt::AltModifier) ) {
           newPoint2D = oldPoint2D_;
           Vec3d backtrans = draggingOrigin3D_ - center();
@@ -1285,8 +1285,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         // Snap back to origin position if mouse cursor
         // is near enough
-        if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
-            && abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+        if (std::abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
+            && std::abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
             && (_event->modifiers() & Qt::AltModifier) ) {
           newPoint2D = oldPoint2D_;
           Vec3d backtrans = draggingOrigin3D_ - center();
@@ -1358,8 +1358,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         // Snap back to origin position if mouse cursor
         // is near enough
-        if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
-            && abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+        if (std::abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE
+            && std::abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
             && (_event->modifiers() & Qt::AltModifier) ) {
           newPoint2D = oldPoint2D_;
           Vec3d backtrans = draggingOrigin3D_ - center();
@@ -1695,19 +1695,19 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
   Vec3d normalX = (directionX % cylinderAxis).normalize();
   Vec3d vdX = ((origin2 - originX) % directionX);
   double axis_hitX = (normalX | vdX);
-  double orthodistanceX = fabsf( ( origin2 - originX ) | normalX);
+  double orthodistanceX = std::abs( ( origin2 - originX ) | normalX);
 
   // compute pseude-intersection (y axis)
   Vec3d normalY = (directionY % cylinderAxis).normalize();
   Vec3d vdY = ((origin2 - originY) % directionY);
   double axis_hitY = (normalY | vdY);
-  double orthodistanceY = fabsf( ( origin2 - originY ) | normalY);
+  double orthodistanceY = std::abs( ( origin2 - originY ) | normalY);
 
   // compute pseude-intersection (z axis)
   Vec3d normalZ = (directionZ % cylinderAxis).normalize();
   Vec3d vdZ = ((origin2 - originZ) % directionZ);
   double axis_hitZ = (normalZ | vdZ);
-  double orthodistanceZ = fabsf( ( origin2 - originZ ) | normalZ);
+  double orthodistanceZ = std::abs( ( origin2 - originZ ) | normalZ);
 
   if ( _updateStates == None )
     return false;
@@ -1810,19 +1810,19 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
   Vec3d normalX = (directionX % cylinderAxis).normalize();
   Vec3d vdX = ((origin2 - originX) % directionX );
   double axis_hitX = (normalX | vdX);
-  double orthodistanceX = fabsf( ( origin2 - originX ) | normalX);
+  double orthodistanceX = std::abs( ( origin2 - originX ) | normalX);
 
   // compute pseude-intersection (y axis)
   Vec3d normalY = (directionY % cylinderAxis).normalize();
   Vec3d vdY = ((origin2 - originY) % directionY);
   double axis_hitY = (normalY | vdY);
-  double orthodistanceY = fabsf( ( origin2 - originY ) | normalY);
+  double orthodistanceY = std::abs( ( origin2 - originY ) | normalY);
 
   // compute pseude-intersection (z axis)
   Vec3d normalZ = (directionZ % cylinderAxis).normalize();
   Vec3d vdZ = ((origin2 - originZ) % directionZ);
   double axis_hitZ = (normalZ | vdZ);
-  double orthodistanceZ = fabsf( ( origin2 - originZ ) | normalZ);
+  double orthodistanceZ = std::abs( ( origin2 - originZ ) | normalZ);
 
   if ( _updateStates == None )
     return false;
