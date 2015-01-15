@@ -131,7 +131,7 @@ void discrete_mean_curv_op( const MeshT&                        _m,
     
     const typename MeshT::Point p0 = _m.point( _vh );
     const typename MeshT::Point p1 = _m.point( _m.to_vertex_handle( *voh_it));
-//     const typename MeshT::Point p2 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( voh_it.handle())));
+//     const typename MeshT::Point p2 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( *voh_it)));
     const typename MeshT::Point p2 = _m.point( _m.from_vertex_handle( _m.prev_halfedge_handle( *voh_it)));
     const typename MeshT::Point p3 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( _m.opposite_halfedge_handle(*voh_it))));
 
