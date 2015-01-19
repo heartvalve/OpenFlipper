@@ -172,7 +172,10 @@ int FileSTLPlugin::loadObject(QString _filename) {
 bool FileSTLPlugin::saveObject(int _id, QString _filename)
 {
     BaseObjectData* object;
-    PluginFunctions::getObject(_id,object);
+    if ( !PluginFunctions::getObject(_id,object) ) {
+      emit log(LOGERR, tr("saveObject : cannot get object id %1 for save name %2").arg(_id).arg(_filename) );
+      return false;
+    }
 
     std::string filename = std::string( _filename.toUtf8() );
 

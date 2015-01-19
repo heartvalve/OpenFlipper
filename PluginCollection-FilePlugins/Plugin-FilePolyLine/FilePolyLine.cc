@@ -121,7 +121,13 @@ bool FilePolyLinePlugin::saveObject(int _id, QString _filename)
       PolyLineObjectSerializer serializer(pol);
       serializer.serialize(fout);
       fout.close();
+      return true;
+    } else {
+      return false;
     }
+  } else {
+    emit log(LOGERR, tr("saveObject : cannot get object id %1 for save name %2").arg(_id).arg(_filename) );
+    return false;
   }
 
   return true;

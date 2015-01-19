@@ -338,6 +338,9 @@ bool FileSKLPlugin::saveObject(int _id, QString _filename)
 		  obj->setName(obj->filename());
 			SaveSkeleton(skel->skeleton(), _filename);
 		}
+	} else {
+	  emit log(LOGERR, tr("saveObject : cannot get object id %1 for save name %2").arg(_id).arg(_filename) );
+	  return false;
 	}
 
 	return true;
