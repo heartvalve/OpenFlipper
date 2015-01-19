@@ -77,7 +77,7 @@
 
 // constants of color range drop down box
 static const int COLORRANGE_0_1   = 0;
-static const int COLORRANGE_0_255 = 1;
+//static const int COLORRANGE_0_255 = 1;
 
 
 //== IMPLEMENTATION ==============================================

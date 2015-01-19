@@ -155,6 +155,9 @@ bool FilePlaPlugin::saveObject(int _id, QString _filename)
       settings.setValue("YDirection2",  plane->planeNode()->yDirection()[2]);
       settings.endGroup();
     }
+  } else {
+    emit log(LOGERR, tr("saveObject : cannot get object id %1 for save name %2").arg(_id).arg(_filename) );
+    return false;
   }
 
   return true;
