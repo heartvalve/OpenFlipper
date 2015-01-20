@@ -94,14 +94,14 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
   //write the materials
   for(MaterialList::iterator it = materials_.begin(); it != materials_.end(); ++it) {
       Material& mat = (*it).second;
-      matStream << "newmtl " << mat << std::endl;
-      matStream << "Ka 0.5000 0.5000 0.5000" << std::endl;
+      matStream << "newmtl " << mat << '\n';
+      matStream << "Ka 0.5000 0.5000 0.5000" << '\n';
       ACG::Vec3f c = mat.Kd();
-      matStream << "Kd " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+      matStream << "Kd " << c[0] << " " << c[1] << " " << c[2] << '\n';
       if(optionColorAlpha) {
-          matStream << "Tr " << mat.Tr() << std::endl;
+          matStream << "Tr " << mat.Tr() << '\n';
       }
-      matStream << "illum 1" << std::endl;
+      matStream << "illum 1" << '\n';
 
       // Write out texture info
       if(optionTextures && mat.has_Texture()) {
@@ -112,17 +112,17 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
                   QFileInfo materialFilename(_filename);
 
                   matStream << "map_Kd " << materialFilename.baseName().toStdString() << "_textures" << QDir::separator().toLatin1()
-                      << file.fileName().toStdString() << std::endl;
+                      << file.fileName().toStdString() << '\n';
               } else {
-                  matStream << "map_Kd " << file.fileName().toStdString() << std::endl;
+                  matStream << "map_Kd " << file.fileName().toStdString() << '\n';
               }
           } else {
               // Use original file path
-              matStream << "map_Kd " << mat.map_Kd() << std::endl;
+              matStream << "map_Kd " << mat.map_Kd() << '\n';
           }
       }
 
-      matStream << std::endl;
+      matStream << '\n';
   }
 
   matStream.close();
@@ -270,11 +270,11 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
   // Header
   _out << "# " << _mesh.n_vertices() << " vertices, ";
-  _out << _mesh.n_faces() << " faces" << std::endl;
+  _out << _mesh.n_faces() << " faces" << '\n';
 
   // Material file
   if (useMaterial &&  optionFaceColors )
-    _out << "mtllib " << fi.baseName().toStdString() << ".mtl" << std::endl;
+    _out << "mtllib " << fi.baseName().toStdString() << ".mtl" << '\n';
 
   // Store indices of vertices in a map such that
   // they can easily be referenced for face definitions
@@ -293,15 +293,15 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
       t  = _mesh.texcoord2D(vh);
 
     // Write out vertex coordinates
-    _out << "v " << v[0] <<" "<< v[1] <<" "<< v[2] << std::endl;
+    _out << "v " << v[0] <<" "<< v[1] <<" "<< v[2] << '\n';
 
     // Write out vertex coordinates
     if ( optionVertexNormals)
-      _out << "vn " << n[0] <<" "<< n[1] <<" "<< n[2] << std::endl;
+      _out << "vn " << n[0] <<" "<< n[1] <<" "<< n[2] << '\n';
 
     // Write out vertex texture coordinates
     if ( optionVertexTexCoords && _mesh.has_vertex_texcoords2D() && !_mesh.has_halfedge_texcoords2D()) {
-      _out << "vt " << t[0] <<" "<< t[1] << std::endl;
+      _out << "vt " << t[0] <<" "<< t[1] << '\n';
       vtMapV.insert(std::pair<typename MeshT::VertexHandle, int>(vh, cf));
       cf++;
     }
@@ -322,7 +322,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
       for (f_it = _mesh.faces_begin(); f_it != _mesh.faces_end(); ++f_it) {
           for(fh_it=_mesh.fh_iter(*f_it); fh_it.is_valid(); ++fh_it) {
               typename MeshT::TexCoord2D t = _mesh.texcoord2D(*fh_it);
-              _out << "vt " << t[0] << " " << t[1] << std::endl;
+              _out << "vt " << t[0] << " " << t[1] << '\n';
               vtMap.insert(std::pair<typename MeshT::HalfedgeHandle, int>(*fh_it, count));
               count++;
           }
@@ -344,7 +344,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
         // If we are ina a new material block, specify in the file which material to use
         if(lastMat != material) {
-            _out << "usemtl " << material << std::endl;
+            _out << "usemtl " << material << '\n';
             lastMat = material;
         }
     }
@@ -386,7 +386,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
         }
     }
 
-    _out << std::endl;
+    _out << '\n';
   }
 
   // Copy texture files (if demanded)
