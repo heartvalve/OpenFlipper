@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 19065 )</b>
+- <b>OpenFlipper 2.1 ( 2015/01/21 , 20181 )</b>
      - <b>General</b>
         - Refactored multiple classes in order to separate glew from Qt5GL.
      - <b>ACG</b>
@@ -51,6 +51,8 @@
              - const correctness in mesh compiler refs #2060
              - implemented GL_TRIANGLES_ADJACENCY mode in meshcompiler
              - more robust estimation of split-count in MeshCompiler refs #2195
+        - Picking Implementation
+             - Introduced a new shader based picking which is way faster and uses less memory for its buffers
 	- ShaderGenerator
              - Add support for include statement in ACG shader load function
 	     - Write source location of shader input files as comments into code
@@ -58,6 +60,7 @@
              - Extension to replace lightingcode
              - Add comments to shaders to keep track of input files used to compose shaders
              - Tesselation Shader support
+             - Support for relative paths
 	- ShaderCache
 	     - Added clear function
              - add function which compares shader files with the last modified timestamp
@@ -91,6 +94,8 @@
              - Added setViewAndWindowGeometry to core scripting functions.   
              - Improved PluginFunctions::getSaveFileName
              - Function to invalidate pick caches via plugin functions.
+        - IO
+             - Fixed crash in save functions, not correctly checking if the object to be saved exists
         - UI
              - add gui elements for shader timestemp function (see options -> files) and reload shaders
              - Added F2 shortcut for Viewer Snapshot
@@ -100,6 +105,7 @@
              - Fixed opaque rendering of background for screenshots with alpha channel
              - fix snapshot output format for transparent objects
              - Refactored glWidget::decodeView.
+             - Fixed ortho projection when moving multiple objects #2234
      - <b>Plugins</b>
          - Components
              - Add nogui support
@@ -131,6 +137,7 @@
              - Added better measurement of free memory for Linux platforms.
          - Move
              - no crash, if the manipulator is sized too small
+             - Provide Manipulator context menu for all plugins that use a manipulator
          - Primitives
              - Added Sphere generator based on subdivision (Thanks to Vladimir Chalupecky for the original patch). closes #2041
          - PropertyViz
@@ -181,6 +188,8 @@
          - Windows packaging support for VS2013 redistributable
          - Qt5: Fixed RCC Resource compiler problems (wrong path!)
          - Don't use ftgl anymore and don't warn 
+         - QWT6 Integration
+         - Speedup for cmake generators
      - <b>Documentation</b>
          - Raised Doxygen version of files to 1.8.7
 	 - Added documentation for shader generator
