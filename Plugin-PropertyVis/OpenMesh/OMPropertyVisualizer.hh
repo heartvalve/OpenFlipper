@@ -139,8 +139,8 @@ private:
     class CopyProperty
     {
         public:
-            CopyProperty(const PropHandleT& p1, const PropHandleT& p2, MeshT*& mesh) :
-                p1(p1), p2(p2), mesh(mesh) {}
+            CopyProperty(const PropHandleT& _p1, const PropHandleT& _p2, MeshT*& mesh) :
+                p1(_p1), p2(_p2), mesh(mesh) {}
 
             template<typename PrimitiveHandleT>
             inline void operator() (const PrimitiveHandleT &pr) {
