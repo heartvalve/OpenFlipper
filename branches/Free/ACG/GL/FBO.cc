@@ -462,11 +462,11 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 #ifdef GL_ARB_texture_multisample
         case GL_TEXTURE_2D_MULTISAMPLE:
 #endif
-          attachTexture2D(it->first, rt->dim[0], rt->dim[1], rt->internalFormat, rt->format, rt->wrapMode, rt->minFilter, rt->magFilter);
+          attachTexture2D(it->first, _width, _height, rt->internalFormat, rt->format, rt->wrapMode, rt->minFilter, rt->magFilter);
           break;
 
         case GL_TEXTURE_3D:
-          attachTexture3D(it->first, rt->dim[0], rt->dim[1], rt->dim[2], rt->internalFormat, rt->format, rt->wrapMode, rt->minFilter, rt->magFilter);
+          attachTexture3D(it->first, _width, _height, rt->dim[2], rt->internalFormat, rt->format, rt->wrapMode, rt->minFilter, rt->magFilter);
           break;
 
         default:
