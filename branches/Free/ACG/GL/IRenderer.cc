@@ -1065,7 +1065,6 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
   QString objectString;
 
   QTextStream outStrm(&objectString);
-  std::vector<ACG::ShaderModifier*>::iterator it;
 
   for (int i = 0; i < getNumRenderObjects(); ++i)
   {
