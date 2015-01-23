@@ -1817,7 +1817,6 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
     // check vertex id -> input (face, corner)
     if (file.is_open())
       file <<  "checking vbo -> (face, corner) by comparing vertex data ..\n";
-    numErrors = 0;
 
     for (int vertex = 0; vertex < getNumVertices(); ++vertex)
     {
@@ -2106,7 +2105,7 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
   {
     // typecast data to format in vertex buffer
     int data_i[4] = {0,0,0,0};    // data in integer fmt
-    double data_d[4]; // data in floating point
+    double data_d[4] = {0.0, 0.0, 0.0, 0.0}; // data in floating point
 
     // read data
     for (int i = 0; i < elementSize; ++i)
@@ -3523,6 +3522,13 @@ void MeshCompiler::prepareData()
     minFaceSize  = std::min(minFaceSize, fsize);
   }
   
+  // faces with less than 3 vertices (lines or points) shouldn't be included in the first place
+  // these parts should be handled separately, as they don't need all the costly preprocessing of MeshCompiler
+  if (minFaceSize < 3)
+    std::cout << "error: input contains faces with less than 3 vertices! MeshCompiler only works for pure surface meshes!" << std::endl;
+
+  assert(minFaceSize >= 3);
+
   if (minFaceSize < (int)maxFaceSize_)
   {
     int curOffset = 0;
