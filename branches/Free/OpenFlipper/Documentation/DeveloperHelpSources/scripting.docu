@@ -1,7 +1,14 @@
 /*!
-\page scripting OpenFlipper Scripting
+\page scripting OpenFlipper Scripting and Batch Mode
 
-TODO: OpenFlipper Scripting and examples.
+  \section scripting_batch_mode OpenFlipper Batch mode
+    OpenFlipper can be started in batch mode without a graphical user interface by providing "-b" 
+    as a command line option. Furthermore you have to provide an OpenFlipper script (extension is .ofs),
+    which will get executed. To get output to the command line, you also have to provide the command 
+    line switch "-c". Only plugins which support batch mode ( They implement an nogui() function ), will
+    be loaded. For example, no renderers, postprocessors or other plugins providing only user interface
+    or graphical functionality will be loaded. You can see on the command line (when "-c" is given),
+    which plugins are activated and which are skipped in batch mode.
 
   \section scripting_iterating Iterating over objects
     In the scripting system you can also iterate over objects in the scene.
@@ -52,7 +59,14 @@ TODO: OpenFlipper Scripting and examples.
      The Matrix4x4T type used in the C++ code is mapped to the scripting language. Details
      can be found here:
        \subpage scripting_matrix_type
-    
+ 
+  \section scripting_misc Miscellaneuos
+     \subsection scripting_misc_path How to get the path of the current script?
+       \code
+         // The path of the currently executed script is stored in the ScriptPath variable.
+         print(ScriptPath)
+       \endcode
+  
   \section scripting_examples Scripting Examples
     \subsection scripting_examples_qstringlist Iterating over a QStringList
 
