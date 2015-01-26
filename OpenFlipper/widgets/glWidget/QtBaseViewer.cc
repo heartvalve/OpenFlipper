@@ -643,6 +643,13 @@ void glViewer::drawScene()
 //
 //  }
 
+  // save hardware backbuffer
+  GLuint backbufferFbo = 0;
+  GLuint backbufferTarget = 0;
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&backbufferFbo);
+  glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&backbufferTarget);
+
+
   // Clear back buffer here:
   // Render plugins do not have to worry about using scissor test for clearing their viewports later on.
   glClearColor(properties_.backgroundColor()[0], properties_.backgroundColor()[1],
@@ -731,11 +738,6 @@ void glViewer::drawScene()
   // Post-Processing pipeline
 
   if (numPostProcessors || stereoAnaglyph) {
-    GLuint backbufferFbo = 0;
-    GLuint backbufferTarget = 0;
-    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&backbufferFbo);
-    glGetIntegerv(GL_DRAW_BUFFER, (GLint*)&backbufferTarget);
-
 
     updatePostProcessingBufs(glstate_->viewport_width(),glstate_->viewport_height());
 
@@ -871,7 +873,7 @@ void glViewer::drawScene()
 
   // =================================================================================
 
-  glDrawBuffer(GL_BACK);
+  glDrawBuffer(backbufferTarget);
 
   // unbind vbo for qt log window
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
