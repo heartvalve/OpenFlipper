@@ -66,7 +66,7 @@ KeyGen::KeyGen(QString n, QString cHash, QString pHash, QString cpHash, QString 
 	requestSig = request;
 }
 
-QString KeyGen::computeSignature(QByteArray (QString::*_codingfun)()const ) const {
+QString KeyGen::computeSignature(const bool _utf8 ) const {
     // Get the salts
     QString saltPre;
     ADD_SALT_PRE(saltPre);
@@ -75,20 +75,28 @@ QString KeyGen::computeSignature(QByteArray (QString::*_codingfun)()const ) cons
 
     QString keyRequest = saltPre + name + coreHash + pluginHash + cpuHash
             + productHash + macHashes.join("") + saltPost;
-    QString requestSigCheck =
-            QCryptographicHash::hash((keyRequest.*_codingfun)(),
-                                     QCryptographicHash::Sha1).toHex();
+
+    QString requestSigCheck;
+
+    if ( _utf8 )
+      requestSigCheck =
+          QCryptographicHash::hash(keyRequest.toUtf8(),
+              QCryptographicHash::Sha1).toHex();
+    else
+      requestSigCheck =
+        QCryptographicHash::hash(keyRequest.toLatin1(),
+            QCryptographicHash::Sha1).toHex();
 
     return requestSigCheck;
 }
 
 KeyGen::ValidationResult KeyGen::isValid() const
 {
-  if (requestSig == computeSignature(&QString::toUtf8))
+  if (requestSig == computeSignature(true))
   {
     return UTF8;
   }
-  else if(requestSig == computeSignature(&QString::toLatin1))
+  else if(requestSig == computeSignature(false))
   {
     return LATIN1;
   }

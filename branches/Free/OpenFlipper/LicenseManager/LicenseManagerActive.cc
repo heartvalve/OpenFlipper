@@ -73,11 +73,27 @@ License File format:
 #include <OpenFlipper/LicenseManager/LicenseManagerActive.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <QFile>
+#include <QString>
 #include <QCryptographicHash>
 #include <QNetworkInterface>
 
 
+/** \brief decode string
+ *
+ *  Decodes a QString either via utf8 or latin1
+ *
+ * @param _string Input string
+ * @param _utf8 true->toUtf8 or false ->toLatin1
+ * @return Decoded String
+ */
+QByteArray decodeString(const QString& _string ,bool _utf8){
 
+  if (_utf8)
+    return _string.toUtf8();
+  else
+    return _string.toLatin1();
+
+}
 
 LicenseManager::~LicenseManager()
 { 
@@ -125,7 +141,8 @@ bool LicenseManager::authenticate() {
   QFile file( licenseFileName );
   QStringList elements; //has no elements, if file is invalid or was not found
   bool signatureOk = false;
-  QByteArray (QString::*codingfun)()const = &QString::toUtf8;
+
+  bool utf8Encoded = true;
 
   if (file.open(QIODevice::ReadOnly|QIODevice::Text))
   {
@@ -148,13 +165,13 @@ bool LicenseManager::authenticate() {
       signatureOk = licenseHash == elements[0];
 
       if (signatureOk)
-        codingfun = &QString::toUtf8;
+        utf8Encoded = true;
       else
       {
         licenseHash = QCryptographicHash::hash ( license.toLatin1()  , QCryptographicHash::Sha1 ).toHex();
         signatureOk = licenseHash == elements[0];
         if (signatureOk)
-          codingfun = &QString::toLatin1;
+          utf8Encoded = false;
       }
 
     }
@@ -278,7 +295,8 @@ bool LicenseManager::authenticate() {
           if ( (currentMac.count(":") == 5) && 
                ( pCurrAddresses->IfType == IF_TYPE_IEEE80211 || pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD )  ) {
                 // Cleanup and remember mac adress
-                currentMac = (currentMac.*codingfun)().toUpper();
+
+                currentMac = (decodeString(currentMac,utf8Encoded)).toUpper();
                 currentMac = currentMac.remove(":");
                 macHashes.push_back(currentMac);
           }
@@ -312,7 +330,7 @@ bool LicenseManager::authenticate() {
     }
 
     // Cleanup mac adress
-    QString currentMac = (netInterface.hardwareAddress().*codingfun)().toUpper();
+    QString currentMac = (decodeString(netInterface.hardwareAddress(),utf8Encoded)).toUpper();
     currentMac = currentMac.remove(":");
     
     macHashes.push_back(currentMac);
@@ -326,7 +344,8 @@ bool LicenseManager::authenticate() {
 
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
-    macHashes[i] = QCryptographicHash::hash ( (macHashes[i].*codingfun)() , QCryptographicHash::Sha1 ).toHex();
+    // Cleanup mac adress
+    macHashes[i] = QCryptographicHash::hash ( decodeString(macHashes[i],utf8Encoded) , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Compute hash of processor information
@@ -377,7 +396,7 @@ bool LicenseManager::authenticate() {
     }
   #endif
 
-  QString cpuHash = QCryptographicHash::hash ( (processor.*codingfun)()  , QCryptographicHash::Sha1 ).toHex();
+  QString cpuHash = QCryptographicHash::hash ( decodeString(processor,utf8Encoded)  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Get windows product id
@@ -392,7 +411,7 @@ bool LicenseManager::authenticate() {
     QString productId = "-";
   #endif
   
-  QString productHash = QCryptographicHash::hash ( (productId.*codingfun)()  , QCryptographicHash::Sha1 ).toHex();
+  QString productHash = QCryptographicHash::hash ( decodeString(productId,utf8Encoded)  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Check License or generate request

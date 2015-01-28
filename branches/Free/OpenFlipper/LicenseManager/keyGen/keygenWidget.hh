@@ -61,7 +61,7 @@ class KeyGen
 		//returns string containing the key
 		QString Generate(QString expiryDate) const;
 		//finds all occurrences of info in messy string
-		QString computeSignature(QByteArray (QString::*_codingfun)()const = &QString::toUtf8) const;
+		QString computeSignature(bool _utf8 = true) const;
 		enum ValidationResult
 		{
 		  INVALID = 0,
