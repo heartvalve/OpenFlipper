@@ -170,7 +170,8 @@ void FileHeightFieldPNGPlugin::loadImageAsTriangleMesh(QImage& _image,TriMesh* _
       const QColor currentColor = _image.pixel(i,j);
       double value = std::max(currentColor.redF(),currentColor.blueF());
       value = std::max(currentColor.greenF(),value);
-      _mesh->add_vertex(TriMesh::Point(i,j,-value * _height));
+      TriMesh::VertexHandle vh = _mesh->add_vertex(TriMesh::Point(i,j,-value * _height));
+      _mesh->set_color(vh,TriMesh::Color(currentColor.redF(),currentColor.greenF(),currentColor.blueF()));
     }
   }
 
