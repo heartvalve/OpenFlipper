@@ -67,7 +67,10 @@
  */
 bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
-  PluginFunctions::getObject(_id,object);
+  if ( !PluginFunctions::getObject(_id,object) ) {
+    emit log(LOGERR, tr("saveObject : cannot get object %1").arg(_id) );
+    return false;
+  }
 
   QString file_extension = QFileInfo(_filename).suffix();
   
@@ -123,7 +126,9 @@ bool Core::saveObject( int _id, QString _filename ) {
 /// (existing files will be overwritten)
 void Core::saveObject( int _id, QString _filename, int _pluginID ) {
   BaseObjectData* object;
-  PluginFunctions::getObject(_id,object);
+  if ( !PluginFunctions::getObject(_id,object) ) {
+    emit log(LOGERR, tr("saveObject : cannot get object %1").arg(_id) );
+  }
 
 
   if ( OpenFlipper::Options::gui() ) {
