@@ -1,5 +1,21 @@
 /*! \page changelog Changelog
 
+- <b>OpenFlipper 2.2 ( ?/?/? , 20213 )</b>
+     - <b>ACG</b>
+        - MeshCompiler and DrawMesh
+	     - check surface type of meshcompiler input
+             - fix solid vertex colored drawmodes 
+     - <b>Core</b>
+        - QtBaseViewer
+             -  assumption that the drawbuffer is always GL_BACK might be problematic refs #2361
+     - <b>License Manager</b>
+        - Remove function pointers which produce errors in C++11
+     - <b>Documentation</b>
+        - More scripting documentation
+     - <b>Plugins</b>
+         - FileHeightField
+             - Import the color of the image that is loaded as a height field as vertex colors
+
 - <b>OpenFlipper 2.1 ( 2015/01/21 , 20181 )</b>
      - <b>General</b>
         - Refactored multiple classes in order to separate glew from Qt5GL.
