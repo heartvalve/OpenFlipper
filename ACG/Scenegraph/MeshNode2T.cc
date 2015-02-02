@@ -503,7 +503,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->usePerVertexNormals();
     drawMesh_->usePerFaceColors();
 
-    draw_faces();
+
+    drawMesh_->draw(textureMap_, true);
     ACG::GLState::depthRange(0.0, 1.0);
 
     _state.set_base_color(base_color_backup);
@@ -639,6 +640,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.shaderDesc.vertexTemplateFile = ""; //QString(props->vertexShader().c_str());
     ro.shaderDesc.geometryTemplateFile = ""; //QString(props->geometryShader().c_str());
     ro.shaderDesc.fragmentTemplateFile = ""; //QString(props->fragmentShader().c_str());
+
+    ro.shaderDesc.vertexColorsInterpolator = "";
 
     // ------------------------
     // 1. setup drawMesh based on property source
@@ -854,7 +857,13 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         if (!ro.shaderDesc.vertexTemplateFile.isEmpty())
           drawMesh_->scanVertexShaderForInput(ro.shaderDesc.vertexTemplateFile.toStdString());
 
-        add_face_RenderObjects(_renderer, &ro);
+        bool useNonIndexed = (props->colorSource() == DrawModes::COLOR_PER_FACE) && (props->lightStage() == DrawModes::LIGHTSTAGE_SMOOTH) && !props->flatShaded();
+        if (!useNonIndexed && props->colorSource() == DrawModes::COLOR_PER_FACE)
+          ro.shaderDesc.vertexColorsInterpolator = "flat";
+
+        add_face_RenderObjects(_renderer, &ro, useNonIndexed);
+
+        ro.shaderDesc.vertexColorsInterpolator = "";
       } break;
     default: break;
     }
@@ -927,8 +936,8 @@ draw_faces() {
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-add_face_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj) {
-  drawMesh_->addTriRenderObjects(_renderer, _baseObj, textureMap_);
+add_face_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, bool _nonindexed) {
+  drawMesh_->addTriRenderObjects(_renderer, _baseObj, textureMap_, _nonindexed);
 }
 
 template<class Mesh>
@@ -1228,7 +1237,7 @@ pick_edges(GLState& _state, bool _front)
     enable_arrays(0);
   }
   
-  if (_state.color_picking () ) {
+  if (_state.color_picking () && drawMesh_ ) {
 
     // picking implementations:
     //  0 -> render mesh with picking color buffer (compatibility mode, add. mem alloc: 32 bytes per openmesh edge)
@@ -1411,7 +1420,7 @@ pick_any(GLState& _state)
     return;
   }
   
-  if (_state.color_picking()) {
+  if (_state.color_picking() && drawMesh_) {
 
     // picking implementations:
     //  0 -> render mesh with picking color buffer (compatibility mode, add. mem alloc: 48 bytes per triangle + 32 bytes per edge + 16 bytes per vertex)
@@ -1513,6 +1522,7 @@ update_geometry() {
   
   drawMesh_->updateGeometry();
 
+  drawMesh_->invalidateFullVBO();
 
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
@@ -1614,6 +1624,8 @@ MeshNodeT<Mesh>::getDrawMesh()
 {
   return drawMesh_;
 }
+
+
 
 
 //=============================================================================

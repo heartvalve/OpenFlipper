@@ -227,19 +227,20 @@ public:
 
   /** \brief binds index and vertex buffer and executes draw calls
   *
-  *   @param _textureMap maps from internally texture-id to OpenGL texture id
-  *   may be null to disable textured rendering
+  *   @param _textureMap maps from internally texture-id to OpenGL texture id, may be null to disable textured rendering
+  *   @param _nonindexed use unoptimized non-indexed vbo for rendering, not as efficient in terms of memory usage and performance as an indexed draw call.
   */
-  void draw(std::map< int, GLuint>* _textureMap);
+  void draw(std::map< int, GLuint>* _textureMap, bool _nonindexed = false);
 
   /** \brief adds RenderObjects to a deferred draw call renderer
   *
   *   @param _renderer renderobjects are added to this renderer
   *   @param _baseObj address of the base renderobject with information about shader generation, gl states, matrices ..
   *   @param _textureMap maps from internally texture-id to OpenGL texture id
+  *   @param _nonindexed use non-indexed vbo instead of optimized indexed vbo (should be avoided if possible)
   *   may be null to disable textured rendering
   */
-  void addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap);
+  void addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap, bool _nonindexed = false);
 
   /** \brief render the mesh in wireframe mode
   */
@@ -934,6 +935,46 @@ private:
   void writeVertexProperty(unsigned int _vertex, const VertexElement* _elementDesc, const ACG::Vec4f& _propf);
 
   void writeVertexProperty(unsigned int _vertex, const VertexElement* _elementDesc, const ACG::Vec4d& _propd);
+
+
+  /** \brief Read one vertex from the rendering vbo.
+  *
+  * @param _vertex vertex id from the rendering vbo (not the original input id from openmesh!)
+  * @param _dst [out] pointer to address that will store the vertex. Must have enough space allocated, see vertex declaration stride to get the number of bytes
+  */
+  void readVertexFromVBO(unsigned int _vertex, void* _dst);
+
+
+public:
+
+  //===========================================================================
+  // fully expanded vbo
+  //===========================================================================  
+
+
+  /** \brief the mesh has been changed
+  *
+  * call this function if you changed anything of the mesh.
+  */
+  void invalidateFullVBO();
+
+  /** \brief update the full mesh vbo
+  *
+  * the full vbo is the non-indexed version for drawing.
+  * it's not optimized for rendering at all and it uses lots of memory, so should only be used as last resort.
+  */
+  void updateFullVBO();
+
+
+private:
+  // fully expanded mesh vbo (not indexed)
+  // this is only used for drawmodes with incompatible combinations of interpolation modes (ex. smooth gouraud lighting with flat face colors)
+  GeometryBuffer vboFull_;
+
+  // full vbo has been invalidated
+  bool updateFullVBO_;
+
+
 
 
 public:

@@ -266,7 +266,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, const s
 
   if (oldCache != cache_.end())
   {
-    if (!prog || !prog->isLinked())
+    if (!prog->isLinked())
     {
       delete prog;
       return oldCache->second;
@@ -574,18 +574,6 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   const ShaderGenDesc* a = &_a->desc;
   const ShaderGenDesc* b = &_b->desc;
 
-  if (a->numLights != b->numLights)
-    return -1;
-
-  if (a->shadeMode != b->shadeMode)
-    return -1;
-
-  if (a->vertexColors != b->vertexColors)
-    return -1;
-
-  if (a->textured() != b->textured())
-    return -1;
-
   if (_a->strFragmentTemplate != _b->strFragmentTemplate)
     return -1;
 
@@ -605,10 +593,7 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
     return -1;
 
 
-  if (a->numLights)
-    return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
-
-  return 0; // false
+  return *a == *b ? 0 : -1;
 }
 
 

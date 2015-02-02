@@ -154,23 +154,29 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc, const Defau
 
 
 
-  std::string strColorOut = "";
+  // vertex color output
 
-
-  if (_desc->shadeMode == SG_SHADE_FLAT)
-    if (!_desc->geometryTemplateFile.isEmpty())
-      strColorOut = "vec4 outVertexColor";
+  if (_desc->vertexColorsInterpolator.isEmpty())
+  {
+    std::string strColorOut = "";
+    if (_desc->shadeMode == SG_SHADE_FLAT)
+      if (!_desc->geometryTemplateFile.isEmpty())
+        strColorOut = "vec4 outVertexColor";
+      else {
+        // Bypass the output setter, as we have to set that directly with the flat.
+        addStringToList("vec4 outVertexColor", &outputs_, "flat out ", ";");
+      }
     else {
-      // Bypass the output setter, as we have to set that directly with the flat.
-      addStringToList("vec4 outVertexColor", &outputs_, "flat out ", ";");
+      if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors || _iodesc->inputColor_)
+        strColorOut = "vec4 outVertexColor";
     }
-  else {
-    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors || _iodesc->inputColor_)
-      strColorOut = "vec4 outVertexColor";
-  }
 
-  if (strColorOut.size())
-    addOutput(strColorOut.c_str());
+    if (strColorOut.size())
+      addOutput(strColorOut.c_str());
+  }
+  else
+    addStringToList("vec4 outVertexColor", &outputs_, _desc->vertexColorsInterpolator + " out ", ";");
+
 
 
   // handle other requests: normals, positions, texcoords
@@ -311,7 +317,7 @@ void ShaderGenerator::defineIOAbstraction( const DefaultIODesc* _iodesc, bool _v
       addDefine(SG_INPUT_NORMALOS " inNormal");
 
     if (_iodesc->inputColor_)
-      addDefine(SG_INPUT_VERTEXCOLOR "inColor");
+      addDefine(SG_INPUT_VERTEXCOLOR " inColor");
 
 
 
@@ -1156,8 +1162,8 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
     _code->push_back("sg_vNormalOS = normalize(inNormal);");
   }
 
-  if (ioDesc_.inputColor_)
-    _code->push_back("sg_cColor = inColor;");
+  if (ioDesc_.inputColor_ && (desc_.shadeMode == SG_SHADE_UNLIT || desc_.colorMaterialMode == GL_EMISSION))
+    _code->push_back("sg_cColor = " SG_INPUT_VERTEXCOLOR ";");
 
 
   // apply modifiers
@@ -1761,12 +1767,9 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, SG_ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-      desc_.shadeMode == SG_SHADE_FLAT    ||
-      desc_.vertexColors)
-  {
-    _code->push_back("sg_cColor = out" + inputShader + "Color;");
-  }
-
+      desc_.shadeMode == SG_SHADE_FLAT ||
+      (ioDesc_.passColor_ && (desc_.shadeMode == SG_SHADE_UNLIT || desc_.colorMaterialMode == GL_EMISSION)))
+    _code->push_back("sg_cColor = " SG_INPUT_VERTEXCOLOR ";");
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
     addLightingCode(_code);
@@ -1823,6 +1826,11 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
 
     QString buf;
 
+    const char* vertexColorString = (ioDesc_.inputColor_ && ioDesc_.passColor_) ? SG_INPUT_VERTEXCOLOR ".xyz * " : "";
+    const char* diffuseVertexColor = (desc_.colorMaterialMode == GL_DIFFUSE || desc_.colorMaterialMode == GL_AMBIENT_AND_DIFFUSE) ? vertexColorString : "";
+    const char* ambientVertexColor = (desc_.colorMaterialMode == GL_AMBIENT || desc_.colorMaterialMode == GL_AMBIENT_AND_DIFFUSE) ? vertexColorString : "";
+    const char* specularVertexColor = (desc_.colorMaterialMode == GL_SPECULAR) ? vertexColorString : "";
+
     for (int i = 0; i < desc_.numLights; ++i)
     {
       ShaderGenLightType lgt = desc_.lightTypes[i];
@@ -1830,15 +1838,15 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
       switch (lgt)
       {
       case SG_LIGHT_DIRECTIONAL:
-        buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d);", i, i, i, i);
+        buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_%d, %s g_cLightAmbient_%d, %s g_cLightDiffuse_%d,  %s g_cLightSpecular_%d);", i, ambientVertexColor, i, diffuseVertexColor, i, specularVertexColor, i);
         break;
 
       case SG_LIGHT_POINT:
-        buf.sprintf("sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d);", i, i, i, i, i);
+        buf.sprintf("sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_%d, %s g_cLightAmbient_%d, %s g_cLightDiffuse_%d, %s g_cLightSpecular_%d,  g_vLightAtten_%d);", i, ambientVertexColor, i, diffuseVertexColor, i, specularVertexColor, i, i);
         break;
 
       case SG_LIGHT_SPOT:
-        buf.sprintf("sg_cColor.xyz += LitSpotLight(sg_vPosVS.xyz,  sg_vNormalVS,  g_vLightPos_%d,  g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d,  g_vLightAngleExp_%d);", i, i, i, i, i, i, i);
+        buf.sprintf("sg_cColor.xyz += LitSpotLight(sg_vPosVS.xyz,  sg_vNormalVS,  g_vLightPos_%d,  g_vLightDir_%d, %s g_cLightAmbient_%d, %s g_cLightDiffuse_%d, %s g_cLightSpecular_%d,  g_vLightAtten_%d,  g_vLightAngleExp_%d);", i, i, ambientVertexColor, i, diffuseVertexColor, i, specularVertexColor, i, i, i);
         break;
 
       default: break;

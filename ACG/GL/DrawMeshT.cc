@@ -82,6 +82,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
    invVertexMap_(0),
    offsetPos_(0), offsetNormal_(20), offsetTexc_(12), offsetColor_(32),
+   updateFullVBO_(true),
    textureIndexPropertyName_("Not Set"),
    perFaceTextureCoordinatePropertyName_("Not Set"),
    updatePerEdgeBuffers_(1),
@@ -455,6 +456,7 @@ DrawMeshT<Mesh>::rebuild()
     return;
   }
 
+  invalidateFullVBO();
 
 
   unsigned int maxFaceVertCount = 0;
@@ -1088,6 +1090,9 @@ DrawMeshT<Mesh>::createVBO()
   fillVertexBuffer();
 
   ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+  // non indexed vbo needs updating now
+  invalidateFullVBO();
 }
 
 template <class Mesh>
@@ -1117,7 +1122,7 @@ DrawMeshT<Mesh>::createIBO()
   // line index buffer:
   if (mesh_.n_edges())
   {
-    unsigned int* pLineBuffer = new unsigned int[mesh_.n_edges() * 2];
+    std::vector<unsigned int> lineBuffer(mesh_.n_edges() * 2);
 
     for (unsigned int i = 0; i < mesh_.n_edges(); ++i)
     {
@@ -1125,22 +1130,20 @@ DrawMeshT<Mesh>::createIBO()
 
       if (indexType_ == GL_UNSIGNED_SHORT)
       {
-        ((unsigned short*)pLineBuffer)[2*i] = (unsigned short)invVertexMap_[mesh_.from_vertex_handle(hh).idx()];
-        ((unsigned short*)pLineBuffer)[2*i+1] = (unsigned short)invVertexMap_[mesh_.to_vertex_handle(hh).idx()];
+        // put two words in a dword
+        unsigned int combinedIdx = invVertexMap_[mesh_.from_vertex_handle(hh).idx()] | (invVertexMap_[mesh_.to_vertex_handle(hh).idx()] << 16);
+        lineBuffer[i] = combinedIdx;
       }
       else
       {
-        pLineBuffer[2*i] = invVertexMap_[mesh_.from_vertex_handle(hh).idx()];
-        pLineBuffer[2*i+1] = invVertexMap_[mesh_.to_vertex_handle(hh).idx()];
+        lineBuffer[2 * i] = invVertexMap_[mesh_.from_vertex_handle(hh).idx()];
+        lineBuffer[2 * i + 1] = invVertexMap_[mesh_.to_vertex_handle(hh).idx()];
       }
     }
 
     bindLineIbo();
 
-    fillLineBuffer(mesh_.n_edges(), pLineBuffer);
-
-    // FIXME: This is not exception safe and may lead to memory leaks.
-    delete [] pLineBuffer;
+    fillLineBuffer(mesh_.n_edges(), &lineBuffer[0]);
   }
 
   ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
@@ -1346,9 +1349,16 @@ void DrawMeshT<Mesh>::unbindBuffers()
 }
 
 template <class Mesh>
-void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
+void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap, bool _nonindexed)
 {
-  bindBuffers();
+  if (!_nonindexed)
+    bindBuffers();
+  else
+  {
+    updateFullVBO();
+    vboFull_.bind();
+    vertexDecl_->activateFixedFunction();
+  }
 
 #ifdef DEBUG_MEM_USAGE
   getMemoryUsage(true);
@@ -1371,12 +1381,20 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
         else
           ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[sub->id]);
 
-        glDrawElements(GL_TRIANGLES, sub->numTris * 3, indexType_,
-          (GLvoid*)( (size_t)sub->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        if (!_nonindexed)
+          glDrawElements(GL_TRIANGLES, sub->numTris * 3, indexType_,
+            (GLvoid*)( (size_t)sub->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        else
+          glDrawArrays(GL_TRIANGLES, sub->startIndex, sub->numTris * 3);
       }
     }
     else
-      glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+    {
+      if (!_nonindexed)
+        glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+      else
+        glDrawArrays(GL_TRIANGLES, 0, numTris_ * 3);
+    }
   }
 
   unbindBuffers();
@@ -1384,12 +1402,20 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap)
+void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap, bool _nonindexed)
 {
   if (numTris_)
   {
     RenderObject ro = *_baseObj;
-    bindBuffersToRenderObject(&ro);
+    if (!_nonindexed)
+      bindBuffersToRenderObject(&ro);
+    else
+    {
+      updateFullVBO();
+
+      ro.vertexBuffer = vboFull_.id();
+      ro.vertexDecl = vertexDecl_;
+    }
 
     if (_baseObj->shaderDesc.textured())
     {
@@ -1426,15 +1452,21 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
 
         
 
-        ro.glDrawElements(GL_TRIANGLES, sub->numTris * 3, indexType_,
-          (GLvoid*)( (size_t)sub->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        if (!_nonindexed)
+          ro.glDrawElements(GL_TRIANGLES, sub->numTris * 3, indexType_, 
+            (GLvoid*)((size_t)sub->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        else
+          ro.glDrawArrays(GL_TRIANGLES, sub->startIndex, sub->numTris * 3);
         
         _renderer->addRenderObject(&ro);
       }
     }
     else
     {
-      ro.glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+      if (!_nonindexed)
+        ro.glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+      else
+        ro.glDrawArrays(GL_TRIANGLES,0,  numTris_ * 3);
       _renderer->addRenderObject(&ro);
     }
   }
@@ -2678,6 +2710,86 @@ void DrawMeshT<Mesh>::dumpObj(const char* _filename) const
     file.close();
   }
 }
+
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::readVertexFromVBO(unsigned int _vertex, void* _dst)
+{
+  assert(_dst != 0);
+
+  unsigned int stride = vertexDecl_->getVertexStride();
+
+  // byte offset
+  unsigned int offset = _vertex * stride;
+
+  // copy
+  memcpy(_dst, &vertices_[offset], stride);
+}
+
+
+
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::invalidateFullVBO()
+{
+  updateFullVBO_ = true;
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::updateFullVBO()
+{
+  // update indexed vbo first, in the next step this vbo is resolved into non-indexed
+  updateGPUBuffers();
+
+  if (updateFullVBO_)
+  {
+    MeshCompiler* mc = getMeshCompiler();
+
+    if (mc)
+    {
+      int numTris = mc->getNumTriangles();
+
+      // alloc buffer
+      int numVerts = 3 * numTris;
+      int stride = mc->getVertexDeclaration()->getVertexStride();
+      std::vector<char> fullBuf(numVerts * stride);
+
+      // fill buffer
+      for (int i = 0; i < numTris; ++i)
+      {
+        for (int k = 0; k < 3; ++k)
+        {
+          int idx = i * 3 + k;
+          int vertexID = mc->getIndex(idx);
+          readVertexFromVBO(vertexID, &fullBuf[idx * stride]);
+
+          if (colorMode_ == 2)
+          {
+            // read face color
+
+            int faceId = meshComp_->mapToOriginalFaceID(i);
+            unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+
+            // store face color
+            writeVertexElement(&fullBuf[0], idx, vertexDecl_->getVertexStride(), offsetColor_, 4, &fcolor);
+          }
+
+        }
+      }
+
+      if (!fullBuf.empty())
+        vboFull_.upload(fullBuf.size(), &fullBuf[0], GL_STATIC_DRAW);
+
+      // clean update flag
+      updateFullVBO_ = false;
+    }
+  }
+}
+
+
 
 
 
