@@ -542,8 +542,11 @@ void VertexBufferObject::del() {
 void VertexBufferObject::upload(
         GLsizeiptr size, const GLvoid* data, GLenum usage) {
 
-  if(!valid)
-      gen();
+  if (!valid)
+    gen();
+  
+  bind();
+
   glBufferDataARB(target, size, data, usage);
 }
 
