@@ -82,9 +82,9 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
    invVertexMap_(0),
    offsetPos_(0), offsetNormal_(20), offsetTexc_(12), offsetColor_(32),
-   updateFullVBO_(true),
    textureIndexPropertyName_("Not Set"),
    perFaceTextureCoordinatePropertyName_("Not Set"),
+   updateFullVBO_(true),
    updatePerEdgeBuffers_(1),
   updatePerHalfedgeBuffers_(1)
 {
