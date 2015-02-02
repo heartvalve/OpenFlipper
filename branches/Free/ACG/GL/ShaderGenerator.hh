@@ -94,6 +94,7 @@ public:
     geometryTemplateFile(""),
     fragmentTemplateFile(""),
     normalizeTexColors(true),
+    colorMaterialMode(GL_AMBIENT_AND_DIFFUSE),
     textureTypes_()
   {
     for ( unsigned int i = 0 ; i < SG_MAX_SHADER_LIGHTS ; ++i)
@@ -150,7 +151,13 @@ public:
   /// Defines if the textureVariable is normalized or not, if multiple textures are used
   bool normalizeTexColors;
 
+  /// interpolation qualifier for input vertex colors: "flat", "smooth", "noperspective"
+  QString vertexColorsInterpolator;
 
+  // color material for input vertex colors: GL_EMISSION, GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_AMBIENT_AND_DIFFUSE
+  // Usage of vertex colors in lighting function, as diffuse, emission, ambient color ..  see glColorMaterial()
+  // default: GL_AMBIENT_AND_DIFFUSE
+  GLenum colorMaterialMode;
 
   struct TextureType
   {
@@ -158,6 +165,7 @@ public:
     bool shadow;
   };
 private:
+  // TODO: remove this, multitexturing always requires some customization! should be done via custom shader templates or mods. only allow one diffuse texture, as this is something commonly used and intentions are clear
   /// holds the texture types (second) and the stage id (first). if empty, shader does not support textures
   std::map<size_t,TextureType> textureTypes_;
 
@@ -180,6 +188,52 @@ public:
 
   bool textured()const {return !textureTypes_.empty();}
 
+
+
+  // comparison operator
+  bool operator == (const ShaderGenDesc& _rhs) const
+  {
+    if (numLights != _rhs.numLights)
+      return false;
+
+    if (shadeMode != _rhs.shadeMode)
+      return false;
+
+    if (vertexColors != _rhs.vertexColors)
+      return false;
+
+    if (textured() != _rhs.textured())
+      return false;
+
+    if (vertexColors)
+    {
+      if (vertexColorsInterpolator != _rhs.vertexColorsInterpolator)
+        return false;
+
+      if (colorMaterialMode != _rhs.colorMaterialMode)
+        return false;
+    }
+
+    if (fragmentTemplateFile != _rhs.fragmentTemplateFile)
+      return false;
+
+    if (geometryTemplateFile != _rhs.geometryTemplateFile)
+      return false;
+
+    if (vertexTemplateFile != _rhs.vertexTemplateFile)
+      return false;
+
+    if (tessControlTemplateFile != _rhs.tessControlTemplateFile)
+      return false;
+
+    if (_rhs.tessEvaluationTemplateFile != _rhs.tessEvaluationTemplateFile)
+      return false;
+
+    if (numLights)
+      return memcmp(lightTypes, _rhs.lightTypes, numLights * sizeof(ShaderGenLightType)) == 0;
+
+    return true;
+  }
 };
 
 

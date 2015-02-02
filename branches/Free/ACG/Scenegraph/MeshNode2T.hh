@@ -185,16 +185,15 @@ private:
 /** @} */  
   
 //===========================================================================
-/** @name Strip generation and handling
+/** @name Draw-mesh handling
 * @{ */
 //===========================================================================  
-public:
-//   void update_strips();
-
 private:
   DrawMeshT<Mesh>* drawMesh_;
 
 /** @} */  
+
+
 
 //===========================================================================
 /** @name Bounding Box
@@ -342,7 +341,7 @@ private:
   */
   void draw_faces();
 
-  void add_face_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
+  void add_face_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, bool _nonindexed = false);
   
 private:
   
