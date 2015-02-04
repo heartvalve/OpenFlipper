@@ -69,7 +69,7 @@ void ProcessManagerWidget::updateStatus(QString _id, int _status) {
            
     // No such item has been found -> returning
     if(!found) return;
-    
+
     // Set new status
     (job.progress)->setValue(_status);
 }
@@ -157,7 +157,6 @@ void ProcessManagerWidget::addJob(QString _id, QString _description,
     
     // Insert job into local map
     JobContainer job;
-    job.row         = newRow;
     job.id          = name;
     job.description = desc;
     job.progress    = progressBar;
@@ -180,7 +179,7 @@ void ProcessManagerWidget::cancelButtonPressed() {
 }
 
 void ProcessManagerWidget::removeJob(QString _id) {
-    
+
     JobContainer job;
     std::map<QString, JobContainer>::iterator it = processMap_.begin();
     
@@ -196,8 +195,8 @@ void ProcessManagerWidget::removeJob(QString _id) {
            
     // No such item has been found -> returning
     if(!found) return;
-    
-    this->processList->removeRow(job.row);
+
+    this->processList->removeRow(this->processList->row(job.id));
     
     // Remove from local map
     processMap_.erase(_id);
