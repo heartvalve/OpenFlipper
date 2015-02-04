@@ -45,6 +45,7 @@
 
 #include <QMap>
 #include <QDateTime>
+#include <QPair>
 #include <QImage>
 
 // ---------------------------------------------------------------------------
