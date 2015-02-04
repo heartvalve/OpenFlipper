@@ -44,6 +44,7 @@
 #define TEXTUREIMAGESTORAGE_HH
 
 #include <QMap>
+#include <QDateTime>
 #include <QImage>
 
 // ---------------------------------------------------------------------------
@@ -65,7 +66,7 @@ class ImageStore {
 
   private:
     QMap<int,QImage>  imageMap_;
-    QMap<QString,int> filenameMap_;
+    QMap< QString,QPair<int,QDateTime> > filenameMap_;
     QMap<int,QString> reverseFilenameMap_;
     QMap<int,unsigned int> refCount_;
 
