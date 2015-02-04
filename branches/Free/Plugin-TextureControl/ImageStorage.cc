@@ -76,10 +76,12 @@ int ImageStore::addImageFile( QString _fileName ) {
     loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
 
   // Check if it already exists and return the existing one rather than recreating a new one
-  if ( filenameMap_.count(loadFilename) > 0 ) {
+  QMap< QString,QPair<int,QDateTime> >::const_iterator it = filenameMap_.find(loadFilename);
+  QFileInfo fileInfo(loadFilename);
+  if ( it != filenameMap_.end() && it->second == fileInfo.lastModified()) {
 
     // Get id of the existing image
-    int existingId = filenameMap_[loadFilename];
+    int existingId = filenameMap_[loadFilename].first;
 
     // Update refcount
     refCount_[existingId] = refCount_[existingId] + 1;
@@ -88,8 +90,7 @@ int ImageStore::addImageFile( QString _fileName ) {
     return existingId;
   }
 
-  QFile file(loadFilename);
-  if ( !file.exists() ) {
+  if ( !fileInfo.exists() ) {
     errorString_ =  "addedEmptyObject: Cannot load global texture '"+ loadFilename +"'. File not found!" ;
     return -1;
 
@@ -98,7 +99,7 @@ int ImageStore::addImageFile( QString _fileName ) {
   QImage image;
 
   //QImage cannot handle tga directly
-  if ( QFileInfo(loadFilename).suffix().toLower() == "tga" ){
+  if ( fileInfo.suffix().toLower() == "tga" ){
 
     QPixmap pic(loadFilename);
     image = pic.toImage();
@@ -112,7 +113,7 @@ int ImageStore::addImageFile( QString _fileName ) {
   }
 
   // Store the mapping from filename to id
-  filenameMap_[loadFilename]= nextId_;
+  filenameMap_[loadFilename]= qMakePair(nextId_, fileInfo.lastModified());
   reverseFilenameMap_[nextId_] = loadFilename;
 
   // Initialize refcount
@@ -154,8 +155,8 @@ int  ImageStore::addImage( QImage _image ) {
 int  ImageStore::getImageID(QString _filename) {
 
   // Check if it already exists and return the existing one rather than recreating a new one
-  if ( filenameMap_.count(_filename) > 0 ) {
-    return filenameMap_[_filename];
+  if ( filenameMap_.contains(_filename)) {
+    return filenameMap_[_filename].first;
   }
 
   // Clean error string
@@ -169,7 +170,7 @@ int  ImageStore::getImageID(QString _filename) {
 
 QImage& ImageStore::getImage(int _id, bool* _ok) {
 
-  if ( imageMap_.count(_id) > 0 ) {
+  if ( imageMap_.contains(_id)) {
     if ( _ok)
       *_ok = true;
     return imageMap_[_id];
@@ -186,7 +187,7 @@ QImage& ImageStore::getImage(int _id, bool* _ok) {
 void ImageStore::removeImage(int _id) {
 
   // Check if it exists
-  if ( refCount_.count(_id) > 0 ) {
+  if ( refCount_.contains(_id)) {
     if ( refCount_[_id] > 1 ) {
       refCount_[_id] = refCount_[_id] - 1;
       return;
@@ -197,7 +198,7 @@ void ImageStore::removeImage(int _id) {
       imageMap_.remove(_id);
 
       // This image is from a file and not directly added
-      if ( reverseFilenameMap_.count(_id) > 0 )  {
+      if ( reverseFilenameMap_.contains(_id))  {
 
         // Get the filename
         QString fileName = reverseFilenameMap_[_id];
