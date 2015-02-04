@@ -61,17 +61,20 @@
 RemesherPlugin::RemesherPlugin() :
 progress_(0) {
 
-  progress_ = new ProgressEmitter();
+  if ( OpenFlipper::Options::gui() ) {
+    progress_ = new ProgressEmitter();
 
-  connect(progress_, SIGNAL(signalJobState(QString,int)), this, SIGNAL(setJobState(QString,int)), Qt::QueuedConnection);
-  connect(progress_, SIGNAL(changeDescription(QString,QString)), this, SIGNAL(setJobDescription(QString,QString)), Qt::QueuedConnection);
+    connect(progress_, SIGNAL(signalJobState(QString,int)), this, SIGNAL(setJobState(QString,int)), Qt::QueuedConnection);
+    connect(progress_, SIGNAL(changeDescription(QString,QString)), this, SIGNAL(setJobDescription(QString,QString)), Qt::QueuedConnection);
+  }
 }
 
 // ----------------------------------------------------------------------------------------
 
 RemesherPlugin::~RemesherPlugin() {
-
-  delete progress_;
+  if ( OpenFlipper::Options::gui() ) {
+    delete progress_;
+  }
 }
 
 // ----------------------------------------------------------------------------------------
