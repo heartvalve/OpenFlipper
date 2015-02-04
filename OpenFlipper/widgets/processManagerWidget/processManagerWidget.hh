@@ -118,7 +118,6 @@ class ProcessManagerWidget : public QWidget, public Ui::ProcessManagerWidget
       
     // A container to hold the widget items
     struct JobContainer {
-        int               row;
         QTableWidgetItem* id;
         QTableWidgetItem* description;
         QProgressBar*     progress;
