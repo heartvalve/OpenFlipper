@@ -1,13 +1,21 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.2 ( ?/?/? , 20213 )</b>
+- <b>OpenFlipper 2.2 ( ?/?/? , 20236 )</b>
      - <b>ACG</b>
         - MeshCompiler and DrawMesh
 	     - check surface type of meshcompiler input
              - fix solid vertex colored drawmodes 
+             - support face colors + smooth shading refs #2387
+             . fix properties of DrawMode solid faces colored
+        - GL
+             - implicitly bind vbo on upload()
      - <b>Core</b>
+        - IO
+             - Emit warning in save object function, if object can't be retrieved
         - QtBaseViewer
-             -  assumption that the drawbuffer is always GL_BACK might be problematic refs #2361
+             - assumption that the drawbuffer is always GL_BACK might be problematic refs #2361
+        - ProcessManager:
+             - fix: possible crash with multiple processes (row variable wasn't updated, if the job widget row was changed)
      - <b>License Manager</b>
         - Remove function pointers which produce errors in C++11
      - <b>Documentation</b>
@@ -15,6 +23,10 @@
      - <b>Plugins</b>
          - FileHeightField
              - Import the color of the image that is loaded as a height field as vertex colors
+         - Remesher
+             - add nogui support closes #2384
+         - TextureControl
+             - image storage checks last modification of a texture and reloads it again if necessary closes #2381
 
 - <b>OpenFlipper 2.1 ( 2015/01/21 , 20181 )</b>
      - <b>General</b>
