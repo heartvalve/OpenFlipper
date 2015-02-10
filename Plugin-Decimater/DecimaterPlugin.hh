@@ -45,10 +45,6 @@
 
 //== INCLUDES =================================================================
 
-#include <QObject>
-#include <QMenuBar>
-#include <QTimer>
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
@@ -56,6 +52,7 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/ProcessInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -64,6 +61,8 @@
 #include "DecimaterInfo.hh"
 
 #include "DecimaterToolbarWidget.hh"
+
+#include "DecimateThread.hh"
 
 #include <OpenMesh/Tools/Decimater/DecimaterT.hh>
 #include <OpenMesh/Tools/Decimater/McDecimaterT.hh>
@@ -82,12 +81,16 @@
 #include <ACG/Utils/SmartPointer.hh>
 #include <vector>
 
+#include <QObject>
+#include <QMenuBar>
+#include <QTimer>
+
 
 //== CLASS DEFINITION =========================================================
 
 /** Plugin for Decimater Support
  */
-class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface, LoadSaveInterface
+class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface, LoadSaveInterface, ProcessInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -97,6 +100,7 @@ class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, Logging
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(RPCInterface)
   Q_INTERFACES(LoadSaveInterface)
+  Q_INTERFACES(ProcessInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Decimater")
@@ -126,6 +130,17 @@ signals:
   // BackupInterface
   void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
+  // ProcessInterface
+  void startJob( QString _jobId, QString _description , int _min , int _max , bool _blocking  = false);
+  void cancelJob(QString _jobId );
+  void finishJob(QString _jobId );
+  void setJobState(QString, int);
+  void setJobName(QString _jobId, QString _name );
+  void setJobDescription(QString _jobId, QString _text );
+
+  //self defined signals
+  void jobCanceled(QString _jobId);
+
 private slots:
     // BaseInterface
     void initializePlugin();
@@ -141,6 +156,9 @@ private slots:
     // Tell system that this plugin runs without ui
     void noguiSupported( ) {} ;
 
+    // ProcessInterface
+    void canceledJob (QString _job );
+
 public :
 
   /// Default constructor
@@ -155,12 +173,12 @@ public :
   /// Description of the Plugin
   QString description() { return (QString(tr("Mesh Decimation ..."))); };
 
-private :
 
-  typedef OpenMesh::Decimater::BaseDecimaterT< TriMesh >              BaseDecimaterType;
-  typedef OpenMesh::Decimater::DecimaterT< TriMesh >                  DecimaterType;
-  typedef OpenMesh::Decimater::McDecimaterT< TriMesh >                McDecimaterType;
-  typedef OpenMesh::Decimater::MixedDecimaterT< TriMesh >             MixedDecimaterType;
+private :
+  typedef DecimateThread::BaseDecimaterType             BaseDecimaterType;
+  typedef DecimateThread::DecimaterType                 DecimaterType;
+  typedef DecimateThread::McDecimaterType               McDecimaterType;
+  typedef DecimateThread::MixedDecimaterType            MixedDecimaterType;
 
   typedef OpenMesh::Decimater::ModAspectRatioT< TriMesh >::Handle     ModAspectRatioH;
   typedef OpenMesh::Decimater::ModEdgeLengthT< TriMesh >::Handle      ModEdgeLengthH;
@@ -191,10 +209,13 @@ private :
   std::vector< ptr::shared_ptr<DecimaterInit> > decimater_objects_;
   QIcon* toolIcon_;
 
+  int runningJobs_;
+
 public slots:
 
   /// decimating called from button in toolbox
   void slot_decimate();
+  void slot_decimate_finished(QString _jobId); //postprocess after threads finished
 
   /// init called from button in toolbox
   void slot_initialize();
@@ -245,9 +266,7 @@ public slots:
 public slots:
    QString version() { return QString("1.0"); };
 
-
-
-
 };
+
 
 #endif //DECIMATERPLUGIN_HH
