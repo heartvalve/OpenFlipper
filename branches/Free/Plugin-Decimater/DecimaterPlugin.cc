@@ -73,7 +73,9 @@
 
 DecimaterPlugin::DecimaterPlugin() :
         tool_(0),
-        toolIcon_(0)
+        decimater_objects_(),
+        toolIcon_(0),
+        runningJobs_(0)
 {
 
 }
@@ -433,6 +435,7 @@ void DecimaterPlugin::slot_decimate()
     return;
 
   //decimate
+  runningJobs_ = decimater_objects_.size();
   for (std::vector< ptr::shared_ptr<DecimaterInit> >::iterator decIter = decimater_objects_.begin();
       decIter != decimater_objects_.end(); ++decIter)
   {
@@ -460,57 +463,68 @@ void DecimaterPlugin::slot_decimate()
       decimater->module( decInit->hModEdgeLength ).set_edge_length( tool_->edgeLength->value() );
     }
 
-    DecimaterType* dec = dynamic_cast<DecimaterType*>(decimater.get());
-    McDecimaterType* mcDec = dynamic_cast<McDecimaterType*>(decimater.get());
-    MixedDecimaterType* mixedDec = dynamic_cast<MixedDecimaterType*>(decimater.get());
+    // fill data for the decimate thread
+    DecimateThread::Params params;
+    params.dec = (tool_->rbUseDecimater->isChecked()) ? dynamic_cast<DecimaterType*>(decimater.get()) : NULL;
+    params.mcDec = (tool_->rbUseMC->isChecked())   ? dynamic_cast<McDecimaterType*>(decimater.get()) : NULL;
+    params.mixedDec = (tool_->rbUseMixed->isChecked())   ? dynamic_cast<MixedDecimaterType*>(decimater.get()) : NULL;
 
-    if(dec && tool_->rbUseDecimater->isChecked())
-    {
-      if ( tool_->rbVertices->isChecked() )
-        dec->decimate_to(tool_->verticesCount->value());
-      else if (tool_->rbTriangles->isChecked() )
-        dec->decimate_to_faces(0, tool_->trianglesCount->value());
-      else // constraints only
-      dec->decimate_to_faces(0, 1);
-    }
-    else if (mcDec && tool_->rbUseMC->isChecked())
-    {
-      mcDec->set_samples(tool_->randomSamplesCounter->value());
-      if ( tool_->rbVertices->isChecked() )
-        mcDec->decimate_to(tool_->verticesCount->value());
-      else if (tool_->rbTriangles->isChecked() )
-        mcDec->decimate_to_faces(0, tool_->trianglesCount->value());
-      else // constraints only
-        mcDec->decimate_to_faces(0, 1);
-    }
-    else if (mixedDec && tool_->rbUseMixed->isChecked())
-    {
-      float mc_factor = 1.0 - (tool_->mixedFactorCounter->value()*0.01);
-      mixedDec->set_samples(tool_->randomSamplesCounter->value());
+    params.facesCount = (tool_->rbTriangles->isChecked()) ? tool_->trianglesCount->value() : -1;
+    params.verticesCount = (tool_->rbVertices->isChecked() ) ? tool_->verticesCount->value() : -1;
+    params.samples = tool_->randomSamplesCounter->value();
+    params.mc_factor = 1.0 - (tool_->mixedFactorCounter->value()*0.01);
 
-      if ( tool_->rbVertices->isChecked() )
-        mixedDec->decimate_to(tool_->verticesCount->value(),mc_factor);
-      else if (tool_->rbTriangles->isChecked() )
-        mixedDec->decimate_to_faces(0, tool_->trianglesCount->value(),mc_factor);
-      else // constraints only
-        mixedDec->decimate_to_faces(0, 1,mc_factor);
-    }else
-    {
-      emit log(LOGERR,tr("Could not find Decimater Type"));
-    }
+    // create and start decimate thread
+    QString jobId = QString("Decimate_Object_%1").arg(decInit->objId);
+    DecimateThread* th = new DecimateThread(params, jobId, decInit->objId);
+    connect(th, SIGNAL(finished(QString)), this,SIGNAL(finishJob(QString)));
+    connect(th, SIGNAL(finished(QString)), this, SLOT(slot_decimate_finished(QString)));
+    connect(th, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
+    connect(this, SIGNAL(jobCanceled(QString)), th, SLOT(slotCancel(QString)));
 
-    TriMeshObject* object = PluginFunctions::triMeshObject(decInit->objId);
+    tool_->pbDecimate->setEnabled(false);
+    tool_->pbInitialize->setEnabled(false);
 
-    decInit->decimater->mesh().garbage_collection();
-    decInit->decimater->mesh().update_normals();
-    object->update();
+    emit startJob(jobId , QString("Decimate Object with Id %1").arg(decInit->objId) , 0, 100, false);
 
-    // Create backup
-    emit createBackup(decInit->objId, "Decimation");
-    emit updatedObject( decInit->objId , UPDATE_TOPOLOGY );
+    th->start();
+    th->startProcessing();
+
   }
 
-  emit updateView();
+
+}
+
+void DecimaterPlugin::canceledJob (QString _job )
+{
+  emit jobCanceled(_job);
+}
+
+void DecimaterPlugin::slot_decimate_finished(QString _jobId)
+{
+  //This function is executed by the main thread! but the sender is the finished thread
+  DecimateThread* thread = dynamic_cast<DecimateThread*>(sender());
+
+  if (!thread)
+    return;
+  if (!thread->baseDecimater())
+    return;
+
+  //update mesh
+  thread->baseDecimater()->mesh().garbage_collection();
+  thread->baseDecimater()->mesh().update_normals();
+
+  emit updatedObject( thread->objectId() , UPDATE_TOPOLOGY );
+  emit createBackup( thread->objectId(), "Decimation");
+
+  //cleanup when all threads are done
+  --runningJobs_;//running in main thread, so no race condition
+  if (runningJobs_ == 0)
+  {
+    tool_->pbDecimate->setEnabled(true);
+    tool_->pbInitialize->setEnabled(true);
+    emit updateView();
+  }
 }
 
 
