@@ -53,86 +53,42 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 void ProcessManagerWidget::updateStatus(QString _id, int _status) {
-    
-    JobContainer job;
-    std::map<QString, JobContainer>::iterator it = processMap_.begin();
-    
-    // Find item
-    bool found = false;
-    for(; it != processMap_.end(); ++it) {
-        if((*it).first == _id) {
-            found = true;
-            job = (*it).second;
-            break;
-        }
-    }
+
+    QHash<QString, JobContainer>::iterator it = processMap_.find(_id);
            
     // No such item has been found -> returning
-    if(!found) return;
+    if(it == processMap_.end()) return;
 
     // Set new status
-    (job.progress)->setValue(_status);
+    it.value().progress->setValue(_status);
 }
 
 void ProcessManagerWidget::setJobName(QString _id, QString _name) {
     
-    JobContainer job;
-    std::map<QString, JobContainer>::iterator it = processMap_.begin();
+    QHash<QString, JobContainer>::iterator it = processMap_.find(_id);
+
+    // No such item has been found -> returning
+    if(it == processMap_.end()) return;
     
-    // Find item
-    bool found = false;
-    for(; it != processMap_.end(); ++it) {
-        if((*it).first == _id) {
-            found = true;
-            job = (*it).second;
-            break;
-        }
-    }
-    
-    // No such item found -> return
-    if(!found) return;
-    
-    (job.id)->setText(_name);
+    it.value().id->setText(_name);
 }
 
 void ProcessManagerWidget::setJobDescription(QString _id, QString _desc) {
     
-    JobContainer job;
-    std::map<QString, JobContainer>::iterator it = processMap_.begin();
-    
-    // Find item
-    bool found = false;
-    for(; it != processMap_.end(); ++it) {
-        if((*it).first == _id) {
-            found = true;
-            job = (*it).second;
-            break;
-        }
-    }
-           
+    QHash<QString, JobContainer>::iterator it = processMap_.find(_id);
+
     // No such item has been found -> returning
-    if(!found) return;
+    if(it == processMap_.end()) return;
     
     // Set new description
-    (job.description)->setText(_desc);
+    it.value().description->setText(_desc);
 }
 
 void ProcessManagerWidget::addJob(QString _id, QString _description,
                                       int _minSteps, int _maxSteps) {
     
-    std::map<QString, JobContainer>::iterator it = processMap_.begin();
-    
-    // Find item
-    bool found = false;
-    for(; it != processMap_.end(); ++it) {
-        if((*it).first == _id) {
-            found = true;
-            break;
-        }
-    }
-           
     // Item with the same id has already been added
-    if(found) return;
+    if(processMap_.contains(_id)) return;
     
     QTableWidgetItem* name      = new QTableWidgetItem(_id);
     QTableWidgetItem* desc      = new QTableWidgetItem(_description);
@@ -162,7 +118,7 @@ void ProcessManagerWidget::addJob(QString _id, QString _description,
     job.progress    = progressBar;
     job.button      = button;
     
-    processMap_.insert(std::pair<QString, JobContainer>(_id, job));
+    processMap_.insert(_id, job);
 }
 
 void ProcessManagerWidget::cancelButtonPressed() {
@@ -180,24 +136,13 @@ void ProcessManagerWidget::cancelButtonPressed() {
 
 void ProcessManagerWidget::removeJob(QString _id) {
 
-    JobContainer job;
-    std::map<QString, JobContainer>::iterator it = processMap_.begin();
-    
-    // Find item
-    bool found = false;
-    for(; it != processMap_.end(); ++it) {
-        if((*it).first == _id) {
-            found = true;
-            job = (*it).second;
-            break;
-        }
-    }
-           
-    // No such item has been found -> returning
-    if(!found) return;
+    QHash<QString, JobContainer>::iterator it = processMap_.find(_id);
 
-    this->processList->removeRow(this->processList->row(job.id));
+    // No such item has been found -> returning
+    if(it == processMap_.end()) return;
+
+    processList->removeRow(processList->row(it.value().id));
     
     // Remove from local map
-    processMap_.erase(_id);
+    processMap_.erase(it);
 }

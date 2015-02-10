@@ -124,7 +124,7 @@ class ProcessManagerWidget : public QWidget, public Ui::ProcessManagerWidget
         JobCancelButton*  button;
     };
     
-    std::map<QString, JobContainer> processMap_;
+    QHash<QString, JobContainer> processMap_;
 };
 
 
