@@ -55,6 +55,7 @@
 
 //-----------------------------------------------------------------------------
 BackupPlugin::BackupPlugin():
+globalBackup_(),
 backupMenu_(0),
 backupsEnabledAction_(0),
 undoMenuAction_(0),
@@ -62,7 +63,8 @@ redoMenuAction_(0),
 undoToolAction_(0),
 redoToolAction_(0),
 undoContextAction_(0),
-redoContextAction_(0)
+redoContextAction_(0),
+maxBackupSpinBox_(0)
 {
 
 }
