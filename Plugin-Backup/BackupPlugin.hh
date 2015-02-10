@@ -51,6 +51,7 @@
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/OptionsInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
 #include <QObject>
@@ -58,7 +59,7 @@
 
 #include "GroupData.hh"
 
-class BackupPlugin : public QObject, BaseInterface , KeyInterface, MenuInterface, BackupInterface, LoggingInterface, ToolbarInterface, LoadSaveInterface, ContextMenuInterface
+class BackupPlugin : public QObject, BaseInterface , KeyInterface, MenuInterface, BackupInterface, LoggingInterface, ToolbarInterface, LoadSaveInterface, ContextMenuInterface, OptionsInterface
 {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -69,6 +70,7 @@ Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(ToolbarInterface)
 Q_INTERFACES(LoadSaveInterface)
 Q_INTERFACES(ContextMenuInterface)
+Q_INTERFACES(OptionsInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Backup")
@@ -110,6 +112,7 @@ signals:
 private slots:
 
   // BaseInterface
+  void initializePlugin();
   void pluginsInitialized();
   
   void slotAllCleared();
@@ -130,6 +133,10 @@ private slots:
 
   //ContextMenuInterface
   void slotUpdateContextMenu( int _objectId );
+
+  // OptionsInterface
+  bool initializeOptionsWidget(QWidget*& _widget);
+  void applyOptions();
 
 private slots:
   
@@ -169,6 +176,8 @@ private :
   
   QAction* undoContextAction_;
   QAction* redoContextAction_;
+
+  QSpinBox* maxBackupSpinBox_;
 };
 
 #endif //BACKUPPLUGIN_HH

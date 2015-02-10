@@ -1,10 +1,8 @@
 #include "BackupData.hh"
 
-#define MAX_BACKUPS 20
-
 //-----------------------------------------------------------------------------
 
-BackupData::BackupData(BaseObjectData* _object) : currentState_(0), object_(_object)
+BackupData::BackupData(BaseObjectData* _object) : currentState_(0), object_(_object), maxBackups_(20)
 {
 }
 
@@ -12,6 +10,20 @@ BackupData::BackupData(BaseObjectData* _object) : currentState_(0), object_(_obj
 
 BackupData::~BackupData(){
   clear();
+}
+
+//-----------------------------------------------------------------------------
+
+size_t BackupData::maxBackups()
+{
+  return maxBackups_;
+}
+
+//-----------------------------------------------------------------------------
+
+void BackupData::setMaxBackups(size_t _max)
+{
+  maxBackups_ = _max;
 }
 
 //-----------------------------------------------------------------------------
@@ -31,7 +43,7 @@ void BackupData::storeBackup(BaseBackup* _backup){
   }
 
   //delete undo backups if there are too many
-  while( undoStates_.size() > MAX_BACKUPS ){
+  while( undoStates_.size() > maxBackups_ ){
     delete undoStates_.front();
     undoStates_.erase( undoStates_.begin() );
   }

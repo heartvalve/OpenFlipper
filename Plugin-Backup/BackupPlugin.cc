@@ -69,6 +69,14 @@ redoContextAction_(0)
 
 //-----------------------------------------------------------------------------
 
+void BackupPlugin::initializePlugin()
+{
+  int maxBackups = OpenFlipperSettings().value("BackupPlugin/MaxBackups",static_cast<unsigned>(globalBackup_.maxBackups())).toInt();
+  globalBackup_.setMaxBackups(maxBackups);
+}
+
+//-----------------------------------------------------------------------------
+
 void BackupPlugin::pluginsInitialized() {
 
   // Create Backup menu
@@ -136,6 +144,11 @@ void BackupPlugin::pluginsInitialized() {
     redoContextAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-redo.png") );
     connect(redoContextAction_, SIGNAL(triggered()), this, SLOT(slotObjectRedo()) );
     emit addContextMenuItem(redoContextAction_, DATA_ALL, CONTEXTOBJECTMENU);
+
+    //update option widget since it is created earlier
+    if (maxBackupSpinBox_)
+      maxBackupSpinBox_->setValue(globalBackup_.maxBackups());
+
   }
 
 //createBackup(int _objectId, QString _name, UpdateType _type= UPDATE_ALL)
@@ -409,6 +422,34 @@ void BackupPlugin::createBackup(int _objectId, QString _name, UpdateType _type)
 }
 
 //-----------------------------------------------------------------------------
+
+bool BackupPlugin::initializeOptionsWidget(QWidget*& _widget)
+{
+  QLabel* maxBackupLabel = new QLabel();
+  maxBackupLabel->setText(tr("Max. saved backups: "));
+  maxBackupSpinBox_ = new QSpinBox();
+  maxBackupSpinBox_->setValue(globalBackup_.maxBackups());
+  maxBackupSpinBox_->setRange(0,100);
+
+  QHBoxLayout* layout = new QHBoxLayout();
+  layout->addWidget(maxBackupLabel);
+  layout->addWidget(maxBackupSpinBox_);
+
+  QWidget* baseWidget = new QWidget();
+  baseWidget->setLayout(layout);
+  _widget = baseWidget;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void BackupPlugin::applyOptions()
+{
+  int maxBackups = maxBackupSpinBox_->value();
+  globalBackup_.setMaxBackups(maxBackups);
+  OpenFlipperSettings().setValue("BackupPlugin/MaxBackups", maxBackups);
+}
 
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2( backupplugin , BackupPlugin );

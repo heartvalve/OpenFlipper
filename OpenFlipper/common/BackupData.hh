@@ -106,12 +106,20 @@ class DLLEXPORT BackupData : public PerObjectData
     /// return the current state
     BaseBackup* currentState();
 
+    /// return the maximum of backups which are saved
+    size_t maxBackups();
+
+    /// set the maximum of saved backups
+    void setMaxBackups(size_t _max);
+
   protected:
     std::vector< BaseBackup* > undoStates_;
     std::vector< BaseBackup* > redoStates_;
     BaseBackup* currentState_;
 
     BaseObjectData* object_;
+
+    size_t maxBackups_;
 };
 
 #endif //BACKUPDATA_HH
