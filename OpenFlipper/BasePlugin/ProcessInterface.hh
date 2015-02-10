@@ -132,7 +132,7 @@ class ProcessInterface {
        * @param _jobId String which is used as the id of the thread
       */
       virtual void finishJob(QString _jobId ) {};
-      
+
       private slots :
 
         /** \brief A job has been canceled 
@@ -258,13 +258,42 @@ A quick example for stating a thread:
  thread->startProcessing();                                                                                 // start processing
 \endcode
 
-Note: If your class is derived from OpenFlipperThread and reimplements the
-run() function, you might also want to connect the signal OpenFlipperThread::state()
+Note: If your class is derived from OpenFlipperThread, do not reimplement the
+\a run() function. Instead, use the \a function(QString)
+to connect the your running function with \a Qt::DirectConnection. Short example:
+Be \a MyThread the derived thread class
+\code{.cpp}
+ class MyThread : public OpenFlipperThread
+\endcode
+
+and \a parallelFunction(QString) the function which should run by different threads.
+\code
+void MyThread::parallelFunction(QString) // function which will run in parallel
+{
+  std::cout << "I am running in another thread." << currentThreadId() << std::endl;
+}
+\endcode
+
+Instead of reimplementing the run function, connect the \a parallelFunction(QString) with
+the \a function(QString) signal in e.g. the constructor:
+\code
+MyThread::MyThread(QString _jobId):OpenFlipperThread(_jobId)
+{
+  // connect signal function(QString) with the self defined slot function
+  connect(this,SIGNAL(function(QString)),this,SLOT(parallelFunction(QString)), Qt::DirectConnection);
+}
+\endcode
+
+Note: The OpenFlipperThread will not be notified about job cancelling. You plugin
+has to be aware of it.
+
+Note: You might also want to connect the signal OpenFlipperThread::state()
 to the plugin's signal setJobState():
 
 \code
  connect(thread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
 \endcode
+
 
 Use signal OpenFlipperThread::state() within your run() function in order to
 correctly update the job's state.
