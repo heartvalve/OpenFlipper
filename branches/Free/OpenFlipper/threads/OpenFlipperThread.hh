@@ -89,11 +89,11 @@ class DLLEXPORT OpenFlipperThread : public QThread
     
     /** \brief Main processing
     *
-    * Either reimplement this function or connect the function()
-    * signal. If this function is reimplemented, use signal state()
+    * Do not reimplement this function. Connect the function()
+    * signal with your running function. Use signal state()
     * in order to inform the core about the job's current state.
     */
-    virtual void run();
+    void run();
     
     /** \brief Cancel the job
     *
@@ -104,6 +104,11 @@ class DLLEXPORT OpenFlipperThread : public QThread
     */
     virtual void cancel();   
     
+    /** \brief get JobId
+     * get the Id of the current Job
+     */
+    QString jobId();
+
   public slots:
     /** \brief Cancel this job
      *

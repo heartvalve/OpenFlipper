@@ -54,6 +54,10 @@ OpenFlipperThread::OpenFlipperThread( QString _jobId ) :
 OpenFlipperThread::~OpenFlipperThread() {
 }
 
+QString OpenFlipperThread::jobId() {
+  return jobId_;
+}
+
 void OpenFlipperThread::run()
 {
   if ( job_ == 0 ) {
