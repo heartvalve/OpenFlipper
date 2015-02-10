@@ -1395,7 +1395,7 @@ private slots:
   
   private:
     
-    QList< JobInfo* >  currentJobs;
+    QList< JobInfo >  currentJobs;
     
     ProcessManagerWidget* processManager_;
     

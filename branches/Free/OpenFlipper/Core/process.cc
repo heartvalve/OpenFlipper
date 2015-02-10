@@ -64,17 +64,16 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
   std::cerr << "StartJob: " << _jobId.toStdString() << " " << _description.toStdString() << " " << _min << " " << _max  << " " << _blocking <<std::endl;
 
   // Create job information
-  JobInfo* info        = new JobInfo();
-  info->id             = _jobId;
-  info->description    = _description;
-  info->currentStep    =  0;
-  info->minSteps       = _min;
-  info->maxSteps       = _max;
-  info->blocking       = _blocking;
-  info->blockingWidget = 0;
+  JobInfo info;
+  info.id             = _jobId;
+  info.description    = _description;
+  info.currentStep    =  0;
+  info.minSteps       = _min;
+  info.maxSteps       = _max;
+  info.blocking       = _blocking;
+  info.blockingWidget = 0;
 
-  // Add job to local job list
-  currentJobs.push_back(info);
+
 
   if (OpenFlipper::Options::gui()) {
     // Don't show process status in process manager
@@ -88,7 +87,7 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
       connect(widget,     SIGNAL(cancelRequested(QString)),
               this,       SLOT(slotJobCancelRequested(QString)));
 
-      info->blockingWidget = widget;
+      info.blockingWidget = widget;
 
       int x = (coreWidget_->width()  / 2) - (widget->width()  / 2);
       int y = (coreWidget_->height() / 2) - (widget->height() / 2);
@@ -115,13 +114,16 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
       processManager_->show();
     }
   }
+
+  // Add job to local job list
+  currentJobs.push_back(info);
 }
 
 //-----------------------------------------------------------------------------
 bool Core::getJob(QString _jobId, int& _index) {
   
   for ( int i = 0 ; i < currentJobs.size() ; ++i) {
-      if ( currentJobs[i]->id == _jobId ) {
+      if ( currentJobs[i].id == _jobId ) {
         _index = i;
         return true;
       }
@@ -139,16 +141,16 @@ void Core::slotSetJobState(QString _jobId, int _value ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    currentJobs[id]->currentStep = _value;
+    currentJobs[id].currentStep = _value;
 
     if (!OpenFlipper::Options::gui())
         return;
     // Update gui
-    if(!currentJobs[id]->blocking)
+    if(!currentJobs[id].blocking)
     	processManager_->updateStatus(_jobId, _value);
     else {
     	BlockingWidget* w = 0;
-    	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+    	w = dynamic_cast<BlockingWidget*>(currentJobs[id].blockingWidget);
     	if(w != 0) {
     		w->updateStatus(_value);
     	}
@@ -163,16 +165,16 @@ void Core::slotSetJobName(QString _jobId, QString _name ) {
     int id;
     
     if (  getJob(_jobId, id) ) {
-        currentJobs[id]->id = _name;
+        currentJobs[id].id = _name;
 
         if (!OpenFlipper::Options::gui())
             return;
         // Update gui
-        if(!currentJobs[id]->blocking)
+        if(!currentJobs[id].blocking)
         	processManager_->setJobName(_jobId, _name);
         else {
            	BlockingWidget* w = 0;
-           	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+           	w = dynamic_cast<BlockingWidget*>(currentJobs[id].blockingWidget);
            	if(w != 0) {
            		w->setJobId(_name);
            	}
@@ -186,16 +188,16 @@ void Core::slotSetJobDescription(QString _jobId, QString _text ) {
     int id;
     
     if (  getJob(_jobId, id) ) {
-        currentJobs[id]->description = _text;
+        currentJobs[id].description = _text;
 
         if (!OpenFlipper::Options::gui())
             return;
         // Update gui
-        if(!currentJobs[id]->blocking)
+        if(!currentJobs[id].blocking)
         	processManager_->setJobDescription(_jobId, _text);
         else {
            	BlockingWidget* w = 0;
-           	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+           	w = dynamic_cast<BlockingWidget*>(currentJobs[id].blockingWidget);
             if(w != 0) {
             	w->setJobDescription(_text);
             }
@@ -213,11 +215,11 @@ void Core::slotCancelJob(QString _jobId ) {
 
     if (OpenFlipper::Options::gui()) {
         // Update gui
-        if(!currentJobs[id]->blocking)
+        if(!currentJobs[id].blocking)
             processManager_->removeJob(_jobId);
         else {
             BlockingWidget* w = 0;
-            w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+            w = dynamic_cast<BlockingWidget*>(currentJobs[id].blockingWidget);
             if(w != 0) {
                 w->hide();
                 delete w;
@@ -239,7 +241,7 @@ void Core::slotFinishJob(QString _jobId ) {
 
     if (OpenFlipper::Options::gui()) {
         // Update gui
-        if(!currentJobs[id]->blocking) {
+        if(!currentJobs[id].blocking) {
             processManager_->removeJob(_jobId);
 
             // Hide widget if there's no job left
@@ -247,7 +249,7 @@ void Core::slotFinishJob(QString _jobId ) {
 
         } else {
             BlockingWidget* w = 0;
-            w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+            w = dynamic_cast<BlockingWidget*>(currentJobs[id].blockingWidget);
             if(w != 0) {
                 w->hide();
                 delete w;
