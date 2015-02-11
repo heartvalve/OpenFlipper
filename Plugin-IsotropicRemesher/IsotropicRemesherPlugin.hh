@@ -153,6 +153,7 @@ public slots:
 
 public slots:
   QString version() { return QString("1.0"); };
+  void noguiSupported( ) {} ;
 };
 
 #endif //ISOTROPICREMESHERPLUGIN_HH

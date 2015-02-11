@@ -55,19 +55,21 @@ thread_(0)
 
 /// init the Toolbox
 void IsotropicRemesherPlugin::initializePlugin() {
-  tool_ = new IsotropicRemesherToolBox();
+  if ( OpenFlipper::Options::gui() ) {
+    tool_ = new IsotropicRemesherToolBox();
 
-  QSize size(300, 300);
-  tool_->resize(size);
+    QSize size(300, 300);
+    tool_->resize(size);
 
-  connect(tool_->remeshButton, SIGNAL(clicked()), this, SLOT(slotRemeshButtonClicked()) );
+    connect(tool_->remeshButton, SIGNAL(clicked()), this, SLOT(slotRemeshButtonClicked()) );
 
-  connect(tool_->minEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMinLength()) );
-  connect(tool_->maxEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMaxLength()) );
-  connect(tool_->meanEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMeanLength()) );
+    connect(tool_->minEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMinLength()) );
+    connect(tool_->maxEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMaxLength()) );
+    connect(tool_->meanEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMeanLength()) );
 
-  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"remesher.png");
-  emit addToolbox( tr("Isotropic Remesher") , tool_, toolIcon_ );
+    toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"remesher.png");
+    emit addToolbox( tr("Isotropic Remesher") , tool_, toolIcon_ );
+  }
 }
 
 void IsotropicRemesherPlugin::slotRemeshButtonClicked() {
