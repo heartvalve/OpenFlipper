@@ -573,7 +573,6 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       int value = _constraints["decimater_type"].toInt(&ok);
       if (ok)
       {
-        std::cout << "value: " << value << std::endl;
         if (value == 0)
           decimater_object = ptr::shared_ptr<DecimaterType>(new DecimaterType(*mesh));
         else if (value == 1)
