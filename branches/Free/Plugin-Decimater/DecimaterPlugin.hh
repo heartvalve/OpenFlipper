@@ -211,7 +211,7 @@ private :
 
   int runningJobs_;
 
-public slots:
+private slots:
 
   /// decimating called from button in toolbox
   void slot_decimate();
