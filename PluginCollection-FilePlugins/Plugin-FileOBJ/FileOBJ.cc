@@ -705,8 +705,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       }else{
 
-        emit log( LOGERR, tr("Only single 2D texture coordinate per vertex allowed") );
-        return;
+        emit log( LOGERR, tr("Could not add TexCoord. Possible NaN or Inf?\nOnly single 2D texture coordinate per vertex allowed"));
       }
     }
 
@@ -724,6 +723,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       if ( !stream.fail() ){
         _importer.addNormal( OpenMesh::Vec3f(x,y,z) );
+      }else{
+        emit log( LOGERR, tr("Could not read normal. Possible NaN or Inf?"));
       }
     }
 
@@ -859,8 +860,19 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
                 // As obj counts from 1 and not zero add +1
                 value = currentTextureCoordCount + value + 1;
               }
-              assert(!vhandles.empty());
-              if ( _importer.n_texCoords() > 0 && (unsigned int)(value-1) < _importer.n_texCoords() ) {
+
+              if (vhandles.empty())
+              {
+                emit log (LOGWARN, tr("Texture coordinates defined, but no vertex coordinates found!"));
+                break;
+              }
+              if ((unsigned int)(value-1) >= _importer.n_texCoords())
+              {
+                emit log (LOGWARN, tr("Too many texcoords defined, skipping the rest"));
+                break;
+              }
+
+              if ( _importer.n_texCoords() > 0 ) {
                 // Obj counts from 1 and not zero .. array counts from zero therefore -1
                 _importer.setVertexTexCoord( vhandles.back(), value-1 );
                 face_texcoords.push_back( value-1 );
@@ -877,8 +889,19 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
                 // As obj counts from 1 and not zero add +1
                 value = currentNormalCount + value + 1;
               }
-              assert(!vhandles.empty());
-              assert((unsigned int)(value-1) < _importer.n_normals() );
+
+              if (vhandles.empty())
+              {
+                emit log (LOGWARN, tr("Texture coordinates defined, but no vertex coordinates found!"));
+                break;
+              }
+
+              if ((unsigned int)(value-1) >= _importer.n_normals())
+              {
+                emit log (LOGWARN, tr("Too many normals defined, skipping the rest"));
+                break;
+              }
+
               // Obj counts from 1 and not zero .. array counts from zero therefore -1
               _importer.setNormal(vhandles.back(), value-1);
               break;
@@ -1313,6 +1336,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
       if ( !stream.fail() )
         _importer.addVertex( OpenMesh::Vec3f(x,y,z) );
+      else
+        emit log(LOGERR, tr("Could not add Vertex %1. Possible NaN or Inf?").arg(_importer.n_vertices()));
     }
 
     // group
