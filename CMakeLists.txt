@@ -63,7 +63,7 @@ if (QT4_FOUND)
 elseif(QT5_FOUND)
 	message(STATUS "Using QT5 for OpenFlipper")
 else()
-	message(FATAL_ERROR "Could not found any QT Version. Please specify QT5_INSTALL_PATH to build with QT5 or specify the QT_QMAKE_EXECUTABLE to the QT4 qmake")
+	message(FATAL_ERROR "Could not found any QT Version. Please specify QT5_INSTALL_PATH (path to bin and include dir) to build with QT5 or specify the QT_QMAKE_EXECUTABLE to build with QT4")
 endif()
 
 acg_openmp ()
