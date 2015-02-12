@@ -41,9 +41,24 @@
       // Set the object id
       var object = 5;
 
-      // Get the DataTypes and print its name
+      // Get the DataTypes and print its name. the DataType is returned by the function
       print(datacontrol.dataType(object))
       \endcode
+
+    \subsection scripting_datattypes_getting_id Getting the Id of an Object
+      Openflipper provides functions gathering the id of an object.
+      Also, some functions create an object and return its id.
+      Some examples:
+      \code
+      //gathering id of an object
+      core.loadObject(QString) //generate an object and returns its Id
+      core.getObjectId(QString) // returns Id by object name
+      datacontrol.getObjectName(int) // returns object name by Id
+      datacontrol.getTargetObjects(DataType) // returns IdList of all target objects
+      primitivesgenerator.addPyramid() //generate an object and returns its Id
+      ...
+      \endcode
+      
 
   \section scripting_vectortype Vector data type
      The Vec3d used in the C++ code is mapped to the scripting language. Details
@@ -59,6 +74,36 @@
      The Matrix4x4T type used in the C++ code is mapped to the scripting language. Details
      can be found here:
        \subpage scripting_matrix_type
+
+  \section idlisttype IdList type
+    Some functions can perform the same operation on several objects or give multiple objects back.
+    The Id's of these objects are saved in a IdList. This is a simple list of integer containing the id's.
+    Example code:
+    \code
+      //Assume, "Object 1" and "Object 2" are already created or loaded
+      var id1 = core.getObjectId("Object 1")
+      var id2 = core.getObjectId("Object 2")
+      var list = [id1,id2]
+      datacontrol.groupObjects(list)
+    \endcode
+
+  \section qVariantMaptype QVariantMap type
+    The QVariantMap type is used by some function as input.
+    A QVariantMap is similar to a map with key and value, where the types of the key and value is not defined.
+    Mostly, the keys are \a strings describing the property where the value type is of type \a int.
+    Example code:
+    \code
+      // creating a scripting object
+      var constraints = new Object()
+      // filling the QVariantMap
+      constraints["decimater_type"] = 0 
+      constraints["decimation_order"] = 0
+      constraints["vertices"] = 50
+      // load e.g. mesh object
+      var id = core.loadObject("MyTriangleMesh.obj")
+      // perform decimation
+      decimater.decimate(id,constraints)
+    \endcode
  
   \section scripting_misc Miscellaneuos
      \subsection scripting_misc_path How to get the path of the current script?
