@@ -102,6 +102,8 @@ std::vector< QString > drawModeToList(ACG::SceneGraph::DrawModes::DrawMode _draw
     draw_modes.push_back("SOLID_FACES_COLORED_FLAT_SHADED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED)
     draw_modes.push_back("SOLID_FACES_COLORED_SMOOTH_SHADED");
+  if (_drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED)
+    draw_modes.push_back("SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE)
     draw_modes.push_back("SOLID_2DTEXTURED_FACE");    
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED)
@@ -162,7 +164,9 @@ ACG::SceneGraph::DrawModes::DrawMode listToDrawMode( std::vector< QString > _dra
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
     } else if( _draw_modes[i] == "SOLID_FACES_COLORED_SMOOTH_SHADED" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED;
-    } else if( _draw_modes[i] == "SOLID_2DTEXTURED_FACE" ) {
+    } else if (_draw_modes[i] == "SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED") {
+      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED;
+    } else if (_draw_modes[i] == "SOLID_2DTEXTURED_FACE") {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE;
     } else if( _draw_modes[i] == "SOLID_2DTEXTURED_FACE_SHADED" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED;
@@ -225,6 +229,8 @@ ACG::SceneGraph::DrawModes::DrawMode descriptionsToDrawMode ( std::vector< QStri
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
     } else if( _draw_modes[i] == "Solid (colored per-face, smooth shaded)" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED;
+    } else if( _draw_modes[i] == "Solid (colored per-face, face textured, smooth shaded)" ) {
+      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED;
     } else if( _draw_modes[i] == "Solid (face textured)" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE;
     } else if( _draw_modes[i] == "Solid (face textured, shaded)" ) {
@@ -285,6 +291,8 @@ std::vector< QString > drawModeToDescriptions(ACG::SceneGraph::DrawModes::DrawMo
     draw_modes.push_back("Solid (colored per-face, flat shaded)");    
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED)
     draw_modes.push_back("Solid (colored per-face, smooth shaded)");
+  if (_drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED)
+    draw_modes.push_back("Solid (colored per-face, face textured, smooth shaded)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE)
     draw_modes.push_back("Solid (face textured)");    
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED)

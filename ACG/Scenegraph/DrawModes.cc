@@ -100,7 +100,8 @@ DrawMode CELLS                             = ModeFlagSet(1) << 28;
 DrawMode CELLS_COLORED                     = ModeFlagSet(1) << 29;
 DrawMode HALFEDGES                         = ModeFlagSet(1) << 30;
 DrawMode HALFEDGES_COLORED                 = ModeFlagSet(1) << 31;
-DrawMode UNUSED                            = ModeFlagSet(1) << 32;
+DrawMode SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED = ModeFlagSet(1) << 32;
+DrawMode UNUSED                            = ModeFlagSet(1) << 33;
   
 
 //== IMPLEMENTATION ========================================================== 
@@ -685,6 +686,7 @@ void initializeDefaultDrawModes( void )
 
     SOLID_FACES_COLORED_FLAT_SHADED.  setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE,   COLOR_PER_FACE));
     SOLID_FACES_COLORED_SMOOTH_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_VERTEX, COLOR_PER_FACE));
+    SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_VERTEX, COLOR_PER_FACE, TEXCOORD_PER_HALFEDGE));
 
     SOLID_2DTEXTURED_FACE.       setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_NONE, TEXCOORD_PER_HALFEDGE));
     SOLID_2DTEXTURED_FACE_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE, COLOR_NONE, TEXCOORD_PER_HALFEDGE));
@@ -735,6 +737,9 @@ void initializeDefaultDrawModes( void )
 
     registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, flat shaded)", SOLID_FACES_COLORED_FLAT_SHADED ) );
     registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, smooth shaded)", SOLID_FACES_COLORED_SMOOTH_SHADED ) );
+
+    registeredDrawModes_.push_back(DrawModeInternal("Solid (colored per-face, face textured, smooth shaded)", SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED));
+    
 
     registeredDrawModes_.push_back( DrawModeInternal( "Solid (face textured)", SOLID_2DTEXTURED_FACE ) );
     registeredDrawModes_.push_back( DrawModeInternal( "Solid (face textured, shaded)", SOLID_2DTEXTURED_FACE_SHADED ) );

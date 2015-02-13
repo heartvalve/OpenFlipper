@@ -563,6 +563,8 @@ namespace DrawModes {
   extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED_FLAT_SHADED;
   /// draw smooth shaded and colored faces (requires vertex normals and face colors)
   extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED_SMOOTH_SHADED;
+  /// draw per halfedge texture faces modulated with face colors with smooth shading
+  extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED;
   /// draw per halfedge textured faces
   extern ACGDLLEXPORT DrawMode SOLID_2DTEXTURED_FACE;
   /// draw per halfedge textured faces
