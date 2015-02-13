@@ -510,6 +510,7 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
                       DrawModes::SOLID_ENV_MAPPED |
                       DrawModes::SOLID_2DTEXTURED_FACE |
                       DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
+                      DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED |
                       DrawModes::SOLID_SHADER |
                       open_volume_mesh_texture_draw_modes_ ))
    {
@@ -532,6 +533,9 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
         ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
       }
       glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_ );
+
+//       if (_drawmode & DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED)
+//         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
    }
 }
 

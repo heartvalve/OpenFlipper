@@ -161,8 +161,12 @@ availableDrawModes() const {
     if( mesh_.has_face_normals() )
       drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
 
-    if( mesh().has_vertex_normals() )
+    if (mesh().has_vertex_normals()) {
       drawModes |= DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED;
+
+      if (perFaceTextureCoordsAvailable_)
+        drawModes |= DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED;
+    }
   }
   
   if ( mesh_.has_vertex_texcoords2D() ) {
@@ -512,6 +516,39 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
   // Rebind the previous texture
   ACG::GLState::bindTexture(lastTarget,lastBuffer);
+  
+
+  if ((_drawMode & DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED) && mesh_.has_face_colors() && mesh_.has_vertex_normals() && mesh_.has_vertex_texcoords2D() && mesh_.n_faces() > 0)
+  {
+    // face colors, texturing via halfedge texcoords, smooth shading of lighting color
+
+    Vec4f base_color_backup = _state.base_color();
+
+    ACG::GLState::enable(GL_TEXTURE_2D);
+
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::depthRange(0.01, 1.0);
+
+    drawMesh_->setSmoothShading();
+    drawMesh_->usePerVertexNormals();
+    drawMesh_->usePerFaceColors();
+    drawMesh_->usePerHalfedgeTexcoords();
+
+    GLboolean colorMatEnabled = glIsEnabled(GL_COLOR_MATERIAL);
+    if (!colorMatEnabled)
+      ACG::GLState::enable(GL_COLOR_MATERIAL);
+
+    drawMesh_->draw(textureMap_, true);
+    ACG::GLState::depthRange(0.0, 1.0);
+
+    if (!colorMatEnabled)
+      ACG::GLState::disable(GL_COLOR_MATERIAL);
+
+    ACG::GLState::disable(GL_TEXTURE_2D);
+
+    _state.set_base_color(base_color_backup);
+  }
 
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
