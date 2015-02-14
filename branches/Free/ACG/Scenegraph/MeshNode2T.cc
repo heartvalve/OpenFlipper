@@ -539,6 +539,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     if (!colorMatEnabled)
       ACG::GLState::enable(GL_COLOR_MATERIAL);
 
+
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
     drawMesh_->draw(textureMap_, true);
     ACG::GLState::depthRange(0.0, 1.0);
 
