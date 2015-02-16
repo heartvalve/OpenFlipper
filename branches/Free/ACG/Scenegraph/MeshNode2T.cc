@@ -198,6 +198,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
+    
 /*  
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) ||
     ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
@@ -518,7 +519,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   ACG::GLState::bindTexture(lastTarget,lastBuffer);
   
 
-  if ((_drawMode & DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED) && mesh_.has_face_colors() && mesh_.has_vertex_normals() && mesh_.has_vertex_texcoords2D() && mesh_.n_faces() > 0)
+  if ((_drawMode & DrawModes::SOLID_FACES_COLORED_2DTEXTURED_FACE_SMOOTH_SHADED) && mesh_.has_face_colors() && mesh_.has_vertex_normals() && mesh_.n_faces() > 0)
   {
     // face colors, texturing via halfedge texcoords, smooth shading of lighting color
 
@@ -535,18 +536,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->usePerFaceColors();
     drawMesh_->usePerHalfedgeTexcoords();
 
-    GLboolean colorMatEnabled = glIsEnabled(GL_COLOR_MATERIAL);
-    if (!colorMatEnabled)
-      ACG::GLState::enable(GL_COLOR_MATERIAL);
-
-
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
     drawMesh_->draw(textureMap_, true);
     ACG::GLState::depthRange(0.0, 1.0);
-
-    if (!colorMatEnabled)
-      ACG::GLState::disable(GL_COLOR_MATERIAL);
 
     ACG::GLState::disable(GL_TEXTURE_2D);
 
