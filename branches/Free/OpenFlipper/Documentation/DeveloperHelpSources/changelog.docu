@@ -1,12 +1,13 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.2 ( ?/?/? , 20248 )</b>
+- <b>OpenFlipper 2.2 ( ?/?/? , 20266 )</b>
      - <b>ACG</b>
         - MeshCompiler and DrawMesh
 	     - check surface type of meshcompiler input
              - fix solid vertex colored drawmodes 
-             - support face colors + smooth shading refs #2387
-             . fix properties of DrawMode solid faces colored
+             - support face colors + smooth shading refs (#2387)
+             - fix properties of DrawMode solid faces colored
+             - add drawmode face colors + halfedge texcoords + smooth lighting
         - GL
              - implicitly bind vbo on upload()
      - <b>Core</b>
@@ -15,7 +16,7 @@
         - ProcessManager:
              - fix: possible crash with multiple processes (row variable wasn't updated, if the job widget row was changed)
         - QtBaseViewer
-             - assumption that the drawbuffer is ailways GL_BACK might be problematic refs #2361
+             - assumption that the drawbuffer is ailways GL_BACK might be problematic (refs #2361)
      - <b>Interfaces</b>
         - Process Interface
              - Fixed memory leak
@@ -29,15 +30,23 @@
      - <b>Documentation</b>
         - More scripting documentation
         - OpenFlipperThread: Add more information about reimplementing the interface
+        - added some datatype docs
+        - added examples for gathering object ids via script
      - <b>Plugins</b>
          - Backup
              - Added Optionswidget for max backups
          - Decimater
              - Added process interface to decimater and using the observer pattern for progress bar
+             - gui-only slots declared as private slots
          - FileHeightField
              - Import the color of the image that is loaded as a height field as vertex colors
+         - FileOBJ
+             - fix crash when file contains NaN or Inf (closes #2401)
+             - More warnings on defect files
+         - IsotropicRemesher
+             - nogui / batch mode support (closes #2384)
          - Remesher
-             - add nogui support closes #2384
+             - add nogui support (closes #2384)
          - TextureControl
              - image storage checks last modification of a texture and reloads it again if necessary closes #2381
 
