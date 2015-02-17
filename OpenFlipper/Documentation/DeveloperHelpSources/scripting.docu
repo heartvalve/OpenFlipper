@@ -50,12 +50,12 @@
       Also, some functions create an object and return its id.
       Some examples:
       \code
-      //gathering id of an object
-      core.loadObject(QString) //generate an object and returns its Id
-      core.getObjectId(QString) // returns Id by object name
-      datacontrol.getObjectName(int) // returns object name by Id
-      datacontrol.getTargetObjects(DataType) // returns IdList of all target objects
-      primitivesgenerator.addPyramid() //generate an object and returns its Id
+      //Various ways of gathering id and or name of an object
+      var objectId   = core.loadObject(QString)               //generate an object and returns its Id
+      var objectId2  = core.getObjectId(QString)              // returns Id by object name
+      var objectName = datacontrol.getObjectName(int)         // returns object name by Id
+      var objectList = datacontrol.getTargetObjects(DataType) // returns IdList of all target objects
+      var objectId3  = primitivesgenerator.addPyramid()       //generate an object and returns its Id
       ...
       \endcode
       
