@@ -164,6 +164,7 @@ void BackupPlugin::pluginsInitialized() {
 
 void BackupPlugin::slotAllCleared(){
   globalBackup_.clear();
+  updateButtons();
 }
 
 //-----------------------------------------------------------------------------
