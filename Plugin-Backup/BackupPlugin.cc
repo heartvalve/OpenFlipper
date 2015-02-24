@@ -383,7 +383,10 @@ void BackupPlugin::slotUndo(){
     globalBackup_.undo();
 
     for (unsigned int i=0; i < group->objectIDs().size(); i++)
+    {
+      emit restored(group->objectIDs()[i]);
       emit updatedObject(group->objectIDs()[i], UPDATE_ALL);
+    }
 
     updateButtons();
   } else
@@ -411,7 +414,10 @@ void BackupPlugin::slotRedo(){
 
   if ( group != 0)
     for (unsigned int i=0; i < group->objectIDs().size(); i++)
+    {
+      emit restored(group->objectIDs()[i]);
       emit updatedObject(group->objectIDs()[i], UPDATE_ALL);
+    }
 
   updateButtons();
 }
