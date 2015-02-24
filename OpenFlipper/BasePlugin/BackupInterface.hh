@@ -89,7 +89,7 @@ class BackupInterface {
     *
     * Plugins which supports backups can call this function if they want to create group backups.\n
     * The backups specified here will be grouped together. They can only be reverted as one block and
-    * not one by one. they combine backups on multiple objects to a singe backup set.
+    * not one by one. They combine backups on multiple objects to a single backup set.
     *
     * A Backup control Plugin will do the rest.
     *
