@@ -48,6 +48,7 @@
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
+#include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
@@ -58,13 +59,14 @@
 #endif
 
 
-class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface, RPCInterface {
+class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface, RPCInterface, BackupInterface {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(MenuInterface)
   Q_INTERFACES(LoadSaveInterface)
   Q_INTERFACES(RPCInterface)
+  Q_INTERFACES(BackupInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PrimitiveGenerator")
@@ -86,6 +88,9 @@ class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface
 
   // LoadSaveInterface
   void addEmptyObject( DataType _type, int& _id);
+
+  // BackupInterface
+  void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
 
 public:
 
@@ -158,6 +163,8 @@ public slots:
 private:
   int addTriMesh();
   int addPolyMesh();
+  // construct Octahedron in triMesh_
+  void constructOctahedron(const Vector& _position, const double _length);
 
 #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
   int addPolyhedralMesh();

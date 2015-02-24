@@ -247,6 +247,7 @@ int PrimitivesGeneratorPlugin::addPolyhedralMesh() {
         return -1;
     }
 
+
     return objectId;
 }
 #endif
@@ -286,6 +287,7 @@ int PrimitivesGeneratorPlugin::addTetrahedron(const Vector& _position, const dou
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -345,6 +347,7 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube(const Vector& _position,const
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -389,6 +392,7 @@ int PrimitivesGeneratorPlugin::addTetrahedralCuboid(const Vector& _position,
     TetrahedralCuboidGenerator gen(*(object->mesh()), _position, _length, n_x, n_y, n_z);
 
     emit updatedObject(object_id, UPDATE_ALL);
+    emit createBackup(object_id, "Original Object");
 
     object->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
     PluginFunctions::viewAll();
@@ -540,6 +544,7 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(const Vector& _position,c
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -678,6 +683,7 @@ int PrimitivesGeneratorPlugin::addSphere(const Vector& _position, const double _
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -693,7 +699,7 @@ int PrimitivesGeneratorPlugin::addSubdivisionSphere(const Vector& _position, con
 {
 
   // Create the underlying octahedron
-  int newObject = addOctahedron(_position,_radius);
+  int newObject = addTriMesh();
 
   TriMeshObject* object;
   if (!PluginFunctions::getObject(newObject, object)) {
@@ -703,6 +709,7 @@ int PrimitivesGeneratorPlugin::addSubdivisionSphere(const Vector& _position, con
     object->setName( "Sphere " + QString::number(newObject) );
 
     triMesh_ = object->mesh();
+    constructOctahedron(_position, _radius);
 
     // Number of subdivision iterations for the sphere
     const size_t subdivisionSteps = 4;
@@ -725,6 +732,7 @@ int PrimitivesGeneratorPlugin::addSubdivisionSphere(const Vector& _position, con
     triMesh_->update_normals();
 
     emit updatedObject(newObject, UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -779,6 +787,7 @@ int PrimitivesGeneratorPlugin::addPyramid(const Vector& _position,const double _
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -884,6 +893,7 @@ int PrimitivesGeneratorPlugin::addIcosahedron(const Vector& _position,const doub
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -891,6 +901,40 @@ int PrimitivesGeneratorPlugin::addIcosahedron(const Vector& _position,const doub
   }
 
   return -1;
+}
+
+void PrimitivesGeneratorPlugin::constructOctahedron(const Vector& _position, const double _length)
+{
+  triMesh_->clear();
+
+  // Add 6 vertices
+  vhandles_.resize(6);
+
+  const double sqrtLength = sqrt(_length);
+
+  vhandles_[0 ] = triMesh_->add_vertex(TriMesh::Point(-sqrtLength,   0.0,   0.0)+_position);
+  vhandles_[1 ] = triMesh_->add_vertex(TriMesh::Point(  0.0, -sqrtLength,   0.0)+_position);
+  vhandles_[2 ] = triMesh_->add_vertex(TriMesh::Point( sqrtLength,   0.0,   0.0)+_position);
+  vhandles_[3 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,  sqrtLength,   0.0)+_position);
+
+  vhandles_[4 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0,  sqrtLength)+_position);
+  vhandles_[5 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0, -sqrtLength)+_position);
+
+
+  // Add 8 faces
+  add_face(0,1,4);
+  add_face(1,2,4);
+
+  add_face(2,3,4);
+  add_face(0,4,3);
+
+  add_face(5,1,0);
+  add_face(5,2,1);
+
+  add_face(5,3,2);
+  add_face(5,0,3);
+
+  triMesh_->update_normals();
 }
 
 int PrimitivesGeneratorPlugin::addOctahedron(const Vector& _position,const double _length) {
@@ -906,38 +950,10 @@ int PrimitivesGeneratorPlugin::addOctahedron(const Vector& _position,const doubl
 
     triMesh_ =  object->mesh();
 
-    triMesh_->clear();
-
-    // Add 6 vertices
-    vhandles_.resize(6);
-
-    const double sqrtLength = sqrt(_length);
-
-    vhandles_[0 ] = triMesh_->add_vertex(TriMesh::Point(-sqrtLength,   0.0,   0.0)+_position);
-    vhandles_[1 ] = triMesh_->add_vertex(TriMesh::Point(  0.0, -sqrtLength,   0.0)+_position);
-    vhandles_[2 ] = triMesh_->add_vertex(TriMesh::Point( sqrtLength,   0.0,   0.0)+_position);
-    vhandles_[3 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,  sqrtLength,   0.0)+_position);
-
-    vhandles_[4 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0,  sqrtLength)+_position);
-    vhandles_[5 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0, -sqrtLength)+_position);
-
-
-    // Add 8 faces
-    add_face(0,1,4);
-    add_face(1,2,4);
-
-    add_face(2,3,4);
-    add_face(0,4,3);
-
-    add_face(5,1,0);
-    add_face(5,2,1);
-
-    add_face(5,3,2);
-    add_face(5,0,3);
-
-    triMesh_->update_normals();
+    constructOctahedron(_position, _length);
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -1012,6 +1028,7 @@ int PrimitivesGeneratorPlugin::addDodecahedron(const Vector& _position,const dou
     polyMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+    emit createBackup(newObject, "Original Object");
 
     PluginFunctions::viewAll();
 
@@ -1050,6 +1067,8 @@ int PrimitivesGeneratorPlugin::addRandomBSplineSurface(const Vector& _position, 
     surf->createKnots();
 
     emit updatedObject(id, UPDATE_ALL);
+    emit createBackup(id, "Original Object");
+
     PluginFunctions::viewAll();
 
     return id;
