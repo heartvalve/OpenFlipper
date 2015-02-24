@@ -1,5 +1,6 @@
 cppcheck  --xml  \
           --verbose \
+          --xml-version=2 \
           --quiet \
           -i libs_required/OpenMesh/src/OpenMesh \
           -i libs_required/OpenMesh/src/OpenVolumeMesh \
