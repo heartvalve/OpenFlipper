@@ -126,6 +126,12 @@ if (WIN32)
                    -DUSEACG )
 endif ()
 
+
+set ( CATCH_SIGSEGV True CACHE BOOL "Whether SIGSEGV should be catched. Set this to false in order to get a core dump with usable call stack. Set to true in order to get a stack trace at the time of crash." )
+if (NOT CATCH_SIGSEGV)
+    add_definitions( -DNO_CATCH_SIGSEGV )
+endif()
+
 # ====================================================================================
 # Get list of  ll plugin dependencies and handle special ones
 # where we need to link the library directly into the core to prevent 
