@@ -369,11 +369,10 @@ int main(int argc, char **argv)
 
   CSimpleOpt args(argc, argv, g_rgOptions);
 
-// Only Install signal handler if not running in debug version, otherwise gdb will get confused
-// #ifndef DEBUG
+#ifndef NO_CATCH_SIGSEGV
   // Set a handler for segfaults
   std::signal(SIGSEGV, segfaultHandling);
-// #endif
+#endif
 
   OpenFlipper::Options::windowTitle(TOSTRING(PRODUCT_STRING)" v" + OpenFlipper::Options::coreVersion());
 
