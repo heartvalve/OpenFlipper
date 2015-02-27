@@ -525,6 +525,8 @@ void MeshCompiler::fixWeldMap()
     {
       const int weldMapOffset = getInputFaceOffset(i) + k;
 
+      // if a (face,corner) pair is mapped to an invalid value, make it valid by mapping to itself
+      // invalid value is caused by isolated vertices
       if (vertexWeldMapFace_[weldMapOffset] < 0)
       {
         vertexWeldMapFace_[weldMapOffset] = i;
@@ -711,21 +713,30 @@ void MeshCompiler::splitVertices()
       IsoFix[i] = fixIndex;
     }
 
+    // IsoFix[] array contains offsets <= 0 for each position.
+    // It maps from each position id to the vbo index, which does not contain any isolates.
+    // Isolates may be appended later to the vbo if the user wants that.
+    
     numDrawVerts_ = 0;
 
-    // apply index fixing table
+    // apply index fixing table to current vertex ids
     for (int i = 0; i < numFaces_; ++i)
     {
       const int fsize = getFaceSize(i);
       for (int k = 0; k < fsize; ++k)
       {
-        // get vertex position id
+        // get vertex position id before splitting
         int vertex[16];
         getInputFaceVertex_Welded(i, k, vertex);
 
-        // fix interleaved index
+        // get interleaved vertex id for (i, k) after splitting
         int idx = getInputIndexSplit(i, k);
-        idx += IsoFix[vertex[0]];
+
+        // vertex[0] is the position index of (i, k)
+        // IsoFix[vertex[0]] is the offset that has to be applies to the interleaved vertex id
+        idx += IsoFix[vertex[0]];   
+
+        // store fixed vertex id
         setInputIndexSplit(i, k, idx);
       }
     }
@@ -746,16 +757,20 @@ void MeshCompiler::forceUnsharedFaceVertex()
   //  that each triangle makes use of the face-specific vertex
 
 
+  // sharedVertex[i] = 1 iff the vertex id of corner i is shared with any neighboring face
+  // sharedVertex is computed on-the-fly for each face
   std::vector<int> sharedVertices;
   sharedVertices.resize(maxFaceSize_);
 
+  // temporary copy of the vertex ids of a face
   std::vector<int> tmpFaceVerts; // used for face rotation-swap
   tmpFaceVerts.resize(maxFaceSize_);
 
+  // number of ccw index rotations of the face to make the first corner unshared
   faceRotCount_.resize(numFaces_, 0);
 
   int numInitialVerts = numDrawVerts_;
-  char* VertexUsed = new char[numDrawVerts_];
+  char* VertexUsed = new char[numDrawVerts_]; // marks vertices which are not shared with any neighboring face
   memset(VertexUsed, 0, sizeof(char) * numDrawVerts_);
 
   for (int faceID = 0; faceID < numFaces_; ++faceID)
@@ -766,6 +781,7 @@ void MeshCompiler::forceUnsharedFaceVertex()
     memset(&sharedVertices[0], 0, sizeof(int) * maxFaceSize_);
     int numShared = 0;
 
+    // find shared list (corners of this face, that are shared with the neighbors)
     for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
     {
       if (sharedVertices[v0])
@@ -946,9 +962,11 @@ int MeshCompiler::getInputIndexOffset( const int _face, const int _corner, const
   assert(_face >= 0);
   assert(_face < numFaces_);
 
+  // baseIdx: offset to first index of the (face, corner) pair
   const int baseIdx = int(faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face]);
   const int fsize = getFaceSize(_face);
 
+  // rotate the vertices of the face if necessary (if constraint: first vertex of each face is exclusive to that face)
   const int rotCount = faceRotCount_.empty() && _rotation ? 0 : faceRotCount_[_face];
 
 
@@ -1756,7 +1774,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
     int numErrors = 0;
 
-    // check draw_tri <-> face
+    // check draw_tri <-> face   (triangulation)
     if (file.is_open())
       file <<  "checking draw_tri <-> face mapping ..\n";
 
@@ -1767,8 +1785,10 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
       for (int k = 0; k < numTrisOfFace; ++k)
       {
+        // triangle id of the k'th triangle of face
         int tri = mapToDrawTriID(face, k, 0);
 
+        // the corresponding face of that triangle (inverse map)
         int dbg_face = mapToOriginalFaceID(tri);
         if (face != dbg_face)
         {
@@ -1838,6 +1858,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
     for (int vertex = 0; vertex < getNumVertices(); ++vertex)
     {
+      // map from vbo vertex id back to (face, corner)
       int face = 0, corner = 0;
       int posID = mapToOriginalVertexID(vertex, face, corner);
 
@@ -1846,6 +1867,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
       memset(v0, 0, decl_.getVertexStride());
       memset(v1, 0, decl_.getVertexStride());
+
+      // compare vbo data at [vertex] with the input data at (face, corner)
 
       // get output vertex
       getVertex(vertex, v0);
@@ -1891,6 +1914,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
       if (file.is_open())
         file <<  "checking unshared per face vertices ..\n";
 
+      // count number of references for each vertex
       std::vector< std::map<int, int> > VertexRefs;
       VertexRefs.resize(getNumVertices());
 
@@ -1910,6 +1934,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
       }
 
+      // the first vertex of each face should not be referenced by more than one face
 
       for (int i = 0; i < getNumVertices(); ++i)
       {
@@ -1950,6 +1975,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
           int faceID = mapToOriginalFaceID(sub->startIndex/3 + k);
           int grID = getFaceGroup(faceID);
 
+          // input face group should match the subsets
+
           if (grID != sub->id)
           {
             if (file.is_open())
@@ -1979,6 +2006,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
 void MeshCompiler::dbgdump(const char* _filename) const
 {
+  // dump all the internal arrays to text
+
   std::ofstream file;
   file.open(_filename);
 
@@ -2203,6 +2232,8 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
 
 void MeshCompiler::dbgdumpObj(const char* _filename) const
 {
+  // dump resulting mesh to obj file
+
   std::ofstream file;
   file.open(_filename);
 
@@ -2254,6 +2285,8 @@ void MeshCompiler::dbgdumpObj(const char* _filename) const
 
 void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
 {
+  // dump input mesh to obj file
+
   const int nVerts = (inputIDPos_ >= 0) ? input_[inputIDPos_].count : 0;
 //  const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
 //  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
@@ -2339,6 +2372,8 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
 
 void MeshCompiler::dbgdumpInputBin( const char* _filename, bool _seperateFiles ) const
 {
+  // dump input mesh to custom binary format (for debugging/profiling purposes)
+
   const int nVerts = (inputIDPos_ >= 0) ? input_[inputIDPos_].count : 0;
   const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
   const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
@@ -2673,6 +2708,8 @@ int MeshCompiler::getIndex( int _i ) const
 
 void MeshCompiler::createVertexMap(bool _keepIsolatedVerts)
 {
+  // vertexMap: vertex id -> (face, corner)
+
   // the current vertex buffer does not contain any isolated vertices
   // -> add them to end of buffer if required
   const int offsetIso = numDrawVerts_;
@@ -2688,6 +2725,7 @@ void MeshCompiler::createVertexMap(bool _keepIsolatedVerts)
   {
     for (int k = 0; k < getFaceSize(i); ++k)
     {
+      // map from (face, corner) -> vertex id is given by getInputIndexSplit(), so create the inverse
       int vertexID = getInputIndexSplit(i, k);
       vertexMapFace_[vertexID] = i;
       vertexMapCorner_[vertexID] = (unsigned char)k;
@@ -2747,6 +2785,8 @@ void MeshCompiler::createFaceMap()
   // -------------------------------
   // create face -> tri map
 
+  // offset table is necessary for variable polygon face sizes, because the map is stored in a single array
+
   // create offset table
   if (!constantFaceSize_)
   {
@@ -2770,6 +2810,7 @@ void MeshCompiler::createFaceMap()
 
   for (int i = 0; i < numTris_; ++i)
   {
+    // face -> tri map is the inverse of tri -> face map, which is already given by mapToOriginalFaceID()
     int faceID = mapToOriginalFaceID(i);
 
     // offset into lookup table
@@ -2791,6 +2832,8 @@ void MeshCompiler::createFaceMap()
 
 void MeshCompiler::dbgdumpAdjList( const char* _filename ) const
 {
+  // dump adjacency list to text file: vertex -> adjacent faces
+
   FILE* file = 0;
   
   file = fopen(_filename, "wt");
@@ -2828,6 +2871,9 @@ void MeshCompiler::setFaceGroup( int _i, short _groupID )
 
 void MeshCompiler::getVertexBuffer( void* _dst, const int _offset /*= 0*/, const int _range /*= -1*/ )
 {
+  // the final vertex buffer is not explicitly stored (save memory)
+  // so it is created by reading the input data and placing it at the right position in the vbo
+
   int batchSize = _range;
 
   // clamp batch size
@@ -2844,6 +2890,7 @@ void MeshCompiler::getVertexBuffer( void* _dst, const int _offset /*= 0*/, const
 
 struct MeshCompiler_EdgeTriMapKey
 {
+  // ordered vertex ids of the edge:  e0 < e1
   int e0, e1;
 
   MeshCompiler_EdgeTriMapKey(int a, int b)
@@ -3207,6 +3254,7 @@ void MeshCompiler::getIndexAdjBuffer_MT(void* _dst, const int _borderIndex /* = 
 
 void MeshCompiler::getIndexAdjBuffer_BruteForce( void* _dst, const int _borderIndex /*= -1*/ )
 {
+  // simple, but slow algorithm for creating a reference and testing the improved implementations (getIndexAdjBuffer and getIndexAdjBuffer_MT)
 
   int* idst = (int*)_dst;
 
@@ -3459,6 +3507,8 @@ size_t MeshCompiler::getMemoryUsage(bool _printConsole) const
 
 std::string MeshCompiler::checkInputData() const
 {
+  // find common errors and give a short description on what needs to be fixed for the given input
+
   if (!faceInput_)
     return "Error: no face input data present\n";
 
@@ -3843,6 +3893,8 @@ int MeshCompilerFaceInput::getSingleFaceAttr( const int _faceID, const int _face
 
 bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, const VertexDeclaration* _decl )
 {
+  // compare vertex data of two vertices
+
   assert(_decl);
   assert(v0);
   assert(v1);
@@ -3855,10 +3907,11 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
   {
     const VertexElement* el = _decl->getElement(i);
 
-
+    // pointer to element data
     const void* el_0 = static_cast<const char*>(v0) + (size_t)el->pointer_;
     const void* el_1 = static_cast<const char*>(v1) + (size_t)el->pointer_;
 
+    // interpret element based on declaration
     switch ( el->type_ )
     {
     case GL_DOUBLE:
