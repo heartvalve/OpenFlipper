@@ -271,6 +271,14 @@ void MeshCompiler::setTexCoords( int _num, const void* _data, int _stride, bool 
 
 void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _stride, bool _internalCopy /*= false*/, GLuint _fmt, int _elementSize)
 {
+  // sets vertex data for each attribute individually
+  // Example:
+  // Format: float3 pos, float2 uv, float3 normal has 3 attribute vectors, that store all positions, texcoords etc. of the mesh
+  // - positions: float3[n1]  n1: number of positions
+  // - texcoords: float2[n2]  n2: number of texcoords
+  // - normals: float3[n3]    n3: number of normals
+  //  the vector sizes n1, n2, n3 do not have to be equal!
+
   if (_attrIdx < 0)
     return;
 
@@ -280,8 +288,11 @@ void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _
 
   inbuf->count = _num;
 
+  // size in bytes of one vertex element (eg. 12 for float3 element)
   int size = inbuf->attrSize = (int)VertexDeclaration::getElementSize(decl_.getElement(_attrIdx));
 
+
+  // make an internal copy of the input if the user can not guarantee, that the data address is permanently valid
   if (_internalCopy)
   {
     delete [] inbuf->internalBuf;
@@ -303,6 +314,7 @@ void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _
   }
   else
   {
+    // store data address only without making a copy
     inbuf->data = (const char*)_data;
     inbuf->stride = _stride ? _stride : size;
 
@@ -579,10 +591,13 @@ void MeshCompiler::splitVertices()
 
   const int numPositions = input_[inputIDPos_].count;
 
-  // estimate number of splits
+  // estimate number of splits to avoid resizing too often
   int estimatedSplitCount = 0;
   int numDifferentInputCounts = 0;
 
+  // simple heuristic:
+  // if the number of elements of an arbitrary attribute is larger than the number of positions, add the difference to the number of splits
+  //  the actual number of splits may be larger, in which case the array has to be resized.
   for (int i = 0; i < numAttributes_; ++i)
   {
     if (i != inputIDPos_)
@@ -639,6 +654,7 @@ void MeshCompiler::splitVertices()
 
 //  std::cout << "estimated split count: " << estimatedSplitCount << std::endl;
 
+  // split vertices such that each index combination of a face corner (i_pos, i_uv, i_attr..) has a unique vertex id and the number of vertices is minimal
   delete splitter_;
   splitter_ = new VertexSplitter(decl_.getNumElements(),
                                  numPositions,
@@ -655,9 +671,11 @@ void MeshCompiler::splitVertices()
     const int fsize = getFaceSize(i);
     for (int k = 0; k < fsize; ++k)
     {
-      int vertex[16];
+      // indices of the face vertex into the attribute vectors
+      int vertex[16];  // {i_pos, i_attr1, i_attr2 ..}
 
 
+      // get indices of a face corner after welding
       getInputFaceVertex_Welded(i, k, vertex);
 
       // split vertices by index data only
