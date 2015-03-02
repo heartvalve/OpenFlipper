@@ -317,7 +317,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   std::map<typename MeshT::HalfedgeHandle, int> vtMap;
 
   // If mesh has halfedge tex coords, write them out instead of vertex texcoords
-  if(_mesh.has_halfedge_texcoords2D()) {
+  if(optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
       int count = 1;
       for (f_it = _mesh.faces_begin(); f_it != _mesh.faces_end(); ++f_it) {
           for(fh_it=_mesh.fh_iter(*f_it); fh_it.is_valid(); ++fh_it) {
@@ -363,17 +363,19 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
           // Write separator
           _out << "/" ;
 
-          // Write vertex texture coordinate index
-          if ( optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
-            // Refer to halfedge texture coordinates
-            typename std::map<typename MeshT::HalfedgeHandle, int>::iterator it = vtMap.find(*fh_it);
-            if(it != vtMap.end())
-              _out  << (*it).second;
-          } else if (optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D()) {
-            // Refer to vertex texture coordinates
-            typename std::map<typename MeshT::VertexHandle, int>::iterator it = vtMapV.find(_mesh.to_vertex_handle(*fh_it));
-            if(it != vtMapV.end())
-              _out  << (*it).second;
+          if ( optionVertexTexCoords ) {
+            // Write vertex texture coordinate index
+            if ( optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
+              // Refer to halfedge texture coordinates
+              typename std::map<typename MeshT::HalfedgeHandle, int>::iterator it = vtMap.find(*fh_it);
+              if(it != vtMap.end())
+                _out  << (*it).second;
+            } else if (optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D()) {
+              // Refer to vertex texture coordinates
+              typename std::map<typename MeshT::VertexHandle, int>::iterator it = vtMapV.find(_mesh.to_vertex_handle(*fh_it));
+              if(it != vtMapV.end())
+                _out  << (*it).second;
+            }
           }
 
           // Write vertex normal index
