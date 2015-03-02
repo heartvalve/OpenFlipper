@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.2 ( ?/?/? , 20266 )</b>
+- <b>OpenFlipper 2.2 ( ?/?/? , 20293 )</b>
      - <b>ACG</b>
         - MeshCompiler and DrawMesh
 	     - check surface type of meshcompiler input
@@ -23,6 +23,8 @@
              - Process Manager: removed redudant code/speed up
              - OpenFlipperThread: added jobid getter
      - <b>UI</b>
+        - AboutWidget
+             - set OpenFlipper System Information Tab read-only
         - Optionswidget
              - add option for max backups
      - <b>License Manager</b>
@@ -35,6 +37,9 @@
      - <b>Plugins</b>
          - Backup
              - Added Optionswidget for max backups
+             - Added missing restore signal for ui buttons (refs #2407)
+             - fixes problem with textures after undo operation (refs #2407)
+             - update re/undo buttons after clear all
          - Decimater
              - Added process interface to decimater and using the observer pattern for progress bar
              - gui-only slots declared as private slots
@@ -43,12 +48,21 @@
          - FileOBJ
              - fix crash when file contains NaN or Inf (closes #2401)
              - More warnings on defect files
+             - fix crash when file contains degenerated faces (refs #2382)
+             - Fix: Dont write texture coordinates if writing them is disabled
+         - FileOM
+             - Respect save settings dialog for polymeshes
+             - release texture coordinate properties if not found in file
          - IsotropicRemesher
              - nogui / batch mode support (closes #2384)
+         - PrimitiveGenerator
+             - add initial backups for each generated primitive (refs #2407)
          - Remesher
              - add nogui support (closes #2384)
          - TextureControl
              - image storage checks last modification of a texture and reloads it again if necessary closes #2381
+     - <b>Build System</b>
+         - Catching of SIGSEGV can now be controlled through CMake flag.
 
 - <b>OpenFlipper 2.1 ( 2015/01/21 , 20181 )</b>
      - <b>General</b>
