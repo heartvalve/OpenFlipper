@@ -120,9 +120,10 @@ The mouse interface can be used to receive mouse events which occur in the glVie
 There are 4 main viewer modes:
 <ul>
 <li> <b>Move Mode</b> events are never passed to one of the plugins and is only used for scene navigation
-inside the viewers.
-<li> <b>Picking Mode</b> events where passed through the MouseInterface::slotMouseEvent() and MouseInterface::slotMouseWheelEvent().
-<li> <b>Light Mode</b> events where passed through the MouseInterface::slotMouseEventLight()
+inside the viewers.</li>
+<li> <b>Picking Mode</b> events where passed through the MouseInterface::slotMouseEvent() and MouseInterface::slotMouseWheelEvent() to the plugins. This is usually the mode, that plugins use to implement mouse interaction.</li>
+<li> <b>Light Mode</b> events where passed through the MouseInterface::slotMouseEventLight(). Plugins modifying light sources use that mode to get mouse events. </li>
+<li> <b>Info Mode</b> events are passed through the Information interface \ref informationInterfacePage. This mode is used to provide information about clicked objects only.</li>
 </ul>
 
 You can add handlers for these mouse events in your plugin. Remember that all plugins receive these signals.\n
