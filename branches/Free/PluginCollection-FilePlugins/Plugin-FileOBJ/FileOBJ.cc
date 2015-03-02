@@ -70,6 +70,32 @@
 #define TYPEPOLY       2
 #define TYPETRIANGLE   3
 
+//-----------------------------------------------------------------------------
+// help functions
+namespace{
+  template<typename T>
+  class HasSeen : public std::unary_function <T, bool>
+  {
+  public:
+    HasSeen () : seen_ () { }
+
+    bool operator ()(const T& i) const
+    {
+      return (!seen_.insert(i).second);
+    }
+
+  private:
+    mutable std::set<T> seen_;
+  };
+}
+
+void remove_duplicated_vertices(VHandles& _indices)
+{
+  _indices.erase(std::remove_if(_indices.begin(),_indices.end(),HasSeen<int>()),_indices.end());
+}
+
+//-----------------------------------------------------------------------------
+
 /// Constructor
 FileOBJPlugin::FileOBJPlugin()
 : loadOptions_(0),
@@ -917,8 +943,11 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         nV++;
       }
 
+      // remove vertices which can lead to degenerated faces
+      remove_duplicated_vertices(vhandles);
 
-      if( !vhandles.empty() ){
+      // from spec: A minimum of three vertices are required.
+      if( vhandles.size() > 2 ){
 
         if ( !face_texcoords.empty() )
           //if we have texCoords add face+texCoords
