@@ -398,6 +398,17 @@ int FileOMPlugin::loadPolyMeshObject(QString _filename){
             
         }
         
+
+        if ( ! (opt &  OpenMesh::IO::Options::VertexTexCoord) ) {
+          object->mesh()->release_vertex_texcoords2D();
+        }
+
+
+        if ( ! (opt &  OpenMesh::IO::Options::FaceTexCoord) ) {
+          object->mesh()->release_halfedge_texcoords2D();
+        }
+
+
         object->mesh()->update_normals();
         
         object->update();
@@ -455,13 +466,43 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
     std::string filename = std::string( _filename.toUtf8() );
     
     if ( object->dataType( DATA_POLY_MESH ) ) {
+
+      PolyMeshObject* polObj = dynamic_cast<PolyMeshObject* >( object );
+
+      OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
+
+      if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
+
+        PolyMesh* mesh = polObj->mesh();
+
+          if (saveBinary_->isChecked())
+              opt += OpenMesh::IO::Options::Binary;
+
+          if (saveVertexNormal_->isChecked() && mesh->has_vertex_normals())
+              opt += OpenMesh::IO::Options::VertexNormal;
+
+          if (saveVertexTexCoord_->isChecked() && (mesh->has_vertex_texcoords1D() || mesh->has_vertex_texcoords2D() || mesh->has_vertex_texcoords3D())) {
+              std::cerr << "File OM texture write" << std::endl;
+              opt += OpenMesh::IO::Options::VertexTexCoord;
+          }
+
+          if (saveVertexColor_->isChecked() && mesh->has_vertex_colors())
+              opt += OpenMesh::IO::Options::VertexColor;
+
+          if (saveFaceColor_->isChecked() && mesh->has_face_colors())
+              opt += OpenMesh::IO::Options::FaceColor;
+
+          if (saveFaceNormal_->isChecked() && mesh->has_face_normals())
+              opt += OpenMesh::IO::Options::FaceNormal;
+
+      }
         
         object->setFromFileName(_filename);
         object->setName(object->filename());
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
-        if (OpenMesh::IO::write_mesh(*polyObj->mesh(), filename.c_str()) ){
+        if (OpenMesh::IO::write_mesh(*polyObj->mesh(), filename.c_str(),opt) ){
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             return true;
         }else{
@@ -487,8 +528,10 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
             if (saveVertexNormal_->isChecked() && mesh->has_vertex_normals())
                 opt += OpenMesh::IO::Options::VertexNormal;
             
-            if (saveVertexTexCoord_->isChecked() && (mesh->has_vertex_texcoords1D() || mesh->has_vertex_texcoords2D() || mesh->has_vertex_texcoords3D()))
+            if (saveVertexTexCoord_->isChecked() && (mesh->has_vertex_texcoords1D() || mesh->has_vertex_texcoords2D() || mesh->has_vertex_texcoords3D())) {
+                std::cerr << "File OM texture write" << std::endl;
                 opt += OpenMesh::IO::Options::VertexTexCoord;
+            }
             
             if (saveVertexColor_->isChecked() && mesh->has_vertex_colors())
                 opt += OpenMesh::IO::Options::VertexColor;
