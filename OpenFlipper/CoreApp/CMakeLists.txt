@@ -132,6 +132,16 @@ if (NOT CATCH_SIGSEGV)
     add_definitions( -DNO_CATCH_SIGSEGV )
 endif()
 
+if (WIN32)
+  set ( WIN_GET_DEBUG_CONSOLE False CACHE BOOL "Whether a debug console should be visible on windows" )
+  if (WIN_GET_DEBUG_CONSOLE)
+      add_definitions( -DWIN_GET_DEBUG_CONSOLE )
+  endif()
+endif ()
+
+
+
+
 # ====================================================================================
 # Get list of  ll plugin dependencies and handle special ones
 # where we need to link the library directly into the core to prevent 

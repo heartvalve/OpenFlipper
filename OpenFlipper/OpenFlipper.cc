@@ -69,12 +69,6 @@
 #include <execinfo.h>
 #endif
 
-#ifdef WIN32
-#ifndef NDEBUG
-#define WIN_GET_DEBUG_CONSOLE
-#endif
-#endif
-
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
