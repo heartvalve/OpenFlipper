@@ -88,6 +88,12 @@ endif ()
 # using the internal openmesh delivered by the svn repo (default) or use some external installation
 set (USE_INTERNAL_OPENMESH ON CACHE BOOL "Use and build internal version of OpenMesh found in libs_required")
 
+# enable/disable openmesh warnings
+set(NO_DECREMENT_DEPRECATED_WARNINGS OFF CACHE BOOL "Disables all deprecated warnings warning about decrement operations on normal circulators.")
+if(NO_DECREMENT_DEPRECATED_WARNINGS)
+  add_definitions( -DNO_DECREMENT_DEPRECATED_WARNINGS )
+endif()
+
 # OpenMesh is a dependent project (in libs_required) so no finder is needed.
 if (NOT USE_INTERNAL_OPENMESH)
   find_package (OpenMesh REQUIRED)
