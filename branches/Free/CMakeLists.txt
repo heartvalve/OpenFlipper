@@ -101,7 +101,7 @@ endif()
 
 find_package (OpenVolumeMesh)
 if (NOT OPENVOLUMEMESH_FOUND)
-    message (FATAL_ERROR "OpenVolumeMesh not found!")
+    message (WARNING "OpenVolumeMesh not found, proceeding without it!")
 endif ()
 
 
