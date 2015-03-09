@@ -223,6 +223,8 @@ void BackupPlugin::slotKeyEvent( QKeyEvent* _event ){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::objectDeleted(int _objectid) {
+  globalBackup_.eraseBackups(_objectid);
+  updateButtons();
 }
 
 //-----------------------------------------------------------------------------
