@@ -64,6 +64,9 @@ class GroupData : public BackupData
     /// remove object from data
     void updateBackupData(int _objectid, bool _isUndo);
     
+    /// erase all backups containing given id
+    void eraseBackups(int _objectid);
+
     /// perform an undo if possible
     void undo();
     /// perform an redo if possible

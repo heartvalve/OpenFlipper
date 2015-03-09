@@ -3,6 +3,8 @@
 #include "GroupBackup.hh"
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 
 GroupData::GroupData() : BackupData(0)
@@ -242,6 +244,48 @@ void GroupData::redo(int _objectid){
         std::cerr << "Cannot redo operation. This backup involves multiple objects!" << std::endl;
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+struct ContainsId_deleter
+{
+
+  ContainsId_deleter(int _id):id_(_id){}
+  bool operator()(const BaseBackup* _b)
+  {
+    if (dynamic_cast<const GroupBackup* >(_b) && dynamic_cast<const GroupBackup* >(_b)->contains(id_))
+    {
+      delete _b;
+      return true;
+    }
+    return false;
+  }
+private:
+  int id_;
+};
+
+void GroupData::eraseBackups(int _objectid)
+{
+  // remove all backups in undo
+  undoStates_.erase(std::remove_if(undoStates_.begin(),undoStates_.end(),ContainsId_deleter(_objectid)), undoStates_.end());
+  redoStates_.erase(std::remove_if(redoStates_.begin(),redoStates_.end(),ContainsId_deleter(_objectid)), redoStates_.end());
+
+  //reset current state
+  if (ContainsId_deleter(_objectid)(currentState_))
+  {
+    currentState_ = 0;
+    if (!undoStates_.empty())
+    {
+      currentState_ = undoStates_.back();
+      undoStates_.pop_back();
+    }else if (!redoStates_.empty())
+    {
+      currentState_ = redoStates_.back();
+      redoStates_.pop_back();
+    }
+  }
+
 }
 
 //-----------------------------------------------------------------------------
