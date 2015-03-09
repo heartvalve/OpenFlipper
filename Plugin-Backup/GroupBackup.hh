@@ -57,9 +57,9 @@ class GroupBackup : public BaseBackup
 
   public:
     void apply();
-    IdList objectIDs();
+    const IdList& objectIDs() const;
 
-    bool contains( int _objectid );
+    bool contains( int _objectid ) const;
 
   private:
     IdList objectIDs_;
