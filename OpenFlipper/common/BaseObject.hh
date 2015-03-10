@@ -70,6 +70,10 @@
 #include <vector>
 #include <QMap>
 #include "perObjectData.hh"
+#if QT_VERSION >= 0x050000
+#include <QJsonDocument>
+#include <QJsonObject>
+#endif
 
 //== TYPEDEFS =================================================================
 
@@ -575,10 +579,31 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
         result.append(QString("BEGIN Comments for object \"%1\"").arg(name()));
 
+        /*
+         * Compose JSON parsable object.
+         */
+#if QT_VERSION >= 0x050000
+        QJsonObject comment_obj;
+        for (QMap<QString, QString>::const_iterator it = commentsByKey_.begin(), it_end = commentsByKey_.end();
+                it != it_end; ++it) {
+
+            QJsonParseError json_error;
+            QString test_json_str = QString::fromUtf8("{\"test\": %1}").arg(it.value());
+            QByteArray test_json_ba = test_json_str.toUtf8();
+            QJsonDocument test_json = QJsonDocument::fromJson(test_json_ba, &json_error);
+            if (json_error.error != QJsonParseError::NoError) {
+                comment_obj[it.key()] = it.value();
+            } else {
+                comment_obj[it.key()] = test_json.object().value("test");
+            }
+        }
+        result.append(QString::fromUtf8(QJsonDocument(comment_obj).toJson(QJsonDocument::Indented)));
+#else
         for (QMap<QString, QString>::const_iterator it = commentsByKey_.begin(), it_end = commentsByKey_.end();
                 it != it_end; ++it) {
             result.append(QString("%1: %2").arg(it.key(), it.value()));
         }
+#endif
 
         result.append(QString("END Comments for object \"%1\"\n").arg(name()));
 

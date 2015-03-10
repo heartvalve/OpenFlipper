@@ -670,6 +670,6 @@ QString getSaveFileName(const QString &configProperty,
                         QString * selectedFilter = 0, QFileDialog::Options options = 0,
                         const QString & defaultSuffix = QString() );
 
-}
+} /* namespace PluginFunctions */
 
 #endif //PLUGINFUNCTIONS_HH

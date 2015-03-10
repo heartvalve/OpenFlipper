@@ -64,6 +64,8 @@
 
 #include <OpenFlipper/common/RendererInfo.hh>
 
+#include <stdexcept>
+
 //== IMPLEMENTATION ==========================================================
 
 //========================================================================================
@@ -446,6 +448,71 @@ void Core::slotGetCurrentRenderer(unsigned int _viewer, QString& _rendererName) 
   _rendererName = renderManager().active(_viewer)->name;
 }
 
+void Core::slotMetadataDeserialized(
+        const QVector<QPair<QString, QString> > &data) {
 
+    QString obj_metadata;
+    for (QVector<QPair<QString, QString> >::const_iterator
+            it = data.begin(); it != data.end(); ++it) {
+        if (it->first == "Mesh Comments")
+            obj_metadata = it->second;
+
+        emit genericMetadataDeserialized(it->first, it->second);
+    }
+
+    /*
+     * Now handle object metadata.
+     */
+    QRegExp re_begin("BEGIN Comments for object \"([^\\n]*)\"");
+    QRegExp re_end("\\nEND Comments for object \"([^\\n]*)\"");
+    enum STATE {
+        STATE_SEARCH_BEGIN,
+        STATE_CONSUME_INNER,
+        STATE_EOS,
+    };
+
+    int cursor = 0;
+    QString current_object_name;
+    for (STATE state = STATE_SEARCH_BEGIN; state != STATE_EOS; ) {
+        switch (state) {
+            case STATE_SEARCH_BEGIN:
+                cursor = re_begin.indexIn(obj_metadata, cursor);
+                if (cursor == -1) {
+                    state = STATE_EOS;
+                    break;
+                }
+                current_object_name = re_begin.cap(1);
+                cursor += re_begin.matchedLength();
+                state = STATE_CONSUME_INNER;
+                break;
+            case STATE_CONSUME_INNER:
+            {
+                int next = re_end.indexIn(obj_metadata, cursor);
+                if (next == -1) {
+                    state = STATE_EOS;
+                    break;
+                }
+
+                const QStringRef value = obj_metadata.midRef(cursor, next - cursor);
+
+                emit objectMetadataDeserialized(current_object_name, value.toString());
+#if QT_VERSION >= 0x050000
+                QJsonParseError json_error;
+                QJsonDocument json_doc =
+                        QJsonDocument::fromJson(value.toUtf8(), &json_error);
+                if (json_error.error == QJsonParseError::NoError) {
+                    emit objectMetadataDeserializedJson(
+                            current_object_name, json_doc);
+                }
+#endif
+                cursor = next + re_end.matchedLength();
+                state = STATE_SEARCH_BEGIN;
+                break;
+            }
+            default:
+                throw std::logic_error("metadataDeserialized(): Invalid state.");
+        }
+    }
+}
 
 //=============================================================================

@@ -94,6 +94,7 @@
 #include "OpenFlipper/BasePlugin/SelectionInterface.hh"
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/PluginConnectionInterface.hh"
+#include "OpenFlipper/BasePlugin/MetadataInterface.hh"
 
 #include "OpenFlipper/common/RendererInfo.hh"
 
@@ -2252,6 +2253,28 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     if ( !LoadSavePlugin && checkSignal(plugin,"emptyObjectAdded(int)" ) )
       connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
               this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
+  }
+
+  MetadataInterface* metadataPlugin = qobject_cast< MetadataInterface * >(plugin);
+  if ( metadataPlugin ) {
+      if (checkSlot(plugin, "slotGenericMetadataDeserialized(QString,QString)")) {
+          connect(this,   SIGNAL(genericMetadataDeserialized(QString, QString)),
+                  plugin, SLOT(slotGenericMetadataDeserialized(QString, QString)));
+      }
+      if (checkSlot(plugin, "slotObjectMetadataDeserialized(QString,QString)")) {
+          connect(this,   SIGNAL(objectMetadataDeserialized(QString, QString)),
+                  plugin, SLOT(slotObjectMetadataDeserialized(QString, QString)));
+      }
+#if QT_VERSION >= 0x050000
+      if (checkSlot(plugin, "slotObjectMetadataDeserializedJson(QString,QJsonDocument)")) {
+          connect(this,   SIGNAL(objectMetadataDeserializedJson(QString, QJsonDocument)),
+                  plugin, SLOT(slotObjectMetadataDeserializedJson(QString, QJsonDocument)));
+      }
+#endif
+      if (checkSignal(plugin, "metadataDeserialized(QVector<QPair<QString,QString> >)")) {
+          connect(plugin, SIGNAL(metadataDeserialized(QVector<QPair<QString, QString> >)),
+                  this,   SLOT(slotMetadataDeserialized(QVector<QPair<QString, QString> >)));
+      }
   }
 
   emit log(LOGOUT,"================================================================================");
