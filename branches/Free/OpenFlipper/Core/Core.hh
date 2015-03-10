@@ -1251,6 +1251,23 @@ private slots:
 
     void showReducedMenuBar(bool reduced);
 
+    //===========================================================================
+      /** @name Metadata support
+        * @{ */
+    //===========================================================================
+    signals:
+        void genericMetadataDeserialized(QString key, QString value);
+        void objectMetadataDeserialized(QString object_name, QString value);
+#if QT_VERSION >= 0x050000
+        void objectMetadataDeserializedJson(
+                QString object_name, QJsonDocument value);
+#endif
+
+    private slots:
+        void slotMetadataDeserialized(
+                const QVector<QPair<QString, QString> > &data);
+
+
   private :
     /// Core scripting engine
     QScriptEngine scriptEngine_;
