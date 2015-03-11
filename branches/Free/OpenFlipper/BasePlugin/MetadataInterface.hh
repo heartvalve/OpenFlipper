@@ -62,6 +62,8 @@
 
 /** \brief Enables implementers to react on deserialization of meta data.
   *
+  * \ref MetaDataInterfacePage "Detailed description"
+  *
   * Using functions such as BaseObject::getCommentByKey() plugins can attach
   * meta data to objects. This meta data is currently only serialized when
   * taking viewer snapshots. "Plugin-DeserializeScreenshotMetadata" allows
@@ -125,6 +127,25 @@ class MetadataInterface {
         virtual ~MetadataInterface() {};
 
 };
+
+/** \page MetaDataInterfacePage MetaData Interface
+\n
+\image html metaDataInterface.png
+\n
+
+Using functions such as BaseObject::getCommentByKey() plugins can attach
+meta data to objects. This meta data is currently only serialized when
+taking viewer snapshots. "Plugin-DeserializeScreenshotMetadata" allows
+deserializing this metadata from a viewer snapshot. (In the future
+serialization and deserialization of meta data may occur in other contexts
+as well.)
+
+Whenever meta gets deserialized the slots in this interface will get
+triggered. Please refer to the documentation of the individual slots
+to find out which specific signal suits your needs.
+
+*/
+
 
 #if QT_VERSION >= 0x050000
 Q_DECLARE_INTERFACE(MetadataInterface,"OpenFlipper.MetadataInterface_qt5/1.0")
