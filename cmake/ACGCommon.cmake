@@ -748,14 +748,21 @@ function (acg_add_executable _target)
 
   # set common target properties defined in common.cmake
   acg_set_target_props (${_target})
-
-  if (WIN32 OR (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE))
+  
+  if (WIN32)
+    set (OUTPUT_DIR "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}/")
+    set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}) 
+    foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+      string(TOUPPER ${CONFIG} UPCONFIG)
+      set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${UPCONFIG} ${OUTPUT_DIR})
+    endforeach()
+  elseif (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE)
     add_custom_command (TARGET ${_target} POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E
                         copy_if_different
                           $<TARGET_FILE:${_target}>
                           ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}/$<TARGET_FILE_NAME:${_target}>)
-  endif (WIN32 OR (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE))
+  endif ()
   
   if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
     install (TARGETS ${_target} DESTINATION ${ACG_PROJECT_BINDIR})
