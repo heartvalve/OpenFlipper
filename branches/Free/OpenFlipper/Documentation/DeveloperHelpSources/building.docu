@@ -83,7 +83,7 @@ directory.
 <li> Rearrange the files in the glut-3.7 directory such that)<br />
      all *.lib and *.dll files are in a c:\\libs\\glut-3.7\\lib subdirectory)<br />
      and the glut.h file is moved to the subdirectory c:\\libs\\glut-3.7\\include\\gl\\glut.h</li>
-<li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
+<li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html </li>
 <li> Start the cmake gui and select the OpenFlipper toplevel directory as source directory </li>
 \image html cmake-source.png
 <li> Choose a build directory (e.g. a subdirectory called \c build-release in OpenFlipper's root dir)</li>
@@ -102,9 +102,11 @@ You can change view modes of cmake-gui via the select box on the top. </li>
 <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
 </ul> 
 
-Note: If you want to build OpenFlipper as release, you have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
-and generating the Visual Studio solution file. Choose then build type "Release" in Visual Studio and build the solution.
-\image html cmake-buildtype.png
+\note If you want to build OpenFlipper as release on windows, you don't have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
+ generating the Visual Studio solution file. Instead, choose the build type "Release" in Visual Studio and build the solution.
+
+Don't forget setting up the "OpenFlipper" target as startup project as shown in the image below to run the debugger with OpenFlipper right out of Visual Studio.
+\image html windows_build_set_as_startup.png
 
 \subsection cmake_bmacos Building OpenFlipper under MacOS X
 
