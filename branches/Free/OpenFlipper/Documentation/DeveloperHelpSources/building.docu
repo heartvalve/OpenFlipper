@@ -9,7 +9,7 @@ OpenFlipper.
 
 \section reqlibs Required libraries
 <ul>
-<li> Qt >= 4.7.3  ( http://qt.nokia.com/downloads )</li>
+<li> Qt >= 4.8.6  ( http://www.qt.io/download/ )</li>
 <li> GLUT         ( http://www.opengl.org/resources/libraries/glut/ )</li>
 <li> GLEW (>=1.6) ( http://glew.sourceforge.net )</li>
 </ul>
