@@ -143,9 +143,9 @@ Provides an interface to read and write file types. All load/save plugins need t
 Provides functions to control loading/saving of files and generate new objects. Additionally
 this interface informs plugins, when objects get added or removed( \ref loadSaveInterfacePage ).
 
-\subpage MetaDataInterfacePage
+\subpage metaDataInterfacePage
 \image html metaDataInterface.png
-This interface provides functions for serealizing and deserializing MetaData which is stored in screenshots or other files.
+This interface provides functions for serializing and deserializing MetaData which is stored in screenshots or other files( \ref metaDataInterfacePage ).
 
 \subpage selectionInterfacePage
 \image html SelectionInterface.png
