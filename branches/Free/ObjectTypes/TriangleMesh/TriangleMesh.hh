@@ -63,7 +63,7 @@
 
 
 /// Type for a MeshObject containing a triangle mesh
-class DLLEXPORT TriMeshObject : public MeshObject< TriMesh > {
+class DLLEXPORTONLY TriMeshObject : public MeshObject< TriMesh > {
 
 public:
   /** \brief copy constructor
