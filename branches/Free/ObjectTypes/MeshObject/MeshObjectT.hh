@@ -93,7 +93,7 @@ typedef ACG::SceneGraph::TextureNode                      TextureNode;
 /** This class provides the functionality for all kind of meshes for the framework
  */
 template < class MeshT >
-class DLLEXPORTONLY MeshObject : public BaseObjectData {
+class DLLEXPORT MeshObject : public BaseObjectData {
   public:
 
     /** \brief copy constructor
