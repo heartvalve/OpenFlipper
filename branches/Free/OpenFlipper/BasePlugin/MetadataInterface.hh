@@ -128,7 +128,7 @@ class MetadataInterface {
 
 };
 
-/** \page MetaDataInterfacePage MetaData Interface
+/** \page metaDataInterfacePage MetaData Interface
 \n
 \image html metaDataInterface.png
 \n

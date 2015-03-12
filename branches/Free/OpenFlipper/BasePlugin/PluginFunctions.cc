@@ -458,11 +458,13 @@ ACG::SceneGraph::DrawModes::DrawMode drawMode( int _viewer ) {
   return viewerProperties(activeExaminer()).drawMode();
 }
 
+// Pick returning node index
 bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
    return examiner_widgets_[activeExaminer_]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
 }
 
+// Pick returning node index
 bool scenegraphPick( const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
   if ( _examiner >= examiner_widgets_.size() ) {
@@ -471,6 +473,59 @@ bool scenegraphPick( const unsigned int _examiner, ACG::SceneGraph::PickTarget _
   }
   return examiner_widgets_[_examiner]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
 }
+
+
+// Pick returning object and calling refine
+bool scenegraphPick( const unsigned int          _examiner ,
+                     ACG::SceneGraph::PickTarget _pickTarget,
+                     const QPoint &              _mousePos,
+                     BaseObjectData*&            _object,
+                     unsigned int &              _targetIdx,
+                     const bool                  _refine,
+                     ACG::Vec3d *                _hitPointPtr ) {
+
+  unsigned int nodeIdx = 0;
+
+  bool ok = scenegraphPick(_examiner,_pickTarget,_mousePos,nodeIdx,_targetIdx,_hitPointPtr);
+
+  // If successfully picked and object is found
+  if ( ok && PluginFunctions::getPickedObject(nodeIdx, _object) ) {
+
+    if ( _refine && (_hitPointPtr != 0) ) {
+
+      // Map to correct coordinates in OpenGL
+      double x = _mousePos.x() - examiner_widgets_[_examiner]->scenePos().x();
+      double y = examiner_widgets_[_examiner]->glHeight() - (_mousePos.y() - examiner_widgets_[_examiner]->scenePos().y());
+
+      std::cerr << "x " << x << "   y " << y << std::endl;
+
+      ACG::Vec3d mousePoint3d = examiner_widgets_[_examiner]->unproject( ACG::Vec3d(x,y,-1.0 ) );
+
+      ACG::Vec3d direction = (mousePoint3d - eyePos(_examiner)).normalized();
+
+      *_hitPointPtr = _object->refinePick(_pickTarget,*_hitPointPtr, mousePoint3d , direction ,  _targetIdx );
+
+    }
+
+  }
+
+  return ok;
+}
+
+// Pick returning object and calling refine
+bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget,
+                     const QPoint &              _mousePos,
+                     BaseObjectData*&            _object,
+                     unsigned int &              _targetIdx,
+                     const bool                  _refine,
+                     ACG::Vec3d *                _hitPointPtr ) {
+
+  return scenegraphPick(activeExaminer_,_pickTarget,_mousePos, _object,_targetIdx,_refine,_hitPointPtr );
+
+}
+
+
+
 
 bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
                            const QRegion&                             _region,

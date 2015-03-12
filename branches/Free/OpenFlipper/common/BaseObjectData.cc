@@ -314,6 +314,10 @@ bool BaseObjectData::pickingEnabled() {
   return true;
 }
 
+ACG::Vec3d BaseObjectData::refinePick(const ACG::SceneGraph::PickTarget _pickTarget, const ACG::Vec3d _hitPoint, const ACG::Vec3d _start , const ACG::Vec3d _dir,  const unsigned int _targetIdx  ) {
+  return _hitPoint;
+}
+
 // ===============================================================================
 // Content Nodes
 // ===============================================================================
