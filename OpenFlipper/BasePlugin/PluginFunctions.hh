@@ -237,18 +237,40 @@ void setEncodedExaminerView(int _viewerId , QString _view );
 DLLEXPORT
 void setSceneCenter(const ACG::Vec3d& _center, int _viewer );
 
-/** Execute picking operation on scenegraph
+/** \brief Execute picking operation on scenegraph
+ *
  * This picking function will pick in the last active examiner context which is automatically
- * Set by mouseevents from the core
+ * set by the last mouse event from the core
  */
 DLLEXPORT
 bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
-/** Execute picking operation on scenegraph
+/** \brief Execute picking operation on scenegraph
+ *
  * This picking function will pick in the specified examiner context
  */
 DLLEXPORT
 bool scenegraphPick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+
+
+/** \brief Execute picking operation on scenegraph and return object
+ *
+ * This picking function will pick in the specified examiner context and
+ * will return a pointer to the picked object. Furthermore, the refine picking of
+ * the picked object will be called in order to achieve higher picking accuracy
+ */
+DLLEXPORT
+bool scenegraphPick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, BaseObjectData*& _object, unsigned int &_targetIdx, const bool _refine ,ACG::Vec3d *_hitPointPtr );
+
+/** \brief Execute picking operation on scenegraph and return object
+ *
+ * This picking function will pick in the examiner context of the last mouse event and
+ * will return a pointer to the picked object. Furthermore, the refine picking of
+ * the picked object will be called in order to achieve higher picking accuracy
+ */
+DLLEXPORT
+bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, BaseObjectData*& _object, unsigned int &_targetIdx, const bool _refine, ACG::Vec3d *_hitPointPtr );
+
 
 /** Execute picking operation on scenegraph
  * This picking function will pick in the last active examiner context which is automatically

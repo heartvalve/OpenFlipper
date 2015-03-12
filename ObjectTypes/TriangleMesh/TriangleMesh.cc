@@ -34,67 +34,87 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 18128 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2014-02-05 10:20:28 +0100 (Mi, 05. Feb 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
 
 /**
- * \file TriangleMesh.hh
+ * \file TriangleMesh.cc
  * This File contains all required includes for using Triangle Meshes
 */
 
-#ifndef TRIANGLE_MESH_INCLUDE_HH
-#define TRIANGLE_MESH_INCLUDE_HH
+
 
 
 //== INCLUDES =================================================================
 
-
-/** \def DATA_TRIANGLE_MESH
- * Use this macro to reference triangle meshes.
- */
-#define DATA_TRIANGLE_MESH typeId("TriangleMesh")
-#include <ObjectTypes/MeshObject/MeshObjectT.hh>
-#include <ObjectTypes/TriangleMesh/TriangleMeshTypes.hh>
-#include <OpenFlipper/common/GlobalDefines.hh>
-
-
-/// Type for a MeshObject containing a triangle mesh
-class DLLEXPORT TriMeshObject : public MeshObject< TriMesh > {
-
-public:
-  /** \brief copy constructor
-   *
-   *  Create a copy of this object
-   */
-  TriMeshObject(const TriMeshObject& _object);
-
-  /** \brief Constructor
-  *
-  * This is the standard constructor for MeshObjects. As triangle and Poly Meshes are handled by this class, the
-  * typeId is passed to the MeshObject to specify it.
-  *
-  * @param _typeId   This is the type Id the Object will use. Should be typeId("TriangleMesh") or typeId("PolyMesh")
-  */
-  TriMeshObject(DataType _typeId);
-
-  /// destructor
-  virtual ~TriMeshObject();
-
- public:
-    /// Refine picking on triangle meshes
-    ACG::Vec3d refinePick(ACG::SceneGraph::PickTarget _pickTarget, const ACG::Vec3d _hitPoint, const ACG::Vec3d _start , const ACG::Vec3d _dir,  const unsigned int _targetIdx  );
-
-};
-
-#include <ObjectTypes/TriangleMesh/PluginFunctionsTriangleMesh.hh>
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ACG/Geometry/Algorithms.hh>
 
 
 
-//=============================================================================
-#endif // TRIANGLE_MESH_INCLUDE_HH defined
+TriMeshObject::TriMeshObject(const TriMeshObject& _object) : MeshObject< TriMesh >(_object) {
+
+}
+
+
+TriMeshObject::TriMeshObject(DataType _typeId) : MeshObject< TriMesh >(_typeId) {
+
+}
+
+
+TriMeshObject::~TriMeshObject() {
+
+}
+
+/// Refine picking on triangle meshes
+ACG::Vec3d TriMeshObject::refinePick(ACG::SceneGraph::PickTarget _pickTarget, const ACG::Vec3d _hitPoint, const ACG::Vec3d _start , const ACG::Vec3d _dir,  const unsigned int _targetIdx  ) {
+  if ( _pickTarget == ACG::SceneGraph::PICK_FACE) {
+    std::cerr << "Refine Face picking" << std::endl;
+
+    // get picked face handle
+    TriMesh::FaceHandle fh = mesh()->face_handle(_targetIdx);
+
+    TriMesh::FaceVertexIter fv_it = mesh()->fv_begin(fh);
+
+    // Get vertices of the face
+    ACG::Vec3d p1 = mesh()->point(*fv_it);
+    ++fv_it;
+
+    ACG::Vec3d p2 = mesh()->point(*fv_it);
+    ++fv_it;
+
+    ACG::Vec3d p3 = mesh()->point(*fv_it);
+    ++fv_it;
+
+    ACG::Vec3d hitpointNew = _hitPoint;
+
+    TriMesh::Scalar t,u,v;
+    if ( ACG::Geometry::triangleIntersection( _start, _dir, p1 , p2 , p3 , t , u , v) ) {
+      hitpointNew = _start + t * _dir;
+    } else {
+      std::cerr << "Refine Picking failed" << std::endl;
+    }
+
+
+
+
+
+    std::cerr << "Refine on Triangle meshes" << std::endl;
+    std::cerr << "Original: " <<  _hitPoint << std::endl;
+    std::cerr << "MousePos : " << _start << std::endl;
+    std::cerr << "Update:   " <<  hitpointNew << std::endl;
+
+    return hitpointNew;
+
+  }
+  std::cerr << "No Refine on Triangle meshes" << std::endl;
+  return _hitPoint;
+}
+
+
 //=============================================================================
 

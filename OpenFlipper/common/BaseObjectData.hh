@@ -252,6 +252,26 @@ class DLLEXPORT BaseObjectData : public BaseObject
      */
     virtual bool pickingEnabled();
 
+    /** \brief Refine picking
+     *
+     * Reimplement this function, if the object type can refine picking. E.g.
+     * the standard picking will rely on the z-buffer resolution, while a mesh
+     * can intersect a ray with the triangle and refine the depth via
+     * the exact intersection point.
+     *
+     * @param _pickTarget Current picking target (Faces, all,...)
+     * @param _original hitpoint
+     * @param _eyePos current picking ray start position
+     * @param _dir Ray direction when picking
+     * @param _targetIdx Entity id hit (e.g. face index for meshes
+     *
+     */
+    virtual ACG::Vec3d refinePick(ACG::SceneGraph::PickTarget _pickTarget,
+                                  const ACG::Vec3d _hitPoint,
+                                  const ACG::Vec3d _start ,
+                                  const ACG::Vec3d _dir,
+                                  const unsigned int _targetIdx );
+
   /** @} */
 
   //===========================================================================
