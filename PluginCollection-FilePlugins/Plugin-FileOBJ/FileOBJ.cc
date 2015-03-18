@@ -87,6 +87,130 @@ namespace{
   private:
     mutable std::set<T> seen_;
   };
+
+  float getFloat( QTextStream& _source)
+  {
+    QString rawNumber;
+    _source >> rawNumber;
+    //decimal part > 0
+    float highPart = 0.0f;
+    //decimal part < 0
+    float lowPart = 0.0f;
+    //sign of the decimal
+    float sign = 1.0;
+    //counter to concatenate high and lowaprt
+    int n = 0;
+
+    QString::Iterator it = rawNumber.begin();
+    QString::Iterator end = rawNumber.end();
+    if(*it == QLatin1Char('-'))
+    {
+      //we have a negative float
+      sign = sign * -1.0;
+      it++;
+    }
+
+    for (;it != end;it++)
+    {
+      //we have read a digit
+      if(it->isDigit())
+      {
+        highPart *=10;
+        highPart += it->digitValue();
+      }
+      else
+      {
+        //stop counting the highPart if its not a digit
+        it++;
+        break;
+      }
+    }
+
+    for (;it != end;it++)
+    {
+      //we assume to have read a digit
+      if(it->isDigit())
+      {
+        lowPart *=10;
+        lowPart += it->digitValue();
+        n++;
+      }
+      else
+      {
+        //stop counting the highPart dont increment here!
+        // otherwise we cant detect if we successful converted
+        break;
+      }
+    }
+    // if something went wrong during decoding use the standard decoding
+    if(it != end)
+    {
+      return rawNumber.toFloat();
+    }
+    return sign * (highPart + lowPart / std::pow(10.0,n));
+  }
+
+  double getDouble( QTextStream& _source)
+  {
+    QString rawNumber;
+    _source >> rawNumber;
+    //decimal part > 0
+    double highPart = 0.0f;
+    //decimal part < 0
+    double lowPart = 0.0f;
+    //sign of the decimal
+    double sign = 1.0;
+    //counter to concatenate high and lowaprt
+    int n = 0;
+
+    QString::Iterator it = rawNumber.begin();
+    QString::Iterator end = rawNumber.end();
+    if(*it == QLatin1Char('-'))
+    {
+      //we have a negative float
+      sign = sign * -1.0;
+      it++;
+    }
+
+    for (;it != end;it++)
+    {
+      //we have read a digit
+      if(it->isDigit())
+      {
+        highPart *=10;
+        highPart += it->digitValue();
+      }
+      else
+      {
+        //stop counting the highPart if its not a digit
+        it++;
+        break;
+      }
+    }
+
+    for (;it != end;it++)
+    {
+      //we assume to have read a digit
+      if(it->isDigit())
+      {
+        lowPart *=10;
+        lowPart += it->digitValue();
+        n++;
+      }
+      else
+      {
+        //stop counting the highPart dont increment here!
+        // otherwise we cant detect if we successful converted
+        break;
+      }
+    }
+    // if something went wrong during decoding use the standard decoding
+    if(it != end)
+    {
+      return rawNumber.toDouble();
+    }
+    return sign * (highPart + lowPart / std::pow(10.0,n));
+  }
 }
 
 void remove_duplicated_vertices(VHandles& _indices)
@@ -299,12 +423,6 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
     if ( matStream && insideDefintion && mat.is_valid() && !matName.empty())
       _importer.materials()[matName] = mat;
   }
-
-
-//   for ( MaterialList::iterator material = _importer.materials().begin(); material != _importer.materials().end(); material++ )
-//   {
-//     emit log("Material:" + QString(((*material).first).c_str()) );
-//   }
 
   emit log( tr("%1 materials loaded.").arg( _importer.materials().size() ) );
 
@@ -591,8 +709,10 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   //use the QTextStream and QString objects, since they seem to be more efficient when parsing strings.
   //especially regarding copy operations.
   QTextStream input(&sourceFile);
-
-  if (! input.status() == QTextStream::Ok){//!input.is_open() || !input.good() ){
+  QTextStream stream;
+  QTextStream lineData;
+  QTextStream tmp;
+  if (! input.status() == QTextStream::Ok){
     emit log(LOGERR, tr("readOBJFile : cannot read file %1 is the file corrupt?").arg(_filename) );
     return;
   }
@@ -665,7 +785,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       continue;
     }
 
-    QTextStream stream(&line,QIODevice::ReadOnly);
+    stream.setString(&line,QIODevice::ReadOnly);
 
     //unless the keyWrd for the new line is not determined by the previous line
     //read it from stream
@@ -673,7 +793,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       stream >> keyWrd;
     else {
       keyWrd = nextKeyWrd;
-      nextKeyWrd = "";
+      nextKeyWrd = QLatin1String("");
     }
 
     // material file
@@ -726,7 +846,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       // New texture coordinate read so increase counter
       currentTextureCoordCount++;
 
-      stream >> u; stream >> v;
+      u = getFloat(stream);
+      v = getFloat(stream);
 
       if ( stream.status() == QTextStream::Ok ){
 
@@ -748,7 +869,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       // New normal read so increase counter
       currentNormalCount++;
 
-      stream >> x; stream >> y; stream >> z;
+      x = getFloat(stream);
+      y = getFloat(stream);
+      z = getFloat(stream);
 
       if ( stream.status() == QTextStream::Ok ){
         _importer.addNormal( OpenMesh::Vec3f(x,y,z) );
@@ -814,7 +937,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       // read full line after detecting a face
       QString faceLine;
       faceLine = stream.readLine();
-      QTextStream lineData( &faceLine );
+      lineData.setString(&faceLine);
 
       // work on the line until nothing left to read
       while ( !lineData.atEnd() )
@@ -833,7 +956,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
             // read the index value
             QString vertexEntry = vertex.left(found);
-            QTextStream tmp( &vertexEntry );
+            tmp.setString( &vertexEntry );
 
             // If we get an empty string this property is undefined in the file
             if ( vertexEntry.isEmpty() ) {
@@ -856,7 +979,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
           } else {
 
             // last component of the vertex, read it.
-            QTextStream tmp( &vertex );
+            tmp.setString( &vertex );
             tmp >> value;
 
             // Clear vertex after finished reading the line
@@ -985,7 +1108,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         nextKeyWrd = QLatin1String("parm_add");
       }
 
-      QTextStream lineData( &paramLine );
+      lineData.setString( &paramLine );
 
       if ( keyWrd != QLatin1String("parm_add"))
         lineData >> tmp; //push the first u out
@@ -996,7 +1119,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
         double knot;
 
-        lineData >> knot;
+        knot = getDouble(lineData);
 
         if ( lineData.status() == QTextStream::Ok )
           knotsU.push_back( knot );
@@ -1034,13 +1157,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         nextKeyWrd = QLatin1String("curv_add");
       }
 
-      QTextStream lineData( &curveLine );
+      lineData.setString( &curveLine );
 
       // Read knots at the beginning before the indices
       if ( keyWrd == QLatin1String("curv") ) {
         double trash;
-        lineData >> trash;
-        lineData >> trash;
+        trash = getDouble(lineData);
+        trash = getDouble(lineData);
       }
 
 
@@ -1106,7 +1229,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         nextKeyWrd = QLatin1String("parm_add");
       }
 
-      QTextStream lineData( &paramLine );
+      lineData.setString( &paramLine );
 
       if ( keyWrd == QLatin1String("parm_add_u"))
         tmp = QLatin1String("u");
@@ -1132,7 +1255,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
         double knot;
 
-        lineData >> knot;
+        knot = getDouble(lineData);
 
         if ( lineData.status()==QTextStream::Ok  ) {
           knots->push_back( knot );
@@ -1171,7 +1294,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         nextKeyWrd = QLatin1String("surf_add");
       }
 
-      QTextStream lineData( &surfLine );
+      lineData.setString( &surfLine );
 
       // work on the line until nothing left to read
       while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok  )
@@ -1273,6 +1396,9 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   }
 
   QTextStream input( &sourceFile );
+  QTextStream stream;
+  QTextStream lineData;
+  QTextStream tmp;
 
   if ( !input.status()==QTextStream::Ok ){
     emit log(LOGERR, tr("readOBJFile : cannot read file %1 while checking Types (is the file corrupt?)").arg(_filename) );
@@ -1327,7 +1453,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       continue;
     }
 
-    QTextStream stream(&line,QIODevice::ReadOnly);
+    stream.setString(&line);
 
     //unless the keyWrd for the new line is not determined by the previous line
     //read it from stream
@@ -1370,7 +1496,9 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       if (!firstFace)
         firstFace = true;
 
-      stream >> x; stream >> y; stream >> z;
+      x = getFloat(stream);
+      y = getFloat(stream);
+      z = getFloat(stream);
 
       if ( stream.status()==QTextStream::Ok )
         _importer.addVertex( OpenMesh::Vec3f(x,y,z) );
@@ -1427,7 +1555,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       // read full line after detecting a face
       QString faceLine;
       faceLine = stream.readLine();
-      QTextStream lineData( &faceLine );
+      lineData.setString( &faceLine );
 
       // work on the line until nothing left to read
       while ( !lineData.atEnd() )
@@ -1447,7 +1575,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
           // read the index value
           QString vertexEntry = vertex.left(found);
-          QTextStream tmp( &vertexEntry );
+          tmp.setString( &vertexEntry );
 
           // Read current value
           tmp >> value;
@@ -1458,7 +1586,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         } else {
 
           // last component of the vertex, read it.
-          QTextStream tmp( &vertex );
+          tmp.setString( &vertex );
           tmp >> value;
 
           if ( !tmp.status()==QTextStream::Ok )
@@ -1548,13 +1676,13 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         nextKeyWrd = QLatin1String("curv_add");
       }
 
-      QTextStream lineData( &curveLine );
+      lineData.setString( &curveLine );
 
       // Read knots at the beginning before the indices
       if ( keyWrd == QLatin1String("curv") ) {
         double trash;
-        lineData >> trash;
-        lineData >> trash;
+        trash = getDouble(lineData);
+        trash = getDouble(lineData);
       }
 
       // work on the line until nothing left to read
@@ -1643,7 +1771,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         nextKeyWrd = QLatin1String("surf_add");
       }
 
-      QTextStream lineData( &surfLine );
+      lineData.setString( &surfLine );
 
       // work on the line until nothing left to read
       while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok )
