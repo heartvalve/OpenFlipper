@@ -578,15 +578,23 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
 
 void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 {
-
+  //const clock_t begin_time = clock();
   QString path = QFileInfo(_filename).absolutePath();
 
   //setup filestream
 
-  std::fstream input( _filename.toUtf8(), std::ios_base::in );
-
-  if ( !input.is_open() || !input.good() ){
+  QFile sourceFile(_filename);
+  if(!sourceFile.open(QFile::ReadOnly))
+  {
     emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
+    return;
+  }
+  //use the QTextStream and QString objects, since they seem to be more efficient when parsing strings.
+  //especially regarding copy operations.
+  QTextStream input(&sourceFile);
+
+  if (! input.status() == QTextStream::Ok){//!input.is_open() || !input.good() ){
+    emit log(LOGERR, tr("readOBJFile : cannot read file %1 is the file corrupt?").arg(_filename) );
     return;
   }
 
@@ -594,9 +602,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
   ReaderMode mode = NONE;
 
-  std::string line;
-  std::string keyWrd;
-  std::string nextKeyWrd = "";
+  QString line;
+  QString keyWrd;
+  QString nextKeyWrd = "";
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
   unsigned int curveCount = 0;
@@ -611,7 +619,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
   std::vector<VertexHandle> vhandles;
   std::vector<int>          face_texcoords;
-  std::string               matname;
+  QString                   matname;
 
 #if defined (ENABLE_BSPLINECURVE_SUPPORT) || defined (ENABLE_BSPLINESURFACE_SUPPORT)
   std::vector< int > cpIndices;
@@ -642,23 +650,27 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   // Now add all meshes for every group (if exists)
   createAllGroupObjects(_importer);
 
-  while( input && !input.eof() )
+  //QTextStream stream;
+
+  while(  !input.atEnd() )
   {
-    std::getline(input,line);
-    if ( input.bad() ){
+    //std::getline(input,line);
+    line=input.readLine();
+    if ( input.status() == QTextStream::ReadCorruptData ){//input.bad() ){
       emit log(LOGERR, tr("readOBJFile : Warning! Could not read file properly!"));
       return;
     }
 
     // Trim Both leading and trailing spaces
-    trimString(line);
+    //trimString(line);
 
     // comment
-    if ( line.empty() || line[0] == '#' || isspace(line[0]) ) {
+    if ( line.isEmpty() || line[0] == '#' || line[0].isSpace() ) {
       continue;
     }
 
-    std::stringstream stream(line);
+    QTextStream stream(&line,QIODevice::ReadOnly);
+    //std::stringstream stream(line);
 
     //unless the keyWrd for the new line is not determined by the previous line
     //read it from stream
@@ -670,14 +682,14 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // material file
-    if (mode == NONE && keyWrd == "mtllib")
+    if (mode == NONE && keyWrd == QLatin1String("mtllib"))
     {
-      std::string matString;
+      QString matString;
 
       // This will define the filename of the texture
-      std::getline(stream,matString);
+      matString = stream.readLine();
 
-      QString matFile = path + QDir::separator() + QString( matString.c_str() ).trimmed();
+      QString matFile = path + QDir::separator() + matString.trimmed();
 
       emit log( tr("Loading material file: %1").arg( matFile ) );
 
@@ -685,17 +697,17 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // usemtl
-    else if (mode == NONE && keyWrd == "usemtl")
+    else if (mode == NONE && keyWrd == QLatin1String("usemtl"))
     {
       stream >> matname;
-      if ( _importer.materials().find(matname)==_importer.materials().end() )
+      if ( _importer.materials().find(matname.toStdString())==_importer.materials().end() )
       {
-        emit log( LOGERR, tr("Warning! Material '%1' not defined in material file").arg( QString(matname.c_str()) ) );
+        emit log( LOGERR, tr("Warning! Material '%1' not defined in material file").arg( matname ) );
         matname="";
 
       }else{
 
-        Material& mat = _importer.materials()[matname];
+        Material& mat = _importer.materials()[matname.toStdString()];
 
         if ( mat.has_Texture() ){
           //add object if not already there
@@ -703,11 +715,11 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 //            addNewObject(_importer, currentFileName );
 //          }
 
-          _importer.useMaterial( matname );
+          _importer.useMaterial( matname.toStdString() );
         }
       }
     }
-    else if (mode == NONE && keyWrd == "v")
+    else if (mode == NONE && keyWrd == QLatin1String("v"))
     {
      if (!firstFace)
        firstFace = true;
@@ -725,7 +737,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       stream >> u; stream >> v;
 
-      if ( !stream.fail() ){
+      if ( stream.status() == QTextStream::Ok ){
 
         _importer.addTexCoord( OpenMesh::Vec2f(u, v) );
 
@@ -737,7 +749,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
 
     // normal
-    else if (mode == NONE && keyWrd == "vn")
+    else if (mode == NONE && keyWrd == QLatin1String("vn"))
     {
       if (!firstFace)
         firstFace = true;
@@ -747,7 +759,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       stream >> x; stream >> y; stream >> z;
 
-      if ( !stream.fail() ){
+      if ( stream.status() == QTextStream::Ok ){
         _importer.addNormal( OpenMesh::Vec3f(x,y,z) );
       }else{
         emit log( LOGERR, tr("Could not read normal. Possible NaN or Inf?"));
@@ -755,16 +767,16 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // degree (for curves)
-    else if (mode == NONE && keyWrd == "deg")
+    else if (mode == NONE && keyWrd == QLatin1String("deg"))
     {
       stream >> deg;
 
-      if ( !stream.fail() )
+      if ( stream.status() == QTextStream::Ok )
         _importer.setDegreeU( deg );
 
       stream >> deg;
 
-      if ( !stream.fail() )
+      if ( stream.status() == QTextStream::Ok )
         _importer.setDegreeV( deg );
     }
 
@@ -773,14 +785,14 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       if (!firstFace)
         firstFace = true;
 
-      std::string groupName;
-      std::getline(stream, groupName);
+      QString groupName;
+      groupName = stream.readLine();
 
       if(faceCount == 0) {
-        currentFileName = QString(groupName.c_str());
+        currentFileName = groupName;
       }
 
-      int id = _importer.groupId(groupName.c_str());
+      int id = _importer.groupId(groupName);
       if(id == -1) {
           std::cerr << "Error: Group has not been added before!" << std::endl;
           return;
@@ -792,7 +804,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // face
-    else if (mode == NONE && keyWrd == "f")
+    else if (mode == NONE && keyWrd == QLatin1String("f"))
     {
       if (firstFace) {
         // store faces in the default Group if we aren't in a group already
@@ -809,32 +821,33 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       face_texcoords.clear();
 
       // read full line after detecting a face
-      std::string faceLine;
-      std::getline(stream,faceLine);
-      std::stringstream lineData( faceLine );
+      QString faceLine;
+      faceLine = stream.readLine();
+      QTextStream lineData( &faceLine );
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() )
+      while ( !lineData.atEnd() )
       {
         // read one block from the line ( vertex/texCoord/normal )
-        std::string vertex;
+        QString vertex;
         lineData >> vertex;
 
         do{
 
           //get the component (vertex/texCoord/normal)
-          size_t found=vertex.find("/");
+          int found=vertex.indexOf(QLatin1String("/"));
 
           // parts are seperated by '/' So if no '/' found its the last component
           if( found != std::string::npos ){
 
             // read the index value
-            std::stringstream tmp( vertex.substr(0,found) );
+            QString vertexEntry = vertex.left(found);
+            QTextStream tmp( &vertexEntry );
 
             // If we get an empty string this property is undefined in the file
-            if ( vertex.substr(0,found).empty() ) {
+            if ( vertexEntry.isEmpty() ) {
               // Switch to next field
-              vertex = vertex.substr(found+1);
+              vertex = vertex.right(vertex.length()-(found+1));
 
               // Now we are at the next component
               ++component;
@@ -847,19 +860,19 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
             tmp >> value;
 
             // remove the read part from the string
-            vertex = vertex.substr(found+1);
+            vertex = vertex.right(vertex.length()-(found+1));
 
           } else {
 
             // last component of the vertex, read it.
-            std::stringstream tmp( vertex );
+            QTextStream tmp( &vertex );
             tmp >> value;
 
             // Clear vertex after finished reading the line
             vertex="";
 
             // Nothing to read here ( garbage at end of line )
-            if ( tmp.fail() ) {
+            if ( tmp.status() != QTextStream::Ok ) {
               continue;
             }
           }
@@ -937,7 +950,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
           ++component;
 
           // Read until line does not contain any other info
-        } while ( !vertex.empty() );
+        } while ( !vertex.isEmpty() );
 
         component = 0;
         nV++;
@@ -962,45 +975,45 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       //add material to the last added face(s)
       //if polygons get triangulated this can be more than one face
-      _importer.addMaterial( matname );
+      _importer.addMaterial( matname.toStdString() );
     }
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     // param
-    else if ( (mode == CURVE && keyWrd == "parm") || (mode == CURVE && keyWrd == "parm_add") ){
+    else if ( (mode == CURVE && keyWrd == QLatin1String("parm")) || (mode == CURVE && keyWrd == QLatin1String("parm_add")) ){
 
       //get curve knots
-      std::string paramLine;
-      std::string tmp;
+      QString paramLine;
+      QString tmp;
 
-      std::getline(stream, paramLine);
+      paramLine = stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( paramLine.c_str() ).endsWith("\\")){
-        paramLine = paramLine.substr(0, paramLine.length()-1);
-        nextKeyWrd = "parm_add";
+      if (  paramLine.endsWith(QLatin1String("\\"))){
+        paramLine = paramLine.left( paramLine.length()-1);
+        nextKeyWrd = QLatin1String("parm_add");
       }
 
-      std::stringstream lineData( paramLine );
+      QTextStream lineData( &paramLine );
 
-      if ( keyWrd != "parm_add")
+      if ( keyWrd != QLatin1String("parm_add"))
         lineData >> tmp; //push the first u out
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok )
       {
 
         double knot;
 
         lineData >> knot;
 
-        if ( !lineData.fail() )
+        if ( lineData.status() == QTextStream::Ok )
           knotsU.push_back( knot );
       }
     }
 
     // curve
-    else if ( (mode == NONE && keyWrd == "curv") || (mode == CURVE && keyWrd == "curv_add") ){
+    else if ( (mode == NONE && keyWrd == QLatin1String("curv")) || (mode == CURVE && keyWrd == QLatin1String("curv_add")) ){
       if (!firstFace)
         firstFace = true;
 
@@ -1008,7 +1021,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = CURVE;
 
-      if ( keyWrd == "curv" ) {
+      if ( keyWrd == QLatin1String("curv") ) {
 
           //int id = _importer.groupId(QString("spline_curve_%1").arg(curveCount));
           int id = _importer.getCurveGroupId(curveCount);
@@ -1021,20 +1034,20 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       }
 
       //get curve control points
-      std::string curveLine;
+      QString curveLine;
 
-      std::getline(stream, curveLine);
+      curveLine = stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( curveLine.c_str() ).endsWith("\\")){
-        curveLine = curveLine.substr(0, curveLine.length()-1);
-        nextKeyWrd = "curv_add";
+      if ( curveLine.endsWith(QLatin1String("\\"))){
+        curveLine = curveLine.left(curveLine.length()-1);
+        nextKeyWrd = QLatin1String("curv_add");
       }
 
-      std::stringstream lineData( curveLine );
+      QTextStream lineData( &curveLine );
 
       // Read knots at the beginning before the indices
-      if ( keyWrd == "curv" ) {
+      if ( keyWrd == QLatin1String("curv") ) {
         double trash;
         lineData >> trash;
         lineData >> trash;
@@ -1043,7 +1056,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok )
       {
         int index = 0;
 
@@ -1056,13 +1069,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
           index = currentVertexCount + index + 1;
         }
 
-        if ( !lineData.fail() )
+        if ( lineData.status()==QTextStream::Ok  )
           cpIndices.push_back( index -1 );
       }
     }
 
     // end
-    else if (mode == CURVE && keyWrd == "end"){
+    else if (mode == CURVE && keyWrd == QLatin1String("end")){
 
       if ( _importer.isCurve( _importer.currentObject() ) ){
         // set up the spline curve
@@ -1089,56 +1102,56 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
     // param
-    else if ( (mode == SURFACE && keyWrd == "parm") || (mode == SURFACE && keyWrd == "parm_add") ){
+    else if ( (mode == SURFACE && keyWrd == QLatin1String("parm")) || (mode == SURFACE && keyWrd == QLatin1String("parm_add")) ){
 
       //get surface knots
-      std::string paramLine;
-      std::string tmp;
+      QString paramLine;
+      QString tmp;
 
-      std::getline(stream, paramLine);
+      paramLine = stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( paramLine.c_str() ).endsWith("\\")){
-        paramLine = paramLine.substr(0, paramLine.length()-1);
-        nextKeyWrd = "parm_add";
+      if ( paramLine.endsWith(QLatin1String("\\"))){
+        paramLine = paramLine.left(paramLine.length()-1);
+        nextKeyWrd = QLatin1String("parm_add");
       }
 
-      std::stringstream lineData( paramLine );
+      QTextStream lineData( &paramLine );
 
-      if ( keyWrd == "parm_add_u")
-        tmp = "u";
-      else if ( keyWrd == "parm_add_v")
-        tmp = "v";
+      if ( keyWrd == QLatin1String("parm_add_u"))
+        tmp = QLatin1String("u");
+      else if ( keyWrd == QLatin1String("parm_add_v"))
+        tmp = QLatin1String("v");
       else
         lineData >> tmp; //get the direction (u or v)
 
       std::vector< double >* knots;
 
       //Decide if these are knots in U or V direction
-      if (tmp == "u")
+      if (tmp == QLatin1String("u"))
         knots = &knotsU;
       else
         knots = &knotsV;
 
-      if (nextKeyWrd != "")
-        nextKeyWrd += "_" + tmp;
+      if (nextKeyWrd != QLatin1String(""))
+        nextKeyWrd += QLatin1String("_") + tmp;
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok  )
       {
 
         double knot;
 
         lineData >> knot;
 
-        if ( !lineData.fail() ) {
+        if ( lineData.status()==QTextStream::Ok  ) {
           knots->push_back( knot );
         }
       }
     }
 
     // surface
-    else if ( (mode == NONE && keyWrd == "surf") || (mode == SURFACE && keyWrd == "surf_add") ){
+    else if ( (mode == NONE && keyWrd == QLatin1String("surf")) || (mode == SURFACE && keyWrd == QLatin1String("surf_add")) ){
       if (!firstFace)
         firstFace = true;
 
@@ -1146,7 +1159,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = SURFACE;
 
-      if ( keyWrd == "surf" ) {
+      if ( keyWrd == QLatin1String("surf") ) {
 
           //int id = _importer.groupId(QString("spline_surface_%1").arg(surfaceCount));
           int id = _importer.getSurfaceGroupId(surfaceCount);
@@ -1159,20 +1172,20 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       }
 
       //get surface control points
-      std::string surfLine;
+      QString surfLine;
 
-      std::getline(stream, surfLine);
+      surfLine = stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( surfLine.c_str() ).endsWith("\\")){
-        surfLine = surfLine.substr(0, surfLine.length()-1);
-        nextKeyWrd = "surf_add";
+      if ( surfLine.endsWith(QLatin1String("\\"))){
+        surfLine = surfLine.left(surfLine.length()-1);
+        nextKeyWrd = QLatin1String("surf_add");
       }
 
-      std::stringstream lineData( surfLine );
+      QTextStream lineData( &surfLine );
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok  )
       {
         int index = 0;
 
@@ -1185,13 +1198,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
           index = currentVertexCount + index + 1;
         }
 
-        if ( !lineData.fail() )
+        if ( lineData.status()==QTextStream::Ok  )
           cpIndices.push_back( index -1 );
       }
     }
 
     // end
-    else if (mode == SURFACE && keyWrd == "end"){
+    else if (mode == SURFACE && keyWrd == QLatin1String("end")){
 
       if ( _importer.isSurface( _importer.currentObject() ) ){
 
@@ -1256,25 +1269,34 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     if (!inGroup)
       _importer.setCurrentGroup(0);
   }
+ // std::cout << "loading the obj took: "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC <<" seconds"<<std::endl;
 }
 
 ///check file types and read general info like vertices
 void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes)
 {
+  //const clock_t begin_time = clock();
   //setup filestream
 
-  std::fstream input( _filename.toUtf8(), std::ios_base::in );
+  QFile sourceFile(_filename);
+  if(!sourceFile.open(QFile::ReadOnly))
+  {
+    emit log(LOGERR, tr("readOBJFile : cannot open file %1 while checking Types").arg(_filename) );
+    return;
+  }
 
-  if ( !input.is_open() || !input.good() ){
-    emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
+  QTextStream input( &sourceFile );
+
+  if ( !input.status()==QTextStream::Ok ){
+    emit log(LOGERR, tr("readOBJFile : cannot read file %1 while checking Types (is the file corrupt?)").arg(_filename) );
     return;
   }
 
   ReaderMode mode = NONE;
 
-  std::string line;
-  std::string keyWrd;
-  std::string nextKeyWrd = "";
+  QString line;
+  QString keyWrd;
+  QString nextKeyWrd = QLatin1String("");
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
   unsigned int curveCount = 0;
@@ -1302,46 +1324,46 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   int parentId = -1;
 #endif
 
-  while( input && !input.eof() )
+  while( !input.atEnd())
   {
-    std::getline(input,line);
-    if ( input.bad() ){
+    line = input.readLine();
+    if ( !input.status()==QTextStream::Ok ){
       emit log(LOGERR, tr("readOBJFile : Warning! Could not read file properly!"));
       return;
     }
 
     // Trim Both leading and trailing spaces
-    trimString(line);
+    line = line.trimmed();
 
     // comment
-    if ( line.empty() || line[0] == '#' || isspace(line[0]) ) {
+    if ( line.isEmpty() || line[0] == QLatin1Char('#') || line[0].isSpace() ) {
       continue;
     }
 
-    std::stringstream stream(line);
+    QTextStream stream(&line,QIODevice::ReadOnly);
 
     //unless the keyWrd for the new line is not determined by the previous line
     //read it from stream
-    if (nextKeyWrd == "")
+    if (nextKeyWrd == QLatin1String(""))
       stream >> keyWrd;
     else {
       keyWrd = nextKeyWrd;
-      nextKeyWrd = "";
+      nextKeyWrd = QLatin1String("");
     }
 
     //call - included obj files
-    if (mode == NONE && keyWrd == "call"){
+    if (mode == NONE && keyWrd == QLatin1String("call")){
       firstFace = true;
 
-      std::string include;
-      std::getline(stream,include);
+      QString include;
+      include =stream.readLine();
 
       //replace relative path
-      QString includeStr = QString( include.c_str() ).trimmed();
+      QString includeStr = include.trimmed();
 
       if ( !includeStr.isEmpty() ){
 
-        if (includeStr[0] == '.'){
+        if (includeStr[0] == QLatin1Char('.')){
           includeStr = includeStr.right( includeStr.length()-1 );
 
           QFileInfo fi(_filename);
@@ -1356,38 +1378,38 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     }
 
     // vertex
-    else if (mode == NONE && keyWrd == "v")
+    else if (mode == NONE && keyWrd == QLatin1String("v"))
     {
       if (!firstFace)
         firstFace = true;
 
       stream >> x; stream >> y; stream >> z;
 
-      if ( !stream.fail() )
+      if ( stream.status()==QTextStream::Ok )
         _importer.addVertex( OpenMesh::Vec3f(x,y,z) );
       else
         emit log(LOGERR, tr("Could not add Vertex %1. Possible NaN or Inf?").arg(_importer.n_vertices()));
     }
 
     // group
-    else if (mode == NONE && keyWrd == "g"){
+    else if (mode == NONE && keyWrd == QLatin1String("g")){
         if (!firstFace)
           firstFace = true;
 
         //give options to importer and reinitialize
         //for next object
 
-        std::string grpName;
-        std::getline(stream, grpName);
+        QString grpName;
+        grpName = stream.readLine();
 
         if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        int id = _importer.addGroup(grpName.c_str());
+        int id = _importer.addGroup(grpName);
 #if defined ENABLE_BSPLINECURVE_SUPPORT || defined ENABLE_BSPLINESURFACE_SUPPORT
         parentId = id;
-        currentGroupName = grpName.c_str();
-        currentGroupName.remove(".obj");
+        currentGroupName = grpName;
+        currentGroupName.remove(QLatin1String(".obj"));
 #endif
         _importer.setCurrentGroup(id);
 
@@ -1401,7 +1423,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     }
 
     // face
-    else if (mode == NONE && keyWrd == "f"){
+    else if (mode == NONE && keyWrd == QLatin1String("f")){
 
       if (firstFace) {
         // store faces in the default group if we aren't in a group already
@@ -1416,42 +1438,43 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       int value;
 
       // read full line after detecting a face
-      std::string faceLine;
-      std::getline(stream,faceLine);
-      std::stringstream lineData( faceLine );
+      QString faceLine;
+      faceLine = stream.readLine();
+      QTextStream lineData( &faceLine );
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() )
+      while ( !lineData.atEnd() )
       {
         // read one block from the line ( vertex/texCoord/normal )
-        std::string vertex;
+        QString vertex;
         lineData >> vertex;
 
         verticesPerFace++;
 
 
         //get the vertex component (vertex/texCoord/normal)
-        size_t found=vertex.find("/");
+        int found=vertex.indexOf(QLatin1String("/"));
 
         // parts are seperated by '/' So if no '/' found its the last component
         if( found != std::string::npos ){
 
           // read the index value
-          std::stringstream tmp( vertex.substr(0,found) );
+          QString vertexEntry = vertex.left(found);
+          QTextStream tmp( &vertexEntry );
 
           // Read current value
           tmp >> value;
 
-          if ( tmp.fail() )
+          if ( !tmp.status()==QTextStream::Ok )
             emit log(LOGERR, tr("readOBJFile : Error reading vertex index!"));
 
         } else {
 
           // last component of the vertex, read it.
-          std::stringstream tmp( vertex );
+          QTextStream tmp( &vertex );
           tmp >> value;
 
-          if ( tmp.fail() )
+          if ( !tmp.status()==QTextStream::Ok )
             emit log(LOGERR, tr("readOBJFile : Error reading vertex index!"));
         }
 
@@ -1481,7 +1504,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
 
     // curve
-    if ( (mode == NONE && keyWrd == "curv") || (mode == CURVE && keyWrd == "curv_add") ){
+    if ( (mode == NONE && keyWrd == QLatin1String("curv")) || (mode == CURVE && keyWrd == QLatin1String("curv_add")) ){
       if (!firstFace)
         firstFace = true;
 
@@ -1489,7 +1512,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
       mode = CURVE;
 
-      if ( keyWrd == "curv" ) {
+      if ( keyWrd == QLatin1String("curv") ) {
 
         //give options to importer and reinitialize
         //for next object
@@ -1498,7 +1521,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
         QString name = currentGroupName;
         if (name.size() == 0)
-          name = "DefaultGroup";
+          name = QLatin1String("DefaultGroup");
 
         name.append(QString("_curve_%1").arg(curveCount));
         int id = _importer.addGroup(name);
@@ -1528,17 +1551,17 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       }
 
       //get curve control points
-      std::string curveLine;
+      QString curveLine;
 
-      std::getline(stream, curveLine);
+      curveLine=stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( curveLine.c_str() ).endsWith("\\")){
-        curveLine = curveLine.substr(0, curveLine.length()-1);
-        nextKeyWrd = "curv_add";
+      if ( curveLine.endsWith(QLatin1String("\\"))){
+        curveLine = curveLine.left( curveLine.length()-1);
+        nextKeyWrd = QLatin1String("curv_add");
       }
 
-      std::stringstream lineData( curveLine );
+      QTextStream lineData( &curveLine );
 
       // Read knots at the beginning before the indices
       if ( keyWrd == "curv" ) {
@@ -1548,13 +1571,13 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       }
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok )
       {
         int index = 0;
 
         lineData >> index;
 
-        if ( !lineData.fail() ){
+        if ( lineData.status()==QTextStream::Ok ){
           // the importer has to know which vertices are used by the object for correct vertex order
           _importer.useVertex( index -1 );
         }
@@ -1563,7 +1586,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     }
 
     // end
-    else if (mode == CURVE && keyWrd == "end"){
+    else if (mode == CURVE && keyWrd == QLatin1String("end")){
 
       mode = NONE;
 
@@ -1576,7 +1599,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 
     // surface
-    if ( (mode == NONE && keyWrd == "surf") || (mode == SURFACE && keyWrd == "surf_add") ){
+    if ( (mode == NONE && keyWrd == QLatin1String("surf")) || (mode == SURFACE && keyWrd == QLatin1String("surf_add")) ){
       if (!firstFace)
         firstFace = true;
 
@@ -1584,7 +1607,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
       mode = SURFACE;
 
-      if ( keyWrd == "surf" ){
+      if ( keyWrd == QLatin1String("surf") ){
 
         //give options to importer and reinitialize
         //for next object
@@ -1593,7 +1616,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
         QString name = currentGroupName;
         if (name.size() == 0)
-          name = "DefaultGroup";
+          name = QLatin1String("DefaultGroup");
 
         name.append(QString("_surface_%1").arg(surfaceCount));
         int id = _importer.addGroup(name);
@@ -1623,26 +1646,26 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       }
 
       //get surface control points
-      std::string surfLine;
+      QString surfLine;
 
-      std::getline(stream, surfLine);
+      surfLine = stream.readLine();
 
       // value may contain a / as line separator
-      if ( QString( surfLine.c_str() ).endsWith("\\")){
-        surfLine = surfLine.substr(0, surfLine.length()-1);
-        nextKeyWrd = "surf_add";
+      if ( surfLine.endsWith(QLatin1String("\\"))){
+        surfLine = surfLine.left(surfLine.length()-1);
+        nextKeyWrd = QLatin1String("surf_add");
       }
 
-      std::stringstream lineData( surfLine );
+      QTextStream lineData( &surfLine );
 
       // work on the line until nothing left to read
-      while ( !lineData.eof() && !lineData.fail() )
+      while ( !lineData.atEnd() && lineData.status()==QTextStream::Ok )
       {
         int index = 0;
 
         lineData >> index;
 
-        if ( !lineData.fail() ){
+        if ( lineData.status()==QTextStream::Ok ){
           // the importer has to know which vertices are used by the object for correct vertex order
           _importer.useVertex( index -1 );
         }
@@ -1650,7 +1673,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     }
 
     // end
-    else if (mode == SURFACE && keyWrd == "end"){
+    else if (mode == SURFACE && keyWrd == QLatin1String("end")){
 
       mode = NONE;
 
@@ -1669,7 +1692,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   } else {
     // Mesh does not contain any faces
     PolyMeshCount++;
-    if (keyWrd != "call") {
+    if (keyWrd != QLatin1String("call")) {
       // we only have vertices and no faces
       if (keyWrd == "v" && !inGroup) {
         _importer.setCurrentGroup(0);
@@ -1742,7 +1765,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     }
 
   }
-
+ // std::cout << "checkTypes on obj took: "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC <<" seconds"<<std::endl;
 }
 
 //-----------------------------------------------------------------------------------------------------
