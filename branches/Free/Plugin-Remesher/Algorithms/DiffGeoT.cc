@@ -185,7 +185,7 @@ compute_area(VertexHandle _vh) const
   typename Mesh::HalfedgeHandle    		heh0, heh1, heh2;
   typename Mesh::VertexOHalfedgeIter  voh_it;
 
-  ACG::Vec3d   P, Q, R, PQ, QR, PR;
+  typename Mesh::Point   P, Q, R, PQ, QR, PR;
   double  normPQ, normQR, normPR;
   double  angleP, angleQ, angleR;
   double  area;
@@ -202,9 +202,9 @@ compute_area(VertexHandle _vh) const
 
     if (mesh_.is_boundary(heh0)) continue;
 
-    ACG::Vec3d P = (ACG::Vec3d) mesh_.point(mesh_.to_vertex_handle(heh2));
-    ACG::Vec3d Q = (ACG::Vec3d) mesh_.point(mesh_.to_vertex_handle(heh0));
-    ACG::Vec3d R = (ACG::Vec3d) mesh_.point(mesh_.to_vertex_handle(heh1));
+    P = mesh_.point(mesh_.to_vertex_handle(heh2));
+    Q = mesh_.point(mesh_.to_vertex_handle(heh0));
+    R = mesh_.point(mesh_.to_vertex_handle(heh1));
 
     (PQ = Q) -= P;
     (QR = R) -= Q;
