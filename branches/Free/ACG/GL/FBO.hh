@@ -104,6 +104,9 @@ public:
   /// return attached texture id
   GLuint getAttachment( GLenum _attachment );
 
+  /// return internal texture format of attachment
+  GLuint getInternalFormat( GLenum _attachment );
+
   /// return opengl id
   GLuint getFboID();
 
