@@ -92,11 +92,8 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const
   // ======================================================================================================
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, _input[0]->depthTex_);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
+  _input[0]->bindDepthTex(1);
+  _input[0]->bindColorTex(0);
 
   pProgram_->setUniform("ColorTexture", 0);
   pProgram_->setUniform("DepthStencil", 1);
@@ -134,14 +131,7 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
-  glDrawBuffer(_output.drawBuffer_);
-
-  // ======================================================================================================
-  // Clear buffers
-  // ======================================================================================================
-  glClearColor(.0, .0, .0, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  _output.bind();
 
   // ======================================================================================================
   // Execute
@@ -266,7 +256,8 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const
 
   // Select the top left of the renderbuffer and
   // write complete header into these bits
-  glRasterPos2i(0, _glstate->context_height() - 1);
+//  glRasterPos2i(0, _glstate->context_height() - 1);
+  glRasterPos2i(_output.viewport_[0], _output.viewport_[1] + _output.height - 1);
   glDrawPixels(bitVector.size() / 3, 1, GL_RGB, GL_UNSIGNED_BYTE, &bitVector[0]);
 
   // ======================================================================================================

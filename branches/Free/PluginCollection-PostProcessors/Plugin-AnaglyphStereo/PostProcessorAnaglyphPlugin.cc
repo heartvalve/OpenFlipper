@@ -97,20 +97,14 @@ void PostProcessorAnaglyphPlugin::postProcess(ACG::GLState* _glstate, const std:
   // Bind input texture
   // ======================================================================================================
 
-  glActiveTexture(GL_TEXTURE1);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input[1]->colorTex_);
-
-  glActiveTexture(GL_TEXTURE0);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
+  _input[1]->bindColorTex(1);
+  _input[0]->bindColorTex(0);
 
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
-  glDrawBuffer(_output.drawBuffer_);
+  _output.bind();
 
   // ======================================================================================================
   // Setup render states
