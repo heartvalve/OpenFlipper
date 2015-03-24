@@ -155,6 +155,10 @@ public:
   // nearest point filtering of a MSAA texture, recommended when the target FBO has the same size as the input texture
   static void filterMSAATexture_Nearest(GLuint _texture, int _samples, const float* _weights = 0);
 
+  // nearest point filtering of a MSAA texture, recommended when the target FBO has the same size as the input texture
+  // also resolves a multisampled depth texture into the depth target
+  static void filterMSAATexture_Nearest(GLuint _texture, GLuint _depthTexture, int _samples, const float* _weights = 0);
+
   // bilinear filtering of a MSAA texture
   static void filterMSAATexture_Linear(GLuint _texture, int _samples, const float* _weights = 0);
 
@@ -173,6 +177,7 @@ private:
 
   // sampling shaders for nearest and bilinear texture filtering
   GLSL::Program* shaderNearest_;
+  GLSL::Program* shaderNearestDepth_;
   GLSL::Program* shaderLinear_;
 };
 

@@ -57,12 +57,14 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/ScreenQuad.hh>
 
+#include <ACG/GL/ShaderCache.hh>
 
 //== DEFINES ==================================================================
 
 // shader files
 #define MSAA_SCREENQUAD_SHADER "ScreenQuad/screenquad.glsl"
 #define MSAA_NEAREST_SHADER "MSAA/sample_nearest.glsl"
+#define MSAA_NEAREST_DEPTH_SHADER "MSAA/sample_nearest_and_depth.glsl"
 #define MSAA_LINEAR_SHADER "MSAA/sample_linear.glsl"
 
 
@@ -131,13 +133,14 @@ void MSFilterWeights::asTextureBuffer( TextureBuffer& out ) {
 //=============================================================================
 
 
-MSTextureSampler::MSTextureSampler() : shaderNearest_(0), shaderLinear_(0) {
+MSTextureSampler::MSTextureSampler() : shaderNearest_(0), shaderNearestDepth_(0), shaderLinear_(0) {
 }
 
 
 MSTextureSampler::~MSTextureSampler() {
   delete shaderNearest_;
   delete shaderLinear_;
+  delete shaderNearest_;
 }
 
 MSTextureSampler& MSTextureSampler::instance() {
@@ -150,6 +153,9 @@ MSTextureSampler& MSTextureSampler::instance() {
 void MSTextureSampler::init() {
   if (!shaderNearest_)
     shaderNearest_ = GLSL::loadProgram(MSAA_SCREENQUAD_SHADER, MSAA_NEAREST_SHADER);
+
+  if (!shaderNearestDepth_)
+    shaderNearestDepth_ = GLSL::loadProgram(MSAA_SCREENQUAD_SHADER, MSAA_NEAREST_DEPTH_SHADER);
 
   if (!shaderLinear_)
     shaderLinear_ = GLSL::loadProgram(MSAA_SCREENQUAD_SHADER, MSAA_LINEAR_SHADER);
@@ -179,6 +185,48 @@ void MSTextureSampler::filterMSAATexture_Nearest( GLuint _texture, int _samples,
   
   // sample count and filter weights
   shader->setUniform("numSamples", _samples);
+
+  // bind multisampled texture to slot 0
+  shader->setUniform("inputTex", 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _texture);
+
+  // run texture filter
+  ScreenQuad::draw(shader);
+
+  shader->disable();
+}
+
+//=============================================================================
+
+void MSTextureSampler::filterMSAATexture_Nearest( GLuint _texture, GLuint _depthTexture, int _samples, const float* _weights /*= 0*/ ) {
+
+  MSTextureSampler& sampler = instance();
+
+  // load shader
+  if (!sampler.shaderNearestDepth_)
+    sampler.init();
+
+//  GLSL::Program* shader = sampler.shaderNearestDepth_;
+  GLSL::Program* shader = ACG::ShaderCache::getInstance()->getProgram(MSAA_SCREENQUAD_SHADER, MSAA_NEAREST_DEPTH_SHADER);
+
+  if (!shader)
+    return;
+
+
+  shader->use();
+
+  // offset and scale of screenquad
+  shader->setUniform("offset", Vec2f(0.0f, 0.0f));
+  shader->setUniform("size", Vec2f(1.0f, 1.0f));
+
+  // sample count and filter weights
+  shader->setUniform("numSamples", _samples);
+
+  // bind multisampled depth texture to slot 1
+  shader->setUniform("inputDepthTex", 1);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _depthTexture);
 
   // bind multisampled texture to slot 0
   shader->setUniform("inputTex", 0);
