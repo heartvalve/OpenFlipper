@@ -45,6 +45,7 @@
 #define POSTPROCESSORINTERFACE_HH
 
 #include <ACG/GL/GLState.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QAction>
 
 /** \file PostProcessorInterface.hh
@@ -53,39 +54,49 @@
 */
 
 
-struct PostProcessorInput
+struct DLLEXPORT PostProcessorInput
 {
   PostProcessorInput(GLuint _colTex = 0, 
                      GLuint _depthTex = 0,
                      int _width = 0,
-                     int _height = 0)
-                     : colorTex_(_colTex), depthTex_(_depthTex), width(_width), height(_height) 
-  {
-    view_.identity(); 
-    proj_.identity();
-    depthRange_[0] = 0.0; depthRange_[1] = 1.0f;
-  }
+                     int _height = 0);
 
+  // scene colors
   GLuint colorTex_;
+
+  // non-linear depth values directly from the depth buffer
   GLuint depthTex_;
 
   int width, height;
+
+  // multisampling count
+  int sampleCount_;
+
+  // format of color tex
+  GLuint texfmt_;
 
 
   // view and projection matrix
   ACG::GLMatrixf view_;
   ACG::GLMatrixf proj_;
   float depthRange_[2];
+
+
+  // bind color texture to a given texture-slot (0, 1, 2, ..)
+  void bindColorTex(int _texSlot = 0) const;
+
+  // bind non-linear depth texture to a given texture-slot (0, 1, 2, ..)
+  void bindDepthTex(int _texSlot = 0) const;
 };
 
 
-struct PostProcessorOutput 
+struct DLLEXPORT PostProcessorOutput 
 {
   PostProcessorOutput(GLuint _fbo = 0, 
     GLuint _drawBuffer = 0,
     int _width = 0,
-    int _height = 0)
-    : fbo_(_fbo), drawBuffer_(_drawBuffer), width(_width), height(_height) { }
+    int _height = 0,
+    const GLint* _viewport = 0);
 
   // opengl fbo id
   GLuint fbo_;
@@ -93,9 +104,40 @@ struct PostProcessorOutput
   // draw target of fbo: GL_BACK, GL_FRONT, GL_COLOR_ATTACHMENT0..
   GLuint drawBuffer_;
 
+  // target viewport
+  GLint viewport_[4];
+
   int width, height;
+
+
+  // bind fbo, drawbuffer and viewport
+  void bind() const;
 };
 
+
+// in/out format descriptor
+struct PostProcessorFormatDesc
+{
+  PostProcessorFormatDesc(bool _multisampled = false) : supportMultisampling_(_multisampled)
+  {}
+
+
+  enum Format 
+  {
+    PostProcessorFormat_DONTCARE, // the postprocessor works for any format type (default)
+    PostProcessorFormat_FLOAT,    // expect format in fp32 or fp16 format,  used by tonemapper for example
+//    PostProcessorFormat_UNORM,    // expect format in normalized ubyte4 format
+  };
+
+  // expected format of each input
+  std::vector<Format> inputFormats_;
+
+  // post-processor supports multisampled input
+  bool supportMultisampling_;
+
+  // output format
+  Format outputFormat_;
+};
 
 
 /** \brief Interface to add global image post processor functions from within plugins.
@@ -135,6 +177,17 @@ class PostProcessorInterface {
      */
     virtual bool isStereoProcessor() {return false;}
 
+
+    /* \brief Provide in/out format info
+     *
+     * The postprocessor might require non-standard in/out formats, 
+     * which can be described by initializing a descriptor with the in/out formats.
+     * This is entirely optional, is is assumed that the postprocessor does not care about the formats per default.
+     *
+    */
+    virtual void getFormatDesc(PostProcessorFormatDesc* _desc) {}
+
+
     /** \brief Return options menu
      *
      * If you want an options Menu or menu entry, you can return your action here.
@@ -157,9 +210,8 @@ class PostProcessorInterface {
      *
      * \code
      *
-     * // Get version and check
-     * QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-     * if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_1) )
+     * // Check version
+     * if ( ! ACG::openGLVersion(2, 1) )
      *   return QString("Insufficient OpenGL Version! OpenGL 2.1 or higher required");
      *
      * //Get OpenGL extensions
@@ -180,7 +232,6 @@ class PostProcessorInterface {
      * @return Return an empty string if everything is fine, otherwise return, what features are missing.
      */
     virtual QString checkOpenGL() = 0;
-
 };
 
 /** \page postProcessorInterfacePage Post Processor Interface
@@ -195,7 +246,29 @@ buffer and render it to the main image.
 
 Example Code for functions:
 \code
- TODO
+ 
+ // fetch shader from cache:
+ //  default screenquad vertex shader
+ //  custom postprocessor fragment shader stored in "Shaders/MyPostProcessor/shader.glsl"
+ GLSL::Program* shader = ACG::ShaderCache::getInstance()->getProgram("ScreenQuad/screenquad.glsl", "MyPostProcessor/shader.glsl");
+
+
+ // bind color texture input to texture-unit 0
+ _input[0]->bindColorTex(0);
+
+
+ // bind output FBO
+ _output.bind();
+
+
+ // setup shader uniforms
+ shader->use();
+ shader->setUniform("param0", someValue);
+ shader->setUniform("texInput", 0); // color texture was bound to unit 0
+
+ // execute by drawing a screen quad covering the full viewport
+ ACG::ScreenQuad::draw(shader);
+
 \endcode
 
 
