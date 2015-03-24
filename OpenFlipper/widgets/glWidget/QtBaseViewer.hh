@@ -100,6 +100,8 @@ class QGraphicsScene;
 class QtGLViewerLayout;
 class QtShiftPopupMenu;
 class CursorPainter;
+class PostProcessing;
+
 #if QT_VERSION < 0x050000
 class QGLFramebufferObject;
 class QGLFramebufferObjectFormat;
@@ -1086,8 +1088,6 @@ private:
 
 private:
 
-  ACG::FBO stereoFBO_[2];
-
   /** \brief Compute left and right eye projection matrix for stereo rendering
    *
    * @param _width  viewport width
@@ -1100,14 +1100,6 @@ private:
     Viewer::ViewerProperties& _properties,
     ACG::GLMatrixd* _outLeft, ACG::GLMatrixd* _outRight);
 
-  /** \brief Update target fbos for stereo rendering
-   *
-   * @param _width  viewport width
-   * @param _height viewport height
-   */
-  void updateStereoFBOs(int _width, int _height);
-
-
   /** @} */
 
 
@@ -1118,23 +1110,9 @@ private:
 
 private:
 
-  /// source/target fbo
-  ACG::FBO postProcessFBO_[2];
 
-  /// scene texture (read back from back-buffer)
-  ACG::FBO readBackFbo_;
-
-  /// read current color and depth texture of the back buffer for further post-processing 
-  void readBackBuffer(ACG::GLState* _glstate);
-
-
-  /** \brief Adjust size of post processor FBO and attachments
-   *
-   * @param _width  Buffer width
-   * @param _height Buffer height
-   */
-  void updatePostProcessingBufs(int _width, int _height);
-
+  /// Post-Processing executor
+  PostProcessing* postproc_;
 
 
   /** @} */
