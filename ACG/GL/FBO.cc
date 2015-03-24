@@ -107,6 +107,11 @@ void FBO::attachTexture( GLenum _attachment, GLuint _texture, GLuint _level )
   RenderTexture intID;
   intID.id = _texture;
 
+  // free previously bound texture
+  const RenderTexture& prevTex = attachments_[_attachment];
+  if (prevTex.owner && prevTex.id)
+    glDeleteTextures(1, &prevTex.id);
+
   // track texture id
   attachments_[_attachment] = intID;
 #else
@@ -140,6 +145,11 @@ attachTexture2D( GLenum _attachment, GLuint _texture, GLenum _target )
   intID.id = _texture;
   intID.target = _target;
 
+  // free previously bound texture
+  const RenderTexture& prevTex = attachments_[_attachment];
+  if (prevTex.owner && prevTex.id)
+    glDeleteTextures(1, &prevTex.id);
+
   // track texture id
   attachments_[_attachment] = intID;
 }
@@ -158,6 +168,18 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   GLenum target = GL_TEXTURE_2D;
 #endif // GL_ARB_texture_multisample
 
+
+  // if multisampled, texfilter must be GL_NEAREST
+  // texelFetch returns darker color otherwise!
+  if (samples_)
+  {
+    if (_minFilter != GL_NEAREST || _magFilter != GL_NEAREST)
+    {
+      std::cerr << "ACG::FBO - Multisampled texture must be filtered with GL_NEAREST!" << std::endl;
+
+      _minFilter = _magFilter = GL_NEAREST;
+    }
+  }
 
   // store texture id in internal array
   RenderTexture intID;
@@ -430,6 +452,13 @@ GLuint FBO::getAttachment( GLenum _attachment )
 
 //-----------------------------------------------------------------------------
 
+GLuint FBO::getInternalFormat( GLenum _attachment )
+{
+  return attachments_[_attachment].internalFormat;
+}
+
+//-----------------------------------------------------------------------------
+
 void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 {
   if (_width != width_ ||_height != height_ || _forceResize)
@@ -491,41 +520,46 @@ GLuint FBO::getFboID()
 
 GLsizei FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*= GL_TRUE*/ )
 {
-  // clamp sample count to max supported
-  GLint maxSamples;
-  glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+  // recreate textures when params changed
+  bool recreateTextures = fixedsamplelocation_ != _fixedsamplelocations;
 
-  if (_samples >= maxSamples) _samples = maxSamples - 1;
-
-  // gpu driver might cause crash on calling glTexImage2DMultisample if _samples is not a power of 2
-  // -> avoid by seeking to next native MSAA sample-count
-  
-  if (_samples)
+  if (samples_ != _samples)
   {
-    int safeSampleCount = 1;
+    // clamp sample count to max supported
+    static GLint maxSamples = -1;
+    if (maxSamples < 0)
+      glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
 
-    while (safeSampleCount < _samples)
-      safeSampleCount *= 2;
+    if (_samples >= maxSamples) _samples = maxSamples - 1;
 
-    while (safeSampleCount >= maxSamples)
-      safeSampleCount /= 2;
-    
-    _samples = safeSampleCount;
+    // gpu driver might cause crash on calling glTexImage2DMultisample if _samples is not a power of 2
+    // -> avoid by seeking to next native MSAA sample-count
+
+    if (_samples)
+    {
+      int safeSampleCount = 1;
+
+      while (safeSampleCount < _samples)
+        safeSampleCount <<= 1;
+
+      while (safeSampleCount >= maxSamples)
+        safeSampleCount >>= 1;
+
+      _samples = safeSampleCount;
+    }
+
+    recreateTextures = recreateTextures || (samples_ != _samples);
+
+    samples_ = _samples;
   }
 
-
-  // issue texture reloading when params changed
-  bool reloadTextures = (samples_ != _samples || fixedsamplelocation_ != _fixedsamplelocations);
-    
-  samples_ = _samples;
   fixedsamplelocation_ = _fixedsamplelocations;
 
-
-  // force a texture reloading to apply new multisampling
-  if (reloadTextures)
+  // force texture reloading to apply new multisampling
+  if (recreateTextures)
     resize(width_, height_, true);
-
-  return _samples;
+  
+  return samples_;
 }
 
 
