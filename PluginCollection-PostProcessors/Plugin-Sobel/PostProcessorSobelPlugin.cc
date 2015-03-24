@@ -79,33 +79,13 @@ void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const std::ve
   // Bind input texture
   // ======================================================================================================
 
-  const PostProcessorInput* input = _input[0];
-
-  glActiveTexture(GL_TEXTURE0);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, input->colorTex_);
+  _input[0]->bindColorTex(0);
 
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
-  glDrawBuffer(_output.drawBuffer_);
-
-  // ======================================================================================================
-  // Clear rendering buffer
-  // ======================================================================================================
-   _glstate->clearBuffers();
-
-  // ======================================================================================================
-  // Setup render states
-  // ======================================================================================================
-
-  glDepthMask(1);
-  glColorMask(1,1,1,1);
-
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  _output.bind();
 
   // ======================================================================================================
   // Setup shader
@@ -114,7 +94,7 @@ void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const std::ve
   shader_->use();
   shader_->setUniform("textureSampler", 0);
 
-  ACG::Vec2f texcoordOffset(1.0f / float(input->width), 1.0f / float(input->height));
+  ACG::Vec2f texcoordOffset(1.0f / float(_input[0]->width), 1.0f / float(_input[0]->height));
   shader_->setUniform("texcoordOffset", texcoordOffset);
 
   // ======================================================================================================
