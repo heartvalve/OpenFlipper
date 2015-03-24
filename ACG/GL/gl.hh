@@ -254,12 +254,44 @@ inline void ACG::GLState::texcoordPointer(GLint n, GLenum t, GLsizei s, const GL
 
 //-----------------------------------------------------------------------------
 
+namespace {
+/**
+ * Helper function for checkExtensionSupported(). Only for internal use.
+ *
+ * @return The string returned by glGetString(GL_EXTENSIONS) or an empty string
+ * if glGetString() returned a null pointer.
+ */
+inline const char *_getExtensionString() {
+    const char *supported_cstr = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (supported_cstr == 0) {
+        std::cerr << "\x1b[1;31mACG::checkExtensionsSupported: "
+                "glGetString(GL_EXTENSIONS) call failed.\x1b[0m\n";
+        return "";
+    }
+    return supported_cstr;
+}
+}
+
 /** Check if the extension given by a std::string is supported by the current OpenGL extension
 */
 inline bool checkExtensionSupported( std::string _extension )  {
-   std::string supported((const char*)glGetString(GL_EXTENSIONS));
+    /**
+     * Cache glGetString(...) output because depending on the graphics driver
+     * it might return 0 the second time we call it.
+     */
+    static const std::string supported_str(_getExtensionString());
 
-   return (supported.find(_extension) != std::string::npos);
+    /*
+     * supported_str is a space delimited list. Tokenize it. Simply searching
+     * for _extension within supported_str yields false positives if the
+     * requested extension is a substring of a supported one.
+     */
+    for (std::istringstream supported(supported_str); !supported.eof(); ) {
+        std::string feature;
+        supported >> feature;
+        if (feature == _extension) return true;
+    }
+    return false;
 }
 
 /** Check if OpenGL Version is greater or equal than the given values
