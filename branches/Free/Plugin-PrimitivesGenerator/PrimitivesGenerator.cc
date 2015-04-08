@@ -51,6 +51,10 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Geometry/Algorithms.hh>
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+#include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
+#endif
+
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 #include <ObjectTypes/BSplineSurface/BSplineSurface.hh>
 #endif
@@ -121,6 +125,13 @@ void PrimitivesGeneratorPlugin::initializePlugin()
                           QString("Position,Axis,Radius,Height,Top,Bottom").split(","),
                           QString("Bottom center vertex position,Center axis,radius,height,add top vertex,add bottom vertex").split(","));
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  emit setSlotDescription("addRandomBSplineCurve(Vector,int)",
+    tr("Generates a random B-spline curve (ObjectId is returned)"),
+    QString("Position,Count").split(","),
+    QString("Center position,Number of control points").split(","));
+#endif
+
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
   emit setSlotDescription("addRandomBSplineSurface(Vector,int)",
                           tr("Generates a random B-spline surface (ObjectId is returned)"),
@@ -186,6 +197,11 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action = primitivesMenu_->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedron."),"Tetrahedron");
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    action = primitivesMenu_->addAction("Random B-spline curve",this,SLOT(addRandomBSplineCurve()));
+    whatsThisGen.setWhatsThis(action,tr("Create a random B-spline curve."),"B-spline curve");
+#endif
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
     action = primitivesMenu_->addAction("Random B-spline surface",this,SLOT(addRandomBSplineSurface()));
@@ -1037,6 +1053,40 @@ int PrimitivesGeneratorPlugin::addDodecahedron(const Vector& _position,const dou
 
   return -1;
 }
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+int PrimitivesGeneratorPlugin::addRandomBSplineCurve(const Vector& _position, int nDiv)
+{
+  int id = -1;
+  emit addEmptyObject(DATA_BSPLINE_CURVE, id);
+  if (id == -1) {
+    return -1;
+  }
+
+  BSplineCurveObject *object = NULL;
+  if (!PluginFunctions::getObject(id, object)) {
+    return -1;
+  }
+
+  BSplineCurve *curve = object->splineCurve();
+
+  curve->autocompute_knotvector(true);
+  for (int i = 0; i < nDiv; ++i) {
+    double x = _position[0] + i - nDiv / 2.0;
+
+    double r = (2.0 * std::rand()) / RAND_MAX - 1.0;
+    BSplineCurve::Point cp(x, _position[1] + r, _position[2]);
+    curve->add_control_point(cp);
+  }
+
+  emit updatedObject(id, UPDATE_ALL);
+  emit createBackup(id, "Original Object");
+
+  PluginFunctions::viewAll();
+
+  return id;
+}
+#endif
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 int PrimitivesGeneratorPlugin::addRandomBSplineSurface(const Vector& _position, int nDiv)
