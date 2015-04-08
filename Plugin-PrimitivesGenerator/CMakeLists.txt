@@ -3,7 +3,7 @@ include (plugin)
 SET( CURRENT_PLUGIN_DEPS "")
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/BSplineCurve)
-  add_definitions (-DENABLE_SKELETON_SUPPORT)
+  add_definitions (-DENABLE_BSPLINECURVE_SUPPORT)
 endif()
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/BSplineSurface)

@@ -145,6 +145,10 @@ public slots:
   int addDodecahedron(const Vector& _position = Vector(0.0,0.0,0.0),
                       const double _length = 2.0);
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  int addRandomBSplineCurve(const Vector& _position = Vector(0, 0, 0), int nDiv = 5);
+#endif
+
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
   int addRandomBSplineSurface(const Vector& _position = Vector(0, 0, 0), int nDiv = 5);
 #endif
