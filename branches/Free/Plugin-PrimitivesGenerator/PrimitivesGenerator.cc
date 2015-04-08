@@ -200,7 +200,8 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     action = primitivesMenu_->addAction("Random B-spline curve",this,SLOT(addRandomBSplineCurve()));
-    whatsThisGen.setWhatsThis(action,tr("Create a random B-spline curve."),"B-spline curve");
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "bspline_curve.png"));
+    whatsThisGen.setWhatsThis(action, tr("Create a random B-spline curve."), "B-spline curve");
 #endif
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
