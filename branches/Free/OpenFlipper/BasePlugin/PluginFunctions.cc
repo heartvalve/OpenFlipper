@@ -508,14 +508,13 @@ bool scenegraphPick( const unsigned int          _examiner ,
     if ( _refine && (_hitPointPtr != 0) ) {
 
       // Map to correct coordinates in OpenGL
-      double x = _mousePos.x() - examiner_widgets_[_examiner]->scenePos().x();
-      double y = examiner_widgets_[_examiner]->glHeight() - (_mousePos.y() - examiner_widgets_[_examiner]->scenePos().y());
+      double x = _mousePos.x();
+      double y = examiner_widget_->glHeight() - _mousePos.y();
 
-      std::cerr << "x " << x << "   y " << y << std::endl;
+      ACG::Vec3d mousePoint3d;
+      ACG::Vec3d direction;
 
-      ACG::Vec3d mousePoint3d = examiner_widgets_[_examiner]->unproject( ACG::Vec3d(x,y,-1.0 ) );
-
-      ACG::Vec3d direction = (mousePoint3d - eyePos(_examiner)).normalized();
+      getViewingRay(x,y,mousePoint3d,direction);
 
       *_hitPointPtr = _object->refinePick(_pickTarget,*_hitPointPtr, mousePoint3d , direction ,  _targetIdx );
 
