@@ -458,6 +458,20 @@ ACG::SceneGraph::DrawModes::DrawMode drawMode( int _viewer ) {
   return viewerProperties(activeExaminer()).drawMode();
 }
 
+//get a viewing ray for the active examiner x and y are in widgetspace
+void getViewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection)
+{
+  getViewingRay(_x,_y,_outOrigin,_outDirection,activeExaminer_);
+}
+
+//get a viewing ray for the specified examiner x and y are in widgetspace
+void getViewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection, int _viewerIndex)
+{
+  viewerProperties(_viewerIndex).glState().viewing_ray(_x,_y,_outOrigin,_outDirection);
+}
+
 // Pick returning node index
 bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 

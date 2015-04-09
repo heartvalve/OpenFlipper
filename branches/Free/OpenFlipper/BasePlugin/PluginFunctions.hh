@@ -237,6 +237,33 @@ void setEncodedExaminerView(int _viewerId , QString _view );
 DLLEXPORT
 void setSceneCenter(const ACG::Vec3d& _center, int _viewer );
 
+/** \brief Retrieve a viewing ray from the active examiner that can be used for raycasting.
+ *
+ * @param   _x              The widgetspace x Coordinate
+ * @param   _y              The widgetspace y Coordinate
+ * @param   _outOrigin      A reference to the ACG::Vec3d that shall hold the origin
+ *                          of the viewing Ray in worldspace coordinates.
+ * @param   _outDirection   A reference to the ACG::Vec3d that shall hold the direction
+ *                          of the viewing Ray in worldspace (normalized)
+ **/
+DLLEXPORT
+void getViewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection);
+
+/** \brief Retrieve a viewing ray from the specified examiner that can be used for raycasting.
+ *
+ * @param   _x              The widgetspace x Coordinate
+ * @param   _y              The widgetspace y Coordinate
+ * @param   _outOrigin      A reference to the ACG::Vec3d that shall hold the origin
+ *                          of the viewing Ray in worldspace coordinates.
+ * @param   _outDirection   A reference to the ACG::Vec3d that shall hold the direction
+ *                          of the viewing Ray in worldspace (normalized)
+ * @param   _viewerIndex    The index to specify an examiner that shall be used
+ **/
+DLLEXPORT
+void getViewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection, int _viewerIndex);
+
 /** \brief Execute picking operation on scenegraph
  *
  * This picking function will pick in the last active examiner context which is automatically
