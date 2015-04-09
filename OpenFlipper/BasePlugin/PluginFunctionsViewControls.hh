@@ -141,6 +141,33 @@ void setMainGLContext();
 DLLEXPORT
 void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up  , int _viewer = ACTIVE_VIEWER);
 
+/** \brief Retrieve a viewing ray from the active examiner that can be used for raycasting.
+ *
+ * @param   _x              The widgetspace x Coordinate
+ * @param   _y              The widgetspace y Coordinate
+ * @param   _outOrigin      A reference to the ACG::Vec3d that shall hold the origin
+ *                          of the viewing Ray in worldspace coordinates.
+ * @param   _outDirection   A reference to the ACG::Vec3d that shall hold the direction
+ *                          of the viewing Ray in worldspace (normalized)
+ **/
+DLLEXPORT
+void viewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection);
+
+/** \brief Retrieve a viewing ray from the specified examiner that can be used for raycasting.
+ *
+ * @param   _x              The widgetspace x Coordinate
+ * @param   _y              The widgetspace y Coordinate
+ * @param   _outOrigin      A reference to the ACG::Vec3d that shall hold the origin
+ *                          of the viewing Ray in worldspace coordinates.
+ * @param   _outDirection   A reference to the ACG::Vec3d that shall hold the direction
+ *                          of the viewing Ray in worldspace (normalized)
+ * @param   _viewerIndex    The index to specify an examiner that shall be used
+ **/
+DLLEXPORT
+void viewingRay(int _x, int _y,
+               ACG::Vec3d& _outOrigin, ACG::Vec3d& _outDirection, int _viewerIndex);
+
 /** \brief Set the look at transformation directly
 * @param _eye eye point
 * @param _center center point
