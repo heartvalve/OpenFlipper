@@ -490,14 +490,14 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
    if ( _event->type() != QEvent::MouseButtonPress )
       return;
 
-   unsigned int        node_idx, target_idx;
+   unsigned int     target_idx;
    ACG::Vec3d       hit_point;
 
-   if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
-      BaseObjectData* object;
+   BaseObjectData* object;
+   if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),object, target_idx, true, &hit_point)) {
 
-      if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-         if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ) {
+       if ( object != 0 ) {
+         if ( object->dataType(DATA_TRIANGLE_MESH) ) {
             TriMesh& m = *PluginFunctions::triMesh(object);
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
@@ -516,7 +516,7 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
             emit createBackup(object->id(),"Split Face", UPDATE_TOPOLOGY);
          }
 
-         if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
+         if ( object->dataType(DATA_POLY_MESH)  ) {
            PolyMesh& m = *PluginFunctions::polyMesh(object);
            PolyMesh::FaceHandle fh = m.face_handle(target_idx);
 
