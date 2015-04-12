@@ -140,7 +140,7 @@ MSTextureSampler::MSTextureSampler() : shaderNearest_(0), shaderNearestDepth_(0)
 MSTextureSampler::~MSTextureSampler() {
   delete shaderNearest_;
   delete shaderLinear_;
-  delete shaderNearest_;
+  delete shaderNearestDepth_;
 }
 
 MSTextureSampler& MSTextureSampler::instance() {
