@@ -5,7 +5,7 @@ http://www.openflipper.org
 
 Required libs: 
 ==============
-Qt ( >= 4.8 ) http://www.qtsoftware.com/downloads 
+Qt ( >= 4.8.1 ) http://www.qtsoftware.com/downloads 
 OpenGL          http://www.opengl.org
 GLUT            http://www.opengl.org/resources/libraries/glut
 GLEW            http://glew.sourceforge.net
