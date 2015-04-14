@@ -20,7 +20,6 @@ endforeach ()
 include_directories (
   ..
   ${OPENMESH_INCLUDE_DIRS}
-  ${OPENVOLUMEMESH_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -127,7 +126,6 @@ endif()
 
 target_link_libraries (OpenFlipperPluginLib
   ${OPENMESH_LIBRARIES}
-  ${OPENVOLUMEMESH_LIBRARY}
   ACG
   ${QT_LIBRARIES}
   ${OPENGL_LIBRARIES}
